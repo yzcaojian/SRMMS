@@ -4,6 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/4/25 16:55
 import socket
+import  json
 
 Request_Resources = 0
 Send_Instructions = 1
@@ -26,9 +27,10 @@ class OUT_SS_SRMMS_impl(OUT_SS_SRMMS):
         # 将接收到的数据保存到文件
         filename = ip_addr[0] + ".csv"
         f = open(filename, "wb")
-        # 发送标识码
-        send_data = Request_Resources
-        client.send(str(send_data).encode())
+        # 构建json文件
+        file_msg = {"action": Request_Resources}
+        # 发送json文件
+        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
         while True:
             # 每次接收1024字节 纸质接收完毕
             data = client.recv(1024)
@@ -37,15 +39,16 @@ class OUT_SS_SRMMS_impl(OUT_SS_SRMMS):
                 break
         client.close()
 
+        return filename
+
 
 class OUT_SRMMS_SS_impl(OUT_SRMMS_SS):
     def function(self, ip_addr, instructions):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
         client.connect(ip_addr)
-        # 发送标识码
-        send_data = Send_Instructions
-        client.send(str(send_data).encode())
-        # 发送指令
-        client.send(instructions.encode())
+        # 构建json文件
+        file_msg = {"action": Send_Instructions, "instructions": instructions}
+        # 发送json文件
+        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
         client.close()

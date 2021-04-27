@@ -10,12 +10,17 @@ host = socket.gethostname()
 port = 12345
 s.connect((host, port))
 print("已连接")
-info = ""
-while info != "byebye":
+
+f = open("file.txt", "wb")
+while True:
     send_data = input("输入发送内容:")
-    s.send(send_data.encode())
-    if send_data == "byebye":
+    if not send_data:
         break
-    info = s.recv(1024).decode()
-    print("接收到的内容:" + info)
+    s.send(send_data.encode())
+    while True:
+        data = s.recv(1024)
+        f.write(data)
+        if not data:
+            break
+print("传输完成...")
 s.close()
