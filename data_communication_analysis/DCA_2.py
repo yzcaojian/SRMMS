@@ -8,7 +8,7 @@ from interface.in_interface import in_interface_impl
 
 class DAC_2:
     def send_data(self, ip, json_data):
-        # 通过内部接口将资源信息发送给其他模块
+        # 通过内部接口将资源信息发送给其它模块
         overall_info = json_data["overall_info"]
         detailed_info = json_data["detailed_info"]
         in_interface_impl().IN_DCA_RSD(ip, overall_info, detailed_info)
