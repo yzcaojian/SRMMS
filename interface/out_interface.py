@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 # @ModuleName: out_interface
-# @Function: 
+# @Function: out_interface
 # @Author: Chen Zhongwei
 # @Time: 2021/4/25 16:55
 import socket
-import  json
+import json
 
 Request_Resources = 0
 Send_Instructions = 1
-# 资源状态信息接口  服务器->系统
-class OUT_SS_SRMMS:
-    def function(self, ip_addr):
+
+
+class out_interface:
+    # 资源状态信息接口  服务器->系统
+    def OUT_SS_SRMMS(self, ip_addr):
         pass
 
-# 调度指令分配接口  系统->服务器
-class OUT_SRMMS_SS:
-    def function(self, ip_addr, instructions):
+    # 调度指令分配接口  系统->服务器
+    def OUT_SRMMS_SS(self, ip_addr, instructions):
         pass
 
 
-class OUT_SS_SRMMS_impl(OUT_SS_SRMMS):
-    def function(self, ip_addr):
+class out_interface_impl(out_interface):
+    def OUT_SS_SRMMS(self, ip_addr):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
         client.connect(ip_addr)
@@ -41,9 +42,7 @@ class OUT_SS_SRMMS_impl(OUT_SS_SRMMS):
 
         return filename
 
-
-class OUT_SRMMS_SS_impl(OUT_SRMMS_SS):
-    def function(self, ip_addr, instructions):
+    def OUT_SRMMS_SS(self, ip_addr, instructions):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
         client.connect(ip_addr)
