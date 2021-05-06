@@ -5,7 +5,6 @@
 # @Time: 2021/5/6 15:56
 
 
-class RSA_3:
-    # 监控应用需求
-    def monitoring_application_requirements(self):
-        pass
+# 监控应用需求
+def monitoring_application_requirements(self):
+    pass

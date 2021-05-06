@@ -5,7 +5,6 @@
 # @Time: 2021/5/6 15:55
 
 
-class RSA_2:
-    # I/O负载预测
-    def io_load_prediction(self):
-        pass
+# I/O负载预测
+def io_load_prediction(self):
+    pass
