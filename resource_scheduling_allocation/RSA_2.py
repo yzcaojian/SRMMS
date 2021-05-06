@@ -6,5 +6,5 @@
 
 
 # I/O负载预测
-def io_load_prediction(self):
+def io_load_prediction():
     pass

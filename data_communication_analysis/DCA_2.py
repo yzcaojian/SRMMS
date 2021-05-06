@@ -6,7 +6,7 @@
 from interface.in_interface import in_interface_impl
 
 
-def send_data(self, ip, json_data):
+def send_data(ip, json_data):
     # 通过内部接口将资源信息发送给其它模块
     overall_info = json_data["overall_info"]
     detailed_info = json_data["detailed_info"]

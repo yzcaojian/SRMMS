@@ -6,5 +6,5 @@
 
 
 # 线上模型训练
-def online_model_training(self):
+def online_model_training():
     pass

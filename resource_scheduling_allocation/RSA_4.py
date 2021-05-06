@@ -6,5 +6,5 @@
 
 
 # 资源调度分配
-def resource_scheduling_allocation(self):
+def resource_scheduling_allocation():
     pass

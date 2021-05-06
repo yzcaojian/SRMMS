@@ -4,7 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/4/25 16:55
 
-from data_communication_analysis.DAC_1 import DAC_1
+from data_communication_analysis.DAC_1 import send_instructions
 
 class in_interface:
     # 服务器硬盘和I/O负载信息接口  数据通信解析模块->资源调度分配模块
@@ -81,7 +81,7 @@ class in_interface_impl(in_interface):
 
     def IN_RSA_DCA(self, ip, instructions):
         # 调用数据通信解析模块模块函数
-        DAC_1().send_instructions(ip, instructions)
+        send_instructions(ip, instructions)
 
     def IN_DCA_RSD(self, ip, overall_info, detailed_info):
         # 将总体信息和详细信息添加到列表中

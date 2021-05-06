@@ -6,5 +6,5 @@
 
 
 # 监控应用需求
-def monitoring_application_requirements(self):
+def monitoring_application_requirements():
     pass
