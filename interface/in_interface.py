@@ -131,9 +131,9 @@ class in_interface_impl(in_interface):
         in_interface_impl.io_load_prediction_list = []
         return list1
 
-    def IN_RSA_RSD(self, ip, disk_id, instruction):
+    def IN_RSA_RSD(self, ip, disk_id, instructions):
         # 将分配指令日志信息添加到列表中
-        in_interface_impl.allocation_instruction_log_list.append([ip, disk_id, instruction])
+        in_interface_impl.allocation_instruction_log_list.append([ip, disk_id, instructions])
 
     def getData_allocation_instruction_log(self):# 获取分配指令日志信息
         list1 = in_interface_impl.allocation_instruction_log_list
