@@ -4,7 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:53
 
-import time
+
 # 线上模型训练
 def online_model_training():
     pass
