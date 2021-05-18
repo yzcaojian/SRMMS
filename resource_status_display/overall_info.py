@@ -1,4 +1,4 @@
-from configuration_checking import configuration_info
+from resource_status_display.configuration_checking import configuration_info
 
 """
 -*- coding: utf-8 -*- 

@@ -2,13 +2,12 @@ import locale
 import re
 import time
 
-from configuration_checking import configuration_info
-from get_info_item import get_ServerInfo_Item, get_execution_state_item
-from PyQt5 import QtWidgets, QtGui, QtCore
+from resource_status_display.configuration_checking import configuration_info
+from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplication, QMainWindow, QComboBox, \
-    QPushButton, QLineEdit, QTextBrowser, QListView, QListWidget, QListWidgetItem, QMessageBox
+    QPushButton, QLineEdit, QListView, QListWidget, QListWidgetItem, QMessageBox
 
 """
 -*- coding: utf-8 -*- 

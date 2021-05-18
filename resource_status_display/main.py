@@ -1,12 +1,11 @@
 import sys
-import time
 
-from PyQt5.QtCore import Qt, QSize, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
-from mult_disks_info_GUI import MultDisksInfoWidget
-from raid_info_GUI import RAIDInfoWidget
+from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
+from resource_status_display.raid_info_GUI import RAIDInfoWidget
 
 """
 -*- coding: utf-8 -*- 
