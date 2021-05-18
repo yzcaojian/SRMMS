@@ -12,7 +12,7 @@ from data_communication_analysis.DCA_2 import send_data
 # 解析各类资源信息
 def analyse_data(ip):
     # 通过外部接口请求资源信息
-    filename = out_interface_impl.OUT_SS_SRMMS(ip)
+    filename = out_interface_impl().OUT_SS_SRMMS(ip)
     # 将文件以字典形式读取出来 {"overall_info", "detailed_info", "smart_data"}
     with open(filename, 'r', encoding="utf-8") as fp:
         json_data = json.load(fp)
