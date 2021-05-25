@@ -39,9 +39,9 @@ class out_interface_impl(out_interface):
         while True:
             # 每次接收1024字节 直至接收完毕
             data = client.recv(1024)
-            f.write(data)
             if not data:
                 break
+            f.write(data)
         client.close()
 
         return filename
