@@ -7,13 +7,15 @@
 import time
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
 
 
 # I/O负载预测
-def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, rnn_unit, time_step, save_model_path):
+def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
+    rnn_unit, time_step = [20, 20]
     weights = {
         # 'in': tf.get_variable('in', shape=[input_size, rnn_unit], initializer=init_glorot_normal),
         # 'out': tf.get_variable('out', shape=[rnn_unit, output_size], initializer=init_glorot_normal)
@@ -50,7 +52,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     # 截取前面time_step个数据
                     data_list = io_load_input_queue[ip][disk_id][:time_step]
 
-                    data_list = np.array(data_list)[:, 1]  # 第二维是时间戳，这里取第一维
+                    data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                     data_list = data_list.reshape(len(data_list), 1)
 
                     # 预测
@@ -103,7 +105,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 #
 #     while(len(io_load_input_queue["123.123.1.1"]["czw"]) > 19):
 #         tf.reset_default_graph()
-#         io_load_prediction(io_load_input_queue, io_load_output_queue, [], 20, 20,
+#         io_load_prediction(io_load_input_queue, io_load_output_queue, [],
 #                            '../IO_load_prediction_model_training/model/Financial3/')
 #
 #     predict_list = np.array(io_load_output_queue["123.123.1.1"]["czw"])
