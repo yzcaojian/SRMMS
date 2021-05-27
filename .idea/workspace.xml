@@ -2,32 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/a_read_failure.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/b_label_1st_health_state.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/b_label_2nd_health_state.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/c_feature_selection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/d_1st_dataset_division.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/d_2nd_dataset_division.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model/hdd_GRU_model.ckpt.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model/hdd_GRU_model.ckpt.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model/hdd_GRU_model.ckpt.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_2/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_2/hdd_GRU_2_model.ckpt.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_2/hdd_GRU_2_model.ckpt.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_2/hdd_GRU_2_model.ckpt.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict_2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_train_2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/test_data.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/test_data_2.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/test_label.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/test_label_2.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/train_data.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/train_data_2.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/train_label.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/train_label_2.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/SRMMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SRMMS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -120,7 +96,7 @@
       <workItem from="1619163495644" duration="1310000" />
       <workItem from="1621325347635" duration="12884000" />
       <workItem from="1621387362768" duration="1896000" />
-      <workItem from="1622082592835" duration="2626000" />
+      <workItem from="1622082592835" duration="4762000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -241,7 +217,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622085103928</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="旧日立硬盘故障预测">
+      <created>1622085270525</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1622085270525</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -275,13 +258,14 @@
     <MESSAGE value="删除初版故障预测文件夹" />
     <MESSAGE value="前端代码结构调整" />
     <MESSAGE value="日立硬盘故障预测" />
-    <option name="LAST_COMMIT_MESSAGE" value="日立硬盘故障预测" />
+    <MESSAGE value="旧日立硬盘故障预测" />
+    <option name="LAST_COMMIT_MESSAGE" value="旧日立硬盘故障预测" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1497" y="8" key="CommitChangelistDialog2" timestamp="1622085101708">
+    <state x="-1497" y="8" key="CommitChangelistDialog2" timestamp="1622085268138">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1497" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622085101708" />
+    <state x="-1497" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622085268138" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621341108403" />
     <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -303,22 +287,24 @@
     </state>
     <state width="1877" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state x="295" y="110" key="SettingsEditor" timestamp="1618995737435">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622084025293">
+    <state x="-1551" y="139" key="SettingsEditor" timestamp="1622088838696">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084025293" />
+    <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622088838696" />
+    <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622088646421">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622088646421" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
     <state x="449" y="237" key="com.intellij.ide.util.TipDialog" timestamp="1621387642278">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="449" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621387642278" />
-    <state x="465" y="204" key="git4idea.merge.GitPullDialog" timestamp="1621325961030">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622100605961">
+      <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622100605961" />
     <state x="465" y="204" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621325961030" />
     <state x="477" y="313" key="git4idea.ui.GitStashDialog" timestamp="1619163935686">
       <screen x="0" y="0" width="1536" height="824" />
