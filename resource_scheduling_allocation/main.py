@@ -6,15 +6,16 @@
 
 import time
 from interface.in_interface import in_interface_impl
-from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute
-# from resource_scheduling_allocation.RSA_2 import
+from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute,online_model_training
+from resource_scheduling_allocation.RSA_2 import io_load_prediction
 from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, filtering_io_data, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
 
 
 # I/O负载输入队列
 io_load_input_queue = {}
-io_load_input_queue_minute = {}
+io_load_input_queue_predict = {}  # 预测用
+io_load_input_queue_train = {}  # 训练用
 # I/O负载输出队列
 io_load_output_queue = {}
 # 高负载队列
@@ -25,6 +26,10 @@ average_io_load = {}
 warning_message_queue = []
 # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
 disk_detailed_info = {}
+# 存放IO的平均值和标准差
+mean_and_std = []
+
+save_model = ['../IO_load_prediction_model_training/model/Financial4/', 'Model']
 
 while True:
     detailed_info_list = in_interface_impl().getData_disk_io()
@@ -47,10 +52,14 @@ while True:
             io_load_input_queue[ip][disk_id].append([disk_io, now_time])
 
     # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
-    io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute)
+    io_second_to_io_minute(io_load_input_queue, io_load_input_queue_predict)
+    io_second_to_io_minute(io_load_input_queue, io_load_input_queue_train)
 
-    # 调用RSA_1和RSA_2里面的相关函数
-    # pass
+    # 线上训练
+    online_model_training(io_load_input_queue_train, mean_and_std, save_model)
+
+    # IO负载预测
+    io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0])
 
     # 检查是否有硬盘故障预警
     hard_disk_failure_prediction_list = in_interface_impl().getData_hard_disk_failure_prediction()
