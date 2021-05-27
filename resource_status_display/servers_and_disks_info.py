@@ -1,4 +1,4 @@
-from resource_status_display.configuration_checking import configuration_info
+from configuration_checking import configuration_info
 
 """
 -*- coding: utf-8 -*- 
@@ -91,14 +91,14 @@ class LogicVolumeInfo:
 
 def get_server_detailed_info(server_ip, tag):
     # 获取server_ip对应的服务器详细信息
-    if tag == 0:
+    if tag == 0:  # 硬盘详细信息
         return [DiskInfo("hdd-01", "HDD", "正常", "1TB", "0.3TB", "30%", 6),
                 DiskInfo("hdd-02", "HDD", "正常", "1TB", "0.2TB", "20%", 6),
                 DiskInfo("hdd-03", "HDD", "正常", "0.9TB", "0.3TB", "33%", 6),
                 DiskInfo("hdd-04", "HDD", "正常", "2TB", "0.5TB", "25%", 5),
                 DiskInfo("ssd-01", "SSD", "正常", "4TB", "1.2TB", "30%", 4),
                 DiskInfo("ssd-01", "SSD", "正常", "8TB", "3TB", "37.5%", 1)]
-    else:
+    else:  # 逻辑卷详细信息
         return [LogicVolumeInfo("ssd-vol-01", "1TB", "0.3TB", "30%"), LogicVolumeInfo("ssd-vol-02", "4TB", "0.7TB", "17.5%"),
                 LogicVolumeInfo("ssd-vol-03", "2TB", "0.34TB", "17%"), LogicVolumeInfo("hdd-vol-01", "2TB", "0.7TB", "35%"),
                 LogicVolumeInfo("hdd-vol-01", "3TB", "0.52TB", "17.3%"), LogicVolumeInfo("mix-01", "10TB", "7.2TB", "72%")]

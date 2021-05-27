@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
-from resource_status_display.configuration_GUI import ConfigurationWidget
-from resource_status_display.get_info_item import get_warning_info_item, get_scheduling_info_item
-from resource_status_display.log_exception_with_suggestions import warning_list, scheduling_list
-from resource_status_display.tab_GUI import MultDisksInfoTabWidget
+from configuration_GUI import ConfigurationWidget
+from get_info_item import get_warning_info_item, get_scheduling_info_item
+from log_exception_with_suggestions import warning_list, scheduling_list
+from tab_GUI import MultDisksInfoTabWidget
 
 """
 -*- coding: utf-8 -*- 
@@ -40,7 +40,7 @@ class MultDisksInfoWidget(QWidget):
         update_button.setToolTip('刷新')
         update_button.setFixedSize(30, 30)
         update_button_icon = QIcon()
-        update_button_icon.addPixmap(QPixmap('update.png'), QIcon.Normal, QIcon.Off)
+        update_button_icon.addPixmap(QPixmap('./png/update.png'), QIcon.Normal, QIcon.Off)
         update_button.setIcon(update_button_icon)
         update_button.setIconSize(QSize(25, 25))
         update_button.setStyleSheet("background-color:#cccccc")
@@ -51,7 +51,7 @@ class MultDisksInfoWidget(QWidget):
         configuration_button.setToolTip('配置')
         configuration_button.setFixedSize(30, 30)
         configuration_button_icon = QIcon()
-        configuration_button_icon.addPixmap(QPixmap('configuration.png'), QIcon.Normal, QIcon.Off)
+        configuration_button_icon.addPixmap(QPixmap('./png/configuration.png'), QIcon.Normal, QIcon.Off)
         configuration_button.setIcon(configuration_button_icon)
         configuration_button.setIconSize(QSize(25, 25))
         configuration_button.setStyleSheet("background-color:#cccccc")

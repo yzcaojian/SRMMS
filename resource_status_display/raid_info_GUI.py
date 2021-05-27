@@ -1,16 +1,16 @@
-from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QSize, QUrl
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QMainWindow, \
-    QTableWidget, QAbstractItemView, QHeaderView, QSplitter
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QTableWidget, QAbstractItemView, \
+    QHeaderView, QSplitter
 from pyecharts import options as opts
 from pyecharts.charts import Line
 
-from resource_status_display.configuration_GUI import ConfigurationWidget
-from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
-from resource_status_display.backward_thread import UpdateRAIDDataThread
-from resource_status_display.overall_info import get_server_detailed_info, server_storage_info_list
+from configuration_GUI import ConfigurationWidget
+from get_info_item import get_server_storage_info_item, get_volume_storage_info_item
+from backward_thread import UpdateRAIDDataThread
+from history_io_display import HistoryIO
+from servers_and_disks_info import get_server_detailed_info, server_storage_info_list
 
 """
 -*- coding: utf-8 -*- 
@@ -26,7 +26,7 @@ class RAIDInfoWidget(QWidget):
         super().__init__()
         self.configuration = None  # 配置界面
         self.server_overall_info = server_storage_info_list.server_info_list  # 服务器总体信息列表
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0]  # 选中的服务器IP地址，默认是第一个
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.server_detailed_info = get_server_detailed_info("", 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread()  # 后台线程，每秒钟更新数据局
@@ -43,7 +43,7 @@ class RAIDInfoWidget(QWidget):
         update_button.setToolTip('刷新')
         update_button.setFixedSize(30, 30)
         update_button_icon = QIcon()
-        update_button_icon.addPixmap(QPixmap('update.png'), QIcon.Normal, QIcon.Off)
+        update_button_icon.addPixmap(QPixmap('./png/update.png'), QIcon.Normal, QIcon.Off)
         update_button.setIcon(update_button_icon)
         update_button.setIconSize(QSize(25, 25))
         update_button.setStyleSheet("background-color:#cccccc")
@@ -54,7 +54,7 @@ class RAIDInfoWidget(QWidget):
         configuration_button.setToolTip('配置')
         configuration_button.setFixedSize(30, 30)
         configuration_button_icon = QIcon()
-        configuration_button_icon.addPixmap(QPixmap('configuration.png'), QIcon.Normal, QIcon.Off)
+        configuration_button_icon.addPixmap(QPixmap('./png/configuration.png'), QIcon.Normal, QIcon.Off)
         configuration_button.setIcon(configuration_button_icon)
         configuration_button.setIconSize(QSize(25, 25))
         configuration_button.setStyleSheet("background-color:#cccccc")
@@ -182,6 +182,7 @@ class RAIDInfoWidget(QWidget):
         io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
                                         border-width:2px; border-style:solid; border-color:black; border-radius:12px}
                                         QPushButton:pressed{background-color:#bbbbbb}''')
+        io_button.clicked.connect(lambda: self.show_history_io_line())  # 绑定历史I/O负载图弹出事件
         # I/O负载图
         server_io_widget = QWidget()
         server_io_layout = QVBoxLayout()
@@ -225,14 +226,14 @@ class RAIDInfoWidget(QWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("server_io.html"))
+                    .render("./html/server_io.html"))
 
             # line_widget = QWebEngineView()
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             # line_widget.setFixedSize(server_io_widget.size().width() - 20, server_io_widget.size().height() - 100)
             line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///server_io.html"))
+            line_widget.load(QUrl("file:///./html/server_io.html"))
             server_io_layout.addWidget(line_widget, alignment=Qt.AlignLeft | Qt.AlignBottom)
             server_io_layout.addWidget(io_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
             # io_button.setContentsMargins(400, 0, 0, 0)
@@ -240,7 +241,7 @@ class RAIDInfoWidget(QWidget):
         def set_server_io_line(server_selected, IsUpdate):
             # server_selected是获取的选择表格某行的范围信息
             if IsUpdate:
-                print("update per second...")
+                print("update raid server per second...")
                 pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
             else:
                 if server_selected is None:
@@ -284,13 +285,13 @@ class RAIDInfoWidget(QWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("server_io.html"))
+                    .render("./html/server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             # line_widget.setFixedSize(server_io_widget.size().width() - 24, server_io_widget.size().height() - 80)
             line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///server_io.html"))
+            line_widget.load(QUrl("file:///./html/server_io.html"))
 
         draw_server_io_line()
 
@@ -334,4 +335,7 @@ class RAIDInfoWidget(QWidget):
     def show_configuration_GUI(self):
         self.configuration = ConfigurationWidget()
 
+    def show_history_io_line(self):
+        self.server_history_io = HistoryIO(self.selected_server_ip)
+        self.server_history_io.show()
 

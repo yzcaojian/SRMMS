@@ -1,11 +1,12 @@
 import sys
+import time
 
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow
 
-from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
-from resource_status_display.raid_info_GUI import RAIDInfoWidget
+from mult_disks_info_GUI import MultDisksInfoWidget
+from raid_info_GUI import RAIDInfoWidget
 
 """
 -*- coding: utf-8 -*- 
@@ -16,7 +17,7 @@ from resource_status_display.raid_info_GUI import RAIDInfoWidget
 """
 
 
-class MainWindow(QWidget):
+class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.title_widget = QWidget() # 标题
@@ -27,7 +28,7 @@ class MainWindow(QWidget):
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
         self.setWindowTitle("存储资源监控管理系统")
         self.setObjectName('MultDisksInfoWidget')
-        self.setWindowIcon(QIcon('software.png'))  # 设置窗体图标
+        self.setWindowIcon(QIcon('./png/software.png'))  # 设置窗体图标
         self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
 
         self.initUI("192.168.1.1")
@@ -38,11 +39,6 @@ class MainWindow(QWidget):
         self.whole_layout.addWidget(self.mult_disks_info_widget)
         self.setLayout(self.whole_layout)
         self.show()
-
-        # # 定时刷新
-        # self.update_thread = UpdateDataThread()
-        # self.update_thread.update_data.connect(self.initUI)
-        # self.update_thread.start()
 
     def initUI(self, server_ip):
         print(server_ip)
@@ -55,7 +51,7 @@ class MainWindow(QWidget):
         title_label.setAlignment(Qt.AlignCenter)  # 文本居中
         switch_button = QPushButton()
         switch_button.setFixedSize(40, 40)
-        switch_button_icon = QIcon('switch.png')
+        switch_button_icon = QIcon('./png/switch.png')
         switch_button.setIcon(switch_button_icon)
         switch_button.setIconSize(QSize(35, 35))
         # switch_button.setContentsMargins(0, 30, 0, 0)
@@ -81,6 +77,12 @@ class MainWindow(QWidget):
         else:
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.whole_layout.addWidget(self.mult_disks_info_widget)
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        self.main_ui = MainWidget()
 
 
 if __name__ == '__main__':

@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="c8ddc96879b145ba92ef6a8664fae577" class="chart-container" style="width:290.5px; height:328px;"></div>
+    <div id="19547b6666ac4b1dbc9852d34ca9e8e0" class="chart-container" style="width:290.5px; height:378px;"></div>
     <script>
-        var chart_c8ddc96879b145ba92ef6a8664fae577 = echarts.init(
-            document.getElementById('c8ddc96879b145ba92ef6a8664fae577'), 'white', {renderer: 'canvas'});
-        var option_c8ddc96879b145ba92ef6a8664fae577 = {
+        var chart_19547b6666ac4b1dbc9852d34ca9e8e0 = echarts.init(
+            document.getElementById('19547b6666ac4b1dbc9852d34ca9e8e0'), 'white', {renderer: 'canvas'});
+        var option_19547b6666ac4b1dbc9852d34ca9e8e0 = {
     "backgroundColor": "#ffffff",
     "animation": false,
     "animationThreshold": 2000,
@@ -23,6 +23,7 @@
     "animationDelayUpdate": 0,
     "color": [
         "#4d5c6e",
+        "#7eca9c",
         "#c23531",
         "#2f4554",
         "#61a0a8",
@@ -51,12 +52,14 @@
     "series": [
         {
             "type": "bar",
+            "name": "\u5df2\u4f7f\u7528\u5bb9\u91cf",
             "legendHoverLink": true,
             "data": [
-                0.03,
-                0.01
+                140.0,
+                100.0
             ],
             "showBackground": false,
+            "stack": "stack1",
             "barWidth": "40%",
             "barMinHeight": 0,
             "barCategoryGap": "20%",
@@ -72,7 +75,41 @@
                 "show": true,
                 "position": "right",
                 "margin": 8,
-                "formatter": function(x){return Number(x.data * 100).toFixed() + '%';}
+                "formatter": function(x){return Number(x.data).toFixed() + 'TB';}
+            },
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            }
+        },
+        {
+            "type": "bar",
+            "name": "\u5269\u4f59\u5bb9\u91cf",
+            "legendHoverLink": true,
+            "data": [
+                360.0,
+                200.0
+            ],
+            "showBackground": false,
+            "stack": "stack1",
+            "barWidth": "40%",
+            "barMinHeight": 0,
+            "barCategoryGap": "20%",
+            "barGap": "30%",
+            "large": false,
+            "largeThreshold": 400,
+            "seriesLayoutBy": "column",
+            "datasetIndex": 0,
+            "clip": true,
+            "zlevel": 0,
+            "z": 2,
+            "label": {
+                "show": true,
+                "position": "right",
+                "margin": 8,
+                "formatter": function(x){return Number(x.data).toFixed() + 'TB';}
             },
             "rippleEffect": {
                 "show": true,
@@ -85,10 +122,12 @@
     "legend": [
         {
             "data": [
-                ""
+                "\u5df2\u4f7f\u7528\u5bb9\u91cf",
+                "\u5269\u4f59\u5bb9\u91cf"
             ],
             "selected": {
-                "": true
+                "\u5df2\u4f7f\u7528\u5bb9\u91cf": true,
+                "\u5269\u4f59\u5bb9\u91cf": true
             },
             "show": true,
             "padding": 5,
@@ -116,6 +155,7 @@
     },
     "xAxis": [
         {
+            "type": "category",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -148,7 +188,7 @@
     ],
     "yAxis": [
         {
-            "name": "\u6545\u969c\u7387",
+            "name": "\u5bb9\u91cf\n\u5355\u4f4dTB",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -182,7 +222,7 @@
         }
     ]
 };
-        chart_c8ddc96879b145ba92ef6a8664fae577.setOption(option_c8ddc96879b145ba92ef6a8664fae577);
+        chart_19547b6666ac4b1dbc9852d34ca9e8e0.setOption(option_19547b6666ac4b1dbc9852d34ca9e8e0);
     </script>
 </body>
 </html>
