@@ -15,6 +15,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="int.backward" />
+          <option value="hard_disk_failure_prediction.configuration_GUI" />
         </list>
       </option>
     </inspection_tool>

@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
-from configuration_GUI import ConfigurationWidget
-from get_info_item import get_warning_info_item, get_scheduling_info_item
-from log_exception_with_suggestions import warning_list, scheduling_list
-from tab_GUI import MultDisksInfoTabWidget
+from resource_status_display.configuration_GUI import ConfigurationWidget
+from resource_status_display.get_info_item import get_warning_info_item, get_scheduling_info_item
+from resource_status_display.log_exception_with_suggestions import warning_list, scheduling_list
+from resource_status_displa.tab_GUI import MultDisksInfoTabWidget
 
 """
 -*- coding: utf-8 -*- 

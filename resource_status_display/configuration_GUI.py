@@ -2,8 +2,8 @@ import locale
 import re
 import time
 
-from configuration_checking import configuration_info
-from get_info_item import get_ServerInfo_Item, get_execution_state_item
+from resource_status_display.configuration_checking import configuration_info
+from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon

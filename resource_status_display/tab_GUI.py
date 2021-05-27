@@ -6,10 +6,10 @@ from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
-from backward_thread import UpdateMDDataThread
-from get_info_item import get_server_storage_info_item, get_disk_storage_info_item
-from history_io_display import HistoryIO
-from servers_and_disks_info import server_storage_info_list, two_disk_info_list, get_server_detailed_info
+from resource_status_display.backward_thread import UpdateMDDataThread
+from resource_status_display.get_info_item import get_server_storage_info_item, get_disk_storage_info_item
+from resource_status_display.history_io_display import HistoryIO
+from resource_status_display.servers_and_disks_info import server_storage_info_list, two_disk_info_list, get_server_detailed_info
 
 """
 -*- coding: utf-8 -*- 

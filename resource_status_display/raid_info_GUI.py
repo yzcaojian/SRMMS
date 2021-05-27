@@ -6,11 +6,11 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButt
 from pyecharts import options as opts
 from pyecharts.charts import Line
 
-from configuration_GUI import ConfigurationWidget
-from get_info_item import get_server_storage_info_item, get_volume_storage_info_item
-from backward_thread import UpdateRAIDDataThread
-from history_io_display import HistoryIO
-from servers_and_disks_info import get_server_detailed_info, server_storage_info_list
+from resource_status_display.configuration_GUI import ConfigurationWidget
+from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
+from resource_status_display.backward_thread import UpdateRAIDDataThread
+from resource_status_display.history_io_display import HistoryIO
+from resource_status_display.servers_and_disks_info import get_server_detailed_info, server_storage_info_list
 
 """
 -*- coding: utf-8 -*- 
