@@ -1,4 +1,3 @@
-from sklearn.linear_model import Ridge
 from sklearn.svm import LinearSVC, SVC
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import RFECV, RFE
@@ -8,21 +7,19 @@ from pandas import read_csv
 """
 -*- coding: utf-8 -*- 
 @Project: disk_failure_prediction
-@Description: 采用递归特征消除（RFE）方法进行特征值筛选，选择9个最重要的SMART属性作为特征
+@Description: 采用递归特征消除（RFE）方法进行特征值筛选，选择9个最重要的SMART属性作为特征，一级二级健康度数据处理不同
 @Time : 2021/1/31 16:53
 @Author : cao jian
 """
 
-# smart = read_csv('ST4000DM000_v2.csv', header=0)  # header值表示以第几行作为列标题，没有标题则用None
-# title = np.array(smart.columns)[2:]  # 取表头
-# smart = np.array(smart)  # 取数据
-# smart = smart[1:, :]
 reader = read_csv('HGST HMS5C4040ALE640_v1.csv', header=0)
 title = np.array(reader.columns)[2:]  # 取表头
 smart = np.load('HGST HMS5C4040ALE640_data_v1.npy')
 label = np.load('HGST HMS5C4040ALE640_label_v1.npy')
-# smart = np.load('REF_data.npy')
-# label = np.load('REF_label.npy')
+# smart = np.load('feature_selection_data_2.npy')
+# label = np.load('feature_selection_label_2.npy')
+# true_smart = np.load('HGST HMS5C4040ALE640_data_2_v1.npy')
+
 print(smart.shape)
 feature = smart  # 以全部的数据量作为特征
 print(feature.shape)
@@ -47,8 +44,10 @@ for (support, feature, i) in zip(rfe.support_, title, range(len(title))):
     if support:
         left_col.append(i)
         print(feature, end=' ')
+# 一级健康度
 # smart_2_raw smart_3_raw smart_4_raw smart_9_raw smart_12_raw smart_192_raw smart_193_raw smart_196_raw smart_197_raw
-# print("Grid Scores %s" % rfe.grid_scores_)  # 交叉验证的分数，grid_scores_[i] 第i个特征子集的CV分数
+# 二级健康度
+# smart_2_raw smart_3_raw smart_4_raw smart_8_raw smart_9_raw smart_192_raw smart_193_raw smart_194_raw smart_197_raw
 
 for i in range(len(title)):
     if i not in left_col:
@@ -56,3 +55,10 @@ for i in range(len(title)):
 smart = np.delete(smart, del_col, axis=1)
 print('\n', smart.shape)
 np.save('HGST HMS5C4040ALE640_data_v2.npy', smart)
+
+# for i in range(len(title)):
+#     if i not in left_col:
+#         del_col.append(i)
+# true_smart = np.delete(true_smart, del_col, axis=1)
+# print('\n', true_smart.shape)
+# np.save('HGST HMS5C4040ALE640_data_2_v2.npy', true_smart)

@@ -2,7 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/resource_status_display/mult_disks_info_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/mult_disks_info_GUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/a_read_failure.py" beforeDir="false" afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/a_read_failure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/b_label_1st_health_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/b_label_1st_health_state.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/c_feature_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/c_feature_selection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/d_dataset_division.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/disk1_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/disk1_io.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/first.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/first.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/hdd_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/hdd_io.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/history_server_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/history_server_io.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/second.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/second.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/server_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/server_io.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/ssd_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/ssd_io.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +105,7 @@
       <workItem from="1619163495644" duration="1310000" />
       <workItem from="1621325347635" duration="12884000" />
       <workItem from="1621387362768" duration="1896000" />
-      <workItem from="1622082592835" duration="1307000" />
+      <workItem from="1622082592835" duration="2352000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -187,7 +198,21 @@
       <option name="project" value="LOCAL" />
       <updated>1622083437528</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="解决包引入错误">
+      <created>1622084018921</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1622084018921</updated>
+    </task>
+    <task id="LOCAL-00015" summary="删除初版故障预测文件夹">
+      <created>1622084163448</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1622084163448</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -218,33 +243,34 @@
     <MESSAGE value="调整前端代码结构&#10;新增历史I/O负载信息查看、图标闪烁预警功能" />
     <MESSAGE value="解决包引入问题" />
     <MESSAGE value="解决包引入错误" />
-    <option name="LAST_COMMIT_MESSAGE" value="解决包引入错误" />
+    <MESSAGE value="删除初版故障预测文件夹" />
+    <option name="LAST_COMMIT_MESSAGE" value="删除初版故障预测文件夹" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1497" y="8" key="CommitChangelistDialog2" timestamp="1622084016917">
+    <state x="-1497" y="8" key="CommitChangelistDialog2" timestamp="1622084979471">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1497" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084016917" />
+    <state x="-1497" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084979471" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621341108403" />
-    <state width="938" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084051550">
+    <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="938" height="215" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084051550" />
+    <state width="1877" height="215" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="938" height="215" key="GridCell.Tab.0.center" timestamp="1622084051550">
+    <state width="1877" height="215" key="GridCell.Tab.0.center" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="938" height="215" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084051550" />
+    <state width="1877" height="215" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="938" height="215" key="GridCell.Tab.0.left" timestamp="1622084051550">
+    <state width="1877" height="215" key="GridCell.Tab.0.left" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="938" height="215" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084051550" />
+    <state width="1877" height="215" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="938" height="215" key="GridCell.Tab.0.right" timestamp="1622084051550">
+    <state width="1877" height="215" key="GridCell.Tab.0.right" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="938" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084051550" />
+    <state width="1877" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
     <state x="295" y="110" key="SettingsEditor" timestamp="1618995737435">
       <screen x="0" y="0" width="1536" height="824" />

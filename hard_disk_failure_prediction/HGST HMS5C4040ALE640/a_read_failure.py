@@ -34,10 +34,9 @@ for day in date:
         # if first_time and record[2] == "HGST HMS5C4040ALE640":
         #     # 利用已知信息，第一条读入记录肯定不是故障的，所以遍历此记录并得到模板, 每个序列号只会执行一次
         #     # 已弃用用template模板加速SMART有效数据读，因为每个季度之间的smart数据字段数量是不一样的，趋势为逐年增加
-        #     for i in range(4, len(record)):  # 遍历failure字段和所有SMART属性值，保留不为空的字段
+        #     for i in range(4, len(record), 2):  # 遍历failure字段和所有SMART属性值，保留不为空的字段
         #         if record[i] != "":
         #             template.append(i)
-        #             i = i + 1
         #     first_time = False
 
         if record[2] == "HGST HMS5C4040ALE640":  # 选择只采集昱科HGST HMS5C4040ALE640型号的硬盘数据
