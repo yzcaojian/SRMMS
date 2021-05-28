@@ -106,6 +106,13 @@ hdd = np.delete(hdd, del_col, axis=0)
 min_max_scaler = preprocessing.MinMaxScaler()  # 定义一个缩放数据的标量
 smart = hdd[:, 1:mlen - 1]
 health_state = hdd[:, 0]
+
+# 得到归一化的最大值的和最小值
+max_index = smart.argmax(axis=0)
+min_index = smart.argmin(axis=0)
+for i in range(len(max_index)):
+    print("max", smart[max_index[i]][i], "min", smart[min_index[i]][i])
+
 smart = min_max_scaler.fit_transform(smart)
 # hdd = np.column_stack((hdd[:, 0], smart))
 print(hdd.shape)

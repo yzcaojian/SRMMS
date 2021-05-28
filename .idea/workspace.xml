@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1rTMOS2nxQcjrRL6uTDQvKVbXRZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/hard_disk_failure_prediction/HGST HMS5C4040ALE640/model learning" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\hard_disk_failure_prediction\HGST HMS5C4040ALE640\model learning" />
+      <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\hard_disk_failure_prediction\HGST HMS5C4040ALE640" />
+      <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\resource_status_display" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SRMMS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/resource_status_display" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/resource_status_display/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="" />
+      <created>1618995593275</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1618995593275</updated>
+      <workItem from="1618995594699" duration="1381000" />
+      <workItem from="1619163495644" duration="1310000" />
+      <workItem from="1621325347635" duration="12884000" />
+      <workItem from="1621387362768" duration="1896000" />
+      <workItem from="1622082592835" duration="4762000" />
+    </task>
+    <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
+      <created>1618995924490</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1618995924490</updated>
+    </task>
+    <task id="LOCAL-00002" summary="update a.py">
+      <created>1618996593035</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1618996593035</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update a new directory disk_failure_prediction">
+      <created>1621325476159</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1621325476159</updated>
+    </task>
+    <task id="LOCAL-00004" summary="GUI get">
+      <created>1621326422180</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1621326422180</updated>
+    </task>
+    <task id="LOCAL-00005" summary="界面部分基本完成">
+      <created>1621326652504</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1621326652504</updated>
+    </task>
+    <task id="LOCAL-00006" summary="昱科盘的故障预测代码">
+      <created>1621327673367</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1621327673367</updated>
+    </task>
+    <task id="LOCAL-00007" summary="界面bug更改">
+      <created>1621328248866</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1621328248866</updated>
+    </task>
+    <task id="LOCAL-00008" summary="外部接口更改">
+      <created>1621338608254</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1621338608254</updated>
+    </task>
+    <task id="LOCAL-00009" summary="html更新">
+      <created>1621339122993</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1621339122993</updated>
+    </task>
+    <task id="LOCAL-00010" summary="外部接口更改">
+      <created>1621341109992</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1621341109992</updated>
+    </task>
+    <task id="LOCAL-00011" summary="调整前端代码结构&#10;新增历史I/O负载信息查看、图标闪烁预警功能">
+      <created>1622082738319</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1622082738319</updated>
+    </task>
+    <task id="LOCAL-00012" summary="解决包引入问题">
+      <created>1622083257963</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1622083257963</updated>
+    </task>
+    <task id="LOCAL-00013" summary="解决包引入错误">
+      <created>1622083437528</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1622083437528</updated>
+    </task>
+    <task id="LOCAL-00014" summary="解决包引入错误">
+      <created>1622084018921</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1622084018921</updated>
+    </task>
+    <task id="LOCAL-00015" summary="删除初版故障预测文件夹">
+      <created>1622084163448</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1622084163448</updated>
+    </task>
+    <task id="LOCAL-00016" summary="前端代码结构调整">
+      <created>1622085017351</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1622085017351</updated>
+    </task>
+    <task id="LOCAL-00017" summary="日立硬盘故障预测">
+      <created>1622085103928</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1622085103928</updated>
+    </task>
+    <task id="LOCAL-00018" summary="旧日立硬盘故障预测">
+      <created>1622085270525</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1622085270525</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update a.py" />
+    <MESSAGE value="update a new directory disk_failure_prediction" />
+    <MESSAGE value="GUI get" />
+    <MESSAGE value="界面部分基本完成" />
+    <MESSAGE value="昱科盘的故障预测代码" />
+    <MESSAGE value="界面bug更改" />
+    <MESSAGE value="html更新" />
+    <MESSAGE value="外部接口更改" />
+    <MESSAGE value="调整前端代码结构&#10;新增历史I/O负载信息查看、图标闪烁预警功能" />
+    <MESSAGE value="解决包引入问题" />
+    <MESSAGE value="解决包引入错误" />
+    <MESSAGE value="删除初版故障预测文件夹" />
+    <MESSAGE value="前端代码结构调整" />
+    <MESSAGE value="日立硬盘故障预测" />
+    <MESSAGE value="旧日立硬盘故障预测" />
+    <option name="LAST_COMMIT_MESSAGE" value="旧日立硬盘故障预测" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1497" y="8" key="CommitChangelistDialog2" timestamp="1622085268138">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1497" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622085268138" />
+    <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621341108403" />
+    <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="215" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="1493" height="141" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
+    <state width="1877" height="215" key="GridCell.Tab.0.center" timestamp="1622084698554">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="215" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="1493" height="141" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
+    <state width="1877" height="215" key="GridCell.Tab.0.left" timestamp="1622084698554">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="215" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="1493" height="141" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
+    <state width="1877" height="215" key="GridCell.Tab.0.right" timestamp="1622084698554">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
+    <state x="-1551" y="139" key="SettingsEditor" timestamp="1622088838696">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622088838696" />
+    <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622088646421">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622088646421" />
+    <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
+    <state x="449" y="237" key="com.intellij.ide.util.TipDialog" timestamp="1621387642278">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="449" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621387642278" />
+    <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1622123247329">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622123247329" />
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622100605961">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622100605961" />
+    <state x="465" y="204" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621325961030" />
+    <state x="477" y="313" key="git4idea.ui.GitStashDialog" timestamp="1619163935686">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="477" y="313" key="git4idea.ui.GitStashDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1619163935686" />
+    <state x="477" y="260" key="git4idea.ui.GitUnstashDialog" timestamp="1619163960305">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="477" y="260" key="git4idea.ui.GitUnstashDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1619163960305" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1622083908844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
+  </component>
+</project>

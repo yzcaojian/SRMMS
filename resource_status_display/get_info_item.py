@@ -33,7 +33,7 @@ def get_ServerInfo_Item(serverInfo):
     # mgnHeight = int(img.height() * scale)  # 缩放宽高尺寸
     # size = QSize(mgnWidth, mgnHeight)
     # png = QPixmap.fromImage(img.scaled(size, Qt.IgnoreAspectRatio))
-    png = QPixmap('server.png').scaled(30, 50)
+    png = QPixmap('./png/server.png').scaled(30, 50)
     server_image.setPixmap(png)
 
     # 服务器名称
@@ -96,20 +96,27 @@ def get_execution_state_item(line, IsDate=False):
 #     return events_widget
 
 # 获取总体信息表的表格item, server_storage_info是ServerInfo的对象
-def get_server_storage_info_item(server_storage_info):
+def get_server_storage_info_item(server_storage_info, turn=1):
     # 设置默认字体为宋体，大小设为14，并且加粗(划掉)
     text_font = QFont("黑体", 14)  # , QFont.Bold)
 
     # 服务器名称
     server_name_layout = QHBoxLayout()
     server_name_widget = QWidget()
-    server_image = QLabel()
-    server_image.setFixedSize(26, 40)
-    png = QPixmap('server.png').scaled(24, 38)
-    server_image.setPixmap(png)
+    if turn > 0:
+        server_image = QLabel()
+        server_image.setFixedSize(26, 40)
+        png = QPixmap('./png/server.png').scaled(24, 38)
+        server_image.setPixmap(png)
+    else:
+        server_image = QLabel()
+        server_image.setFixedSize(26, 40)
+        png = QPixmap('./png/no.png').scaled(24, 38)
+        server_image.setPixmap(png)
     server_name = QLabel(server_storage_info.serverName)
     server_name.setToolTip(server_storage_info.serverName + ' ' + server_storage_info.serverIP)
     server_name.setFont(text_font)
+
     server_name_layout.addWidget(server_image)
     server_name_layout.addWidget(server_name, alignment=Qt.AlignLeft)
     server_name_widget.setLayout(server_name_layout)
@@ -130,17 +137,23 @@ def get_server_storage_info_item(server_storage_info):
 
 
 # 获取多硬盘架构下详细信息表的表格item，disk_storage_info是DiskInfo类的对象
-def get_disk_storage_info_item(disk_storage_info):
+def get_disk_storage_info_item(disk_storage_info, turn=1):
     # 设置默认字体为宋体，大小设为14，并且加粗(划掉)
     text_font = QFont("黑体", 14)  # , QFont.Bold)
 
     # 硬盘标识
     disk_name_layout = QHBoxLayout()
     disk_name_widget = QWidget()
-    disk_image = QLabel()
-    disk_image.setFixedSize(40, 40)
-    png = QPixmap('SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap('HDD.png').scaled(38, 38)
-    disk_image.setPixmap(png)
+    if turn > 0:
+        disk_image = QLabel()
+        disk_image.setFixedSize(40, 40)
+        png = QPixmap('./png/SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap('./png/HDD.png').scaled(38, 38)
+        disk_image.setPixmap(png)
+    else:
+        disk_image = QLabel()
+        disk_image.setFixedSize(40, 40)
+        png = QPixmap('./png/no.png').scaled(38, 38)
+        disk_image.setPixmap(png)
     disk_name = QLabel(disk_storage_info.diskID)
     disk_name.setToolTip(disk_storage_info.diskID)
     disk_name.setFont(text_font)
@@ -181,7 +194,7 @@ def get_volume_storage_info_item(volume_storage_info):
     volume_name_widget = QWidget()
     volume_image = QLabel()
     volume_image.setFixedSize(34, 40)
-    png = QPixmap('volume.png').scaled(32, 38)
+    png = QPixmap('./png/volume.png').scaled(32, 38)
     volume_image.setPixmap(png)
     volume_name = QLabel(volume_storage_info.logicVolumeID)
     volume_name.setToolTip(volume_storage_info.logicVolumeID)
@@ -213,8 +226,8 @@ def get_warning_info_item(exception):
     slot_image = QLabel()
     slot_image.setFixedSize(40, 40)
     # 红点对应硬盘即将故障与服务器失联两种异常，橙点对应硬盘持续高负载和即将高负载两种异常
-    png = QPixmap('warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else QPixmap(
-        'warning_orange.png').scaled(40, 40)
+    png = QPixmap('./png/warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else QPixmap(
+        './png/warning_orange.png').scaled(40, 40)
     slot_image.setPixmap(png)
     # 异常描述=告警描述=时间+内容
     index = exception[1].find(' ')

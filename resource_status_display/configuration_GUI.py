@@ -7,7 +7,7 @@ from resource_status_display.get_info_item import get_ServerInfo_Item, get_execu
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplication, QMainWindow, QComboBox, \
-    QPushButton, QLineEdit, QListView, QListWidget, QListWidgetItem, QMessageBox
+    QPushButton, QLineEdit, QTextBrowser, QListView, QListWidget, QListWidgetItem, QMessageBox
 
 """
 -*- coding: utf-8 -*- 
@@ -33,9 +33,13 @@ class ConfigurationWidget(QWidget):
         self.setFixedSize(900, 600)
         self.setWindowTitle("系统配置")
         self.setObjectName('ConfigurationWidget')
-        self.setWindowIcon(QIcon('configuration.png'))  # 设置窗体图标
+        self.setWindowIcon(QIcon('./png/configuration.png'))  # 设置窗体图标
         # self.setStyleSheet('#ConfigurationWidget{border-image:url(zuanshi.png);}')  # 设置背景图
         self.setStyleSheet("#ConfigurationWidget{background-color:#cccccc}")  # 设置背景颜色
+        # 新建的窗口始终位于当前屏幕的最前面
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        # 父类窗口不能点击
+        self.setWindowModality(Qt.ApplicationModal)
 
         # 读取配置文件configuration.txt文件内容
         # server_info = []
