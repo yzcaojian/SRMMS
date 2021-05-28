@@ -111,7 +111,6 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
     save_model_path, save_model_name = save_model
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-
         # saver.save(sess, './save/MyModel')
         ckpt = tf.train.get_checkpoint_state(save_model_path)  # checkpoint存在的目录
         if ckpt and ckpt.model_checkpoint_path:
@@ -128,6 +127,8 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
                                                       Y: train_y[batch_index[step]:batch_index[step+1]], keep_prob: kp})
             print(i, loss_)
             loss_list.append(loss_)
+            if loss_ < 1e-4:
+                break
         saver.save(sess, save_model_path + save_model_name)  # 保存模型
 
         # 预测

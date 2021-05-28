@@ -14,7 +14,7 @@ if __name__ == "__main__":
     output_size = 1  # 输出维度
     rnn_unit = 20  # 隐藏层节点
     # lr = 0.00000001  # 学习率
-    lr = 0.000001
+    lr = 0.001
     batch_size = 25  # 每次训练的一个批次的大小
     time_step = 20  # 前time_step步来预测下一步
     predict_step = 20  # 预测predict_step分钟后的负载
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     smooth = 1  # 为1则在时间维度上平滑数据
     train_time = 0  # 所有数据的训练轮次
     filename = './data/Financial2_minutes.csv'
-    save_model_path = './model/Financial3/'  # checkpoint存在的目录
+    save_model_path = './model/Financial2/'  # checkpoint存在的目录
     save_model_name = 'Model'  # saver.save(sess, './save/MyModel') 保存模型
 
     f = open(filename)
@@ -67,7 +67,8 @@ if __name__ == "__main__":
     }
     t0 = time.time()
     train_lstm(data, input_size, output_size, lr, train_time, rnn_unit,
-               weights, biases, train_end, batch_size, time_step, predict_step, kp, [save_model_path, save_model_name], train_begin)
+               weights, biases, train_end, batch_size, time_step, predict_step, kp,
+               [save_model_path, save_model_name], train_begin)
     # io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step, save_model_path, 100, 300)
     t1 = time.time()
     print("时间:%.4fs" % (t1 - t0))

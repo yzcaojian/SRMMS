@@ -37,6 +37,11 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
     Y = tf.placeholder(tf.float32, shape=[None, 1])
     keep_prob = tf.placeholder('float')
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
+    lr = 0.001
+    # 损失函数
+    loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
+    train_op = tf.train.AdamOptimizer(lr).minimize(loss)
+
     saver = tf.train.Saver(max_to_keep=1)
 
     # 读模型操作比较耗时
@@ -89,24 +94,15 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                     train_x.append(x.tolist())
                     train_y.append(y.tolist())
                 batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
-                lr = 0.0001
-                loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
-                train_op = tf.train.AdamOptimizer(lr).minimize(loss)
-                sess.run(tf.global_variables_initializer())  # 变量初始化
+
                 # 重复训练
-                for i in range(0):
+                for i in range(3000):
                     for step in range(len(batch_index) - 1):
                         _, loss_, M, MM = sess.run([train_op, loss, m, mm],
                                                    feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
                                                               Y: train_y[batch_index[step]:batch_index[step + 1]],
                                                               keep_prob: 1})
                     print(i, loss_)
-                    if i % 1000 == 0:
-                        lr = lr / 10
-                        # 损失函数
-                        loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
-                        train_op = tf.train.AdamOptimizer(lr).minimize(loss)
-                        sess.run(tf.global_variables_initializer())  # 变量初始化
 
                 saver.save(sess, save_model_path + save_model_name)  # 保存模型
 
@@ -132,25 +128,25 @@ def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):
             io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
 
 
-# if __name__ == "__main__":
-#     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
-#     df = pd.read_csv(f)  # 读入数据
-#     data = df.values
-#     data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
-#     data = data.reshape(len(data), 1)
-#     newdata = data
-#     for i in range(2, len(data) - 2):
-#         for j in range(0, 1):
-#             newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
-#     data = newdata
-#     data_list = data
-#     io_load_input_queue = {"123.123.1.1": {"czw": []}}
-#
-#     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
-#     Mean_and_std = [[13304.76842105], [4681.6388205]]
-#     for i in range(2):
-#         tf.reset_default_graph()
-#         online_model_training(io_load_input_queue, Mean_and_std,
-#                               ['../IO_load_prediction_model_training/model/Financial4/', 'Model'])
+if __name__ == "__main__":
+    f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
+    df = pd.read_csv(f)  # 读入数据
+    data = df.values
+    data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
+    data = data.reshape(len(data), 1)
+    newdata = data
+    for i in range(2, len(data) - 2):
+        for j in range(0, 1):
+            newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
+    data = newdata
+    data_list = data[:int(len(data) * 0.9)]
+    io_load_input_queue = {"123.123.1.1": {"czw": []}}
+
+    io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
+    Mean_and_std = [[13304.76842105], [4681.6388205]]
+    for i in range(1):
+        tf.reset_default_graph()
+        online_model_training(io_load_input_queue, Mean_and_std,
+                              ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
 
 
