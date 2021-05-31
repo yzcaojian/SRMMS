@@ -132,6 +132,13 @@ class ConfigurationInfo:
                 return self.server_names[i]
         return ""
 
+    # 根据服务器名称查找IP地址
+    def NametoIP(self, server_name):
+        for (i, name) in enumerate(self.server_names):
+            if server_name == name:
+                return self.server_IPs[i]
+        return ""
+
 
 # 单例模式，应用于整个系统进行IP地址和名称的对应
 configuration_info = ConfigurationInfo()
