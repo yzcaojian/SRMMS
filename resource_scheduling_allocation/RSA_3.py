@@ -46,7 +46,7 @@ def filtering_io_data(ip, io_data, average_io_load, high_io_load_queue):
     average_io_load[ip][diskID] = [count + 1, averageIO]
 
     # 高于平均负载的1.2倍或者高于10w视作高负载
-    if diskIO > averageIO * 1.2 or diskIO >= 100000:
+    if diskIO > averageIO * 1.2 * 60 or diskIO >= 100000 * 60:
         # 若该服务器不在此字典中
         if ip not in high_io_load_queue:
             high_io_load_queue[ip] = {}

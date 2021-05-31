@@ -12,7 +12,7 @@ from IO_load_prediction_model_training.offline_model_training import lstm
 
 
 # I/O负载预测
-def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path):
+def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load, warning_message_queue):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
     rnn_unit, time_step = [20, 20]
@@ -84,6 +84,13 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 
                     # 去除前面一个数据
                     io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][1:]
+
+                    _, averageIO = average_io_load[ip][disk_id]
+                    # 高于平均负载的1.2倍或者高于10w视作高负载
+                    if predict > averageIO * 1.2 or predict >= 100000:
+                        errorID = 2
+                        # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
+                        warning_message_queue.append([errorID, now_time, ip, disk_id, predict])
 
 
 # if __name__ == "__main__":

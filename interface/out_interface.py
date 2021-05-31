@@ -29,31 +29,29 @@ class out_interface_impl(out_interface):
         client = socket.socket()
         ip_addr = (ip, self.port)
         client.connect(ip_addr)
-        # 将接收到的数据保存到文件
-        filename = ip_addr[0] + ".csv"
-        f = open(filename, "wb")
-        # 构建json文件
-        file_msg = {"action": Request_Resources}
-        # 发送json文件
-        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
-        while True:
-            # 每次接收1024字节 直至接收完毕
-            data = client.recv(1024)
-            if not data:
-                break
-            f.write(data)
-        client.close()
 
-        return filename
+        # 构建json格式
+        file_msg = {"action": Request_Resources}
+        # 发送json信息
+        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
+
+        # 首先接收数据的长度
+        length = int(client.recv(1024).decode())
+        # 接收指定长度的数据 类型为string
+        data = client.recv(length).decode()
+
+        client.close()
+        # 将接收到的数据返回
+        return data
 
     def OUT_SRMMS_SS(self, ip, instructions):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
         ip_addr = (ip, self.port)
         client.connect(ip_addr)
-        # 构建json文件
+        # 构建json格式
         file_msg = {"action": Send_Instructions, "instructions": instructions}
-        # 发送json文件
+        # 发送json信息
         client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
         client.close()
 
