@@ -9,6 +9,8 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
+from resource_scheduling_allocation.errors import DiskHighLevelIOError
+from resource_status_display.configuration_checking import configuration_info
 
 
 # I/O负载预测
@@ -90,7 +92,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     if predict > averageIO * 1.2 or predict >= 100000:
                         errorID = 2
                         # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
-                        warning_message_queue.append([errorID, now_time, ip, disk_id, predict])
+                        warning_message_queue.append(DiskHighLevelIOError(errorID, now_time, configuration_info.IPtoName(ip), disk_id, predict))
 
 
 # if __name__ == "__main__":
