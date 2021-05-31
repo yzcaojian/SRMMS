@@ -4,6 +4,8 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:56
 import time
+from resource_scheduling_allocation.errors import ServerLostError, DiskIOHighOccupiedError, DiskFailureError
+from resource_status_display.configuration_checking import configuration_info
 
 
 # 监控应用需求_服务器失联告警
@@ -22,8 +24,8 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             # 间隔超过十分钟  视作服务器失联
             if now_time - time_stamp > 600:
                 errorID = 3
-                # 服务器失联异常消息[03, 事件发生时间, 服务器IP, 硬盘标识]
-                warning_message_queue.append([errorID, now_time, ip, diskID])
+                # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
+                warning_message_queue.append(ServerLostError(errorID, now_time, configuration_info.IPtoName(ip), diskID))
             break
 
 
@@ -77,7 +79,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                 average_io = sum / len(high_io_load_queue[serverIP][diskID])
                 errorID = 4
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]
-                warning_message_queue.append([errorID, now_time, serverIP, diskID, average_io])
+                warning_message_queue.append(DiskIOHighOccupiedError(errorID, now_time, configuration_info.IPtoName(serverIP), diskID, average_io))
 
 
 def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue):
@@ -86,4 +88,4 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_messag
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
         health_degree, timestamp = failure_info
         errorID = 1
-        warning_message_queue.append([errorID, timestamp, ip, disk_id, health_degree])
+        warning_message_queue.append(DiskFailureError(errorID, timestamp, configuration_info.IPtoName(ip), disk_id, health_degree))
