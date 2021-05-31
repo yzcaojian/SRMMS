@@ -43,18 +43,18 @@ class Scheduling:
 class Warning:
     warning_num = 0
 
-    def __init__(self, errorId, timeSlot, serverName, diskId, extra):
+    def __init__(self, errorId, timeslot, serverName, diskId, extra):
         # extra表示在不同异常情况发生时需要传入的额外参数
         # self.warningId = str(errorId) + '_' + str(Warning.warning_num)
         self.errorId = errorId
-        self.timeSlot = timeSlot
+        self.timeslot = timeslot
         self.serverName = serverName
         self.diskId = diskId
         self.warningContent = self.get_content(extra)  # content要根据其他字段生成
         self.write_file()
 
     def get_content(self, extra):
-        content = self.timeSlot + " 服务器" + self.serverName
+        content = self.timeslot + " 服务器" + self.serverName
         if self.errorId == 1:  # 硬盘即将故障的情况：extra为healthState
             content += "上标识为" + self.diskId + "的机械硬盘健康度下降为" + extra + "。"
         elif self.errorId == 2:  # I/O即将高负载的情况：extra为[time, IOPeak]
@@ -79,7 +79,7 @@ class SchedulingList:
 
     # scheduling是Scheduling类的对象
     def add_new_scheduling(self, scheduling):
-        self.scheduling_list.append(scheduling.timeSlot + " 系统向服务器" + scheduling.serverName + "发送调度建议，针对" +
+        self.scheduling_list.append(scheduling.timeslot + " 系统向服务器" + scheduling.serverName + "发送调度建议，针对" +
                                     scheduling.situation + "的情况，向服务器作出如下调度建议：" + scheduling.suggestion + "\n")
 
     def read_file(self):
