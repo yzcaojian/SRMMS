@@ -76,13 +76,16 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     if predict < 0:
                         predict = 0
 
+                    # 将浮点数类型的时间戳转化为时间元组，并按照X时X分的格式转化为字符串
                     now_time = time.time()
+                    local_time = time.strftime("%H:%M", time.localtime(now_time))
+
                     # 将预测值添加到输出队列中
                     if ip not in io_load_output_queue:
                         io_load_output_queue[ip] = {}
                     if disk_id not in io_load_output_queue[ip]:
                         io_load_output_queue[ip][disk_id] = []
-                    io_load_output_queue[ip][disk_id].append([predict, now_time])
+                    io_load_output_queue[ip][disk_id].append([predict, local_time])
 
                     # 去除前面一个数据
                     io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][1:]
@@ -137,3 +140,10 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 #     ax1.plot(X, Y[0], color='b', label='predict')
 #     plt.legend()
 #     plt.show()
+
+
+# now_time = time.time()
+# local_time = time.localtime(now_time)
+# string = time.strftime("%H:%M", local_time)
+# print("local_time:", local_time)
+# print(string, type(string))
