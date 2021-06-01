@@ -23,17 +23,25 @@ class ServerInfoList:
     def __init__(self):
         super().__init__()
         # self.server_info_list = []
-        self.server_info_list = [ServerInfo("192.168.1.1", "50TB", "20TB", "40.0%"),
-                                 ServerInfo("192.168.1.2", "40TB", "20TB", "50.0%"),
-                                 ServerInfo("192.168.1.3", "80TB", "10TB", "12.5%"),
-                                 ServerInfo("192.168.20.1", "80TB", "20TB", "25.0%"),
-                                 ServerInfo("192.168.225.230", "10TB", "3TB", "33.3%")]
+        self.md_server_info_list = [ServerInfo("192.168.1.1", "50TB", "20TB", "40.0%"),
+                                    ServerInfo("192.168.1.2", "40TB", "20TB", "50.0%"),
+                                    ServerInfo("192.168.1.3", "80TB", "10TB", "12.5%"),
+                                    ServerInfo("192.168.20.1", "80TB", "20TB", "25.0%"),
+                                    ServerInfo("192.168.225.230", "10TB", "3TB", "33.3%")]
+        self.raid_server_info_list = [ServerInfo("192.168.20.1", "50TB", "20TB", "40.0%"),
+                                      ServerInfo("192.168.20.2", "40TB", "20TB", "50.0%"),
+                                      ServerInfo("192.168.20.3", "80TB", "10TB", "12.5%")]
 
-    def update_info(self, new_list):
+    def update_info(self, md_list, raid_list):
         # list每个元素是一个包含ServerInfo除名称外所有字段信息的列表
-        self.server_info_list.clear()  # 先清空
-        for single in new_list:
-            self.server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
+        if md_list:
+            self.md_server_info_list.clear()  # 先清空
+        for single in md_list:
+            self.md_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
+        if raid_list:
+            self.raid_server_info_list.clear()  # 先清空
+        for single in raid_list:
+            self.raid_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
 
 
 class TwoDiskInfo:
@@ -63,7 +71,8 @@ class TwoDiskInfoList:
 
     def update_info(self, new_list):
         # list每个元素是一个包含所有初始化TwoDiskInfo对象字段信息的列表
-        self.two_disk_info_list.clear()  # 先清空
+        if new_list:
+            self.two_disk_info_list.clear()  # 先清空
         for single in new_list:
             self.two_disk_info_list.append(TwoDiskInfo(single))
 
@@ -99,9 +108,12 @@ def get_server_detailed_info(server_ip, tag):
                 DiskInfo("ssd-01", "SSD", "正常", "4TB", "1.2TB", "30%", 4),
                 DiskInfo("ssd-01", "SSD", "正常", "8TB", "3TB", "37.5%", 1)]
     else:  # 逻辑卷详细信息
-        return [LogicVolumeInfo("ssd-vol-01", "1TB", "0.3TB", "30%"), LogicVolumeInfo("ssd-vol-02", "4TB", "0.7TB", "17.5%"),
-                LogicVolumeInfo("ssd-vol-03", "2TB", "0.34TB", "17%"), LogicVolumeInfo("hdd-vol-01", "2TB", "0.7TB", "35%"),
-                LogicVolumeInfo("hdd-vol-01", "3TB", "0.52TB", "17.3%"), LogicVolumeInfo("mix-01", "10TB", "7.2TB", "72%")]
+        return [LogicVolumeInfo("ssd-vol-01", "1TB", "0.3TB", "30%"),
+                LogicVolumeInfo("ssd-vol-02", "4TB", "0.7TB", "17.5%"),
+                LogicVolumeInfo("ssd-vol-03", "2TB", "0.34TB", "17%"),
+                LogicVolumeInfo("hdd-vol-01", "2TB", "0.7TB", "35%"),
+                LogicVolumeInfo("hdd-vol-01", "3TB", "0.52TB", "17.3%"),
+                LogicVolumeInfo("mix-01", "10TB", "7.2TB", "72%")]
 
 
 # 通过update_info函数进行周期性地刷新

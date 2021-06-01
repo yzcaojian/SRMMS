@@ -35,7 +35,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
         self.exception_list = [[["192.168.1.1", 1], ], [["hdd-01", 1], ]]  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
-        self.server_overall_info = server_storage_info_list.server_info_list  # 服务器总体信息列表
+        self.server_overall_info = server_storage_info_list.md_server_info_list  # 多硬盘架构下服务器总体信息列表
         self.two_disk_info = two_disk_info_list.two_disk_info_list  # 所有服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = get_server_detailed_info("", 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个

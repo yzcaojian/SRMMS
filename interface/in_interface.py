@@ -66,7 +66,7 @@ class in_interface_impl(in_interface):
     # 存放I/O负载预测信息
     io_load_prediction_list = []
     # 存放分配指令日志信息
-    allocation_instruction_log_list = []
+    # allocation_instruction_log_list = []
     # 存放硬盘故障预警信息
     hard_disk_failure_warning_list = []
     # 存放I/O高负载预警信息
@@ -138,10 +138,10 @@ class in_interface_impl(in_interface):
         warning_list.add_new_warning(warning)
         # in_interface_impl.allocation_instruction_log_list.append([ip, disk_id, instructions])
 
-    def getData_allocation_instruction_log(self):  # 获取分配指令日志信息
-        list1 = in_interface_impl.allocation_instruction_log_list
-        in_interface_impl.allocation_instruction_log_list = []
-        return list1
+    # def getData_allocation_instruction_log(self):  # 获取分配指令日志信息
+    #     list1 = in_interface_impl.allocation_instruction_log_list
+    #     in_interface_impl.allocation_instruction_log_list = []
+    #     return list1
 
     def IN_HDW(self, ip, disk_id, disk_warning):
         # 将硬盘故障预警信息添加到列表中
