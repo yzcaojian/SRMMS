@@ -8,6 +8,7 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
+import threading
 
 
 # 线上模型训练
@@ -128,6 +129,19 @@ def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):
             io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
 
 
+class OnlineModelTrainingThread(threading.Thread):
+    def __init__(self, io_load_input_queue, mean_and_std, save_model):
+        threading.Thread.__init__(self)
+        self.io_load_input_queue = io_load_input_queue
+        self.mean_and_std = mean_and_std
+        self.save_model = save_model
+
+    def run(self):
+        print("开始线程:")
+        online_model_training(self.io_load_input_queue, self.mean_and_std, self.save_model)
+        print("退出线程:")
+
+
 if __name__ == "__main__":
     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
     df = pd.read_csv(f)  # 读入数据
@@ -146,7 +160,12 @@ if __name__ == "__main__":
     Mean_and_std = [[13304.76842105], [4681.6388205]]
     for i in range(1):
         tf.reset_default_graph()
-        online_model_training(io_load_input_queue, Mean_and_std,
-                              ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+        thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
+                                            ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+        thread1.start()
+        thread1.join()
+        # online_model_training(io_load_input_queue, Mean_and_std,
+        #                       ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+
 
 
