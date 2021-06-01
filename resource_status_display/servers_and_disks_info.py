@@ -61,20 +61,24 @@ class TwoDiskInfo:
         self.ssdIOPS = info_list[11]
 
 
-class TwoDiskInfoList:
-    def __init__(self):
-        super().__init__()
-        # self.server_info_list = []
-        self.two_disk_info_list = [
-            TwoDiskInfo([20, 10, 500.0, 300.0, 140.0, 100.0, 0.28, 0.33, 0.03, 0.01, 2580, 2683]),
-            TwoDiskInfo([15, 8, 420.0, 240.0, 140.0, 80.0, 0.33, 0.33, 0.03, 0, 2980, 2173])]
+# class TwoDiskInfoList:
+#     def __init__(self):
+#         super().__init__()
+#         # self.server_info_list = []
+#         self.two_disk_info_list = [
+#             TwoDiskInfo([20, 10, 500.0, 300.0, 140.0, 100.0, 0.28, 0.33, 0.03, 0.01, 2580, 2683]),
+#             TwoDiskInfo([15, 8, 420.0, 240.0, 140.0, 80.0, 0.33, 0.33, 0.03, 0, 2980, 2173])]
+#
+#     def update_info(self, new_list):
+#         # list每个元素是一个包含所有初始化TwoDiskInfo对象字段信息的列表
+#         if new_list:
+#             self.two_disk_info_list.clear()  # 先清空
+#         for single in new_list:
+#             self.two_disk_info_list.append(TwoDiskInfo(single))
 
-    def update_info(self, new_list):
-        # list每个元素是一个包含所有初始化TwoDiskInfo对象字段信息的列表
-        if new_list:
-            self.two_disk_info_list.clear()  # 先清空
-        for single in new_list:
-            self.two_disk_info_list.append(TwoDiskInfo(single))
+
+def get_two_disk_info(server_ip):
+    return TwoDiskInfo([20, 10, 500.0, 300.0, 140.0, 100.0, 0.28, 0.33, 0.03, 0.01, 2580, 2683])
 
 
 class DiskInfo:
@@ -118,4 +122,4 @@ def get_server_detailed_info(server_ip, tag):
 
 # 通过update_info函数进行周期性地刷新
 server_storage_info_list = ServerInfoList()
-two_disk_info_list = TwoDiskInfoList()
+# two_disk_info_list = TwoDiskInfoList()
