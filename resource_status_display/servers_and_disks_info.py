@@ -31,7 +31,7 @@ class ServerInfoList:
 
     def update_info(self, new_list):
         # list每个元素是一个包含ServerInfo除名称外所有字段信息的列表
-        self.server_info_list = []  # 先清空
+        self.server_info_list.clear()  # 先清空
         for single in new_list:
             self.server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
 
@@ -63,7 +63,7 @@ class TwoDiskInfoList:
 
     def update_info(self, new_list):
         # list每个元素是一个包含所有初始化TwoDiskInfo对象字段信息的列表
-        self.two_disk_info_list = []  # 先清空
+        self.two_disk_info_list.clear()  # 先清空
         for single in new_list:
             self.two_disk_info_list.append(TwoDiskInfo(single))
 
