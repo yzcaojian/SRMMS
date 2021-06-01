@@ -4,8 +4,11 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:56
 import time
+
+from interface.in_interface import in_interface_impl
 from resource_scheduling_allocation.errors import ServerLostError, DiskIOHighOccupiedError, DiskFailureError
 from resource_status_display.configuration_checking import configuration_info
+from resource_status_display.log_exception_with_suggestions import Warning
 
 
 # 监控应用需求_服务器失联告警
@@ -24,8 +27,11 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             # 间隔超过十分钟  视作服务器失联
             if now_time - time_stamp > 600:
                 errorID = 3
+                warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(ip), "")
                 # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
-                warning_message_queue.append(ServerLostError(errorID, now_time, configuration_info.IPtoName(ip), diskID))
+                warning_message_queue.append(warning)
+                # 服务器失联告警信息 to资源状态显示模块
+                in_interface_impl().IN_RSA_RSD(warning)
             break
 
 
@@ -78,8 +84,11 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                     sum += item[0]
                 average_io = sum / len(high_io_load_queue[serverIP][diskID])
                 errorID = 4
+                warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(serverIP), average_io)
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]
-                warning_message_queue.append(DiskIOHighOccupiedError(errorID, now_time, configuration_info.IPtoName(serverIP), diskID, average_io))
+                warning_message_queue.append(warning)
+                # 硬盘持续高I/O告警信息 to资源状态显示模块
+                in_interface_impl().IN_RSA_RSD(warning)
 
 
 def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue):
@@ -88,4 +97,7 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_messag
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
         health_degree, timestamp = failure_info
         errorID = 1
-        warning_message_queue.append(DiskFailureError(errorID, timestamp, configuration_info.IPtoName(ip), disk_id, health_degree))
+        warning = Warning(errorID, timestamp, disk_id, configuration_info.IPtoName(ip), health_degree)
+        warning_message_queue.append(warning)
+        # 硬盘健康度下降告警信息 to资源状态显示模块
+        in_interface_impl().IN_RSA_RSD(warning)

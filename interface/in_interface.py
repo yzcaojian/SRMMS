@@ -5,6 +5,8 @@
 # @Time: 2021/4/25 16:55
 
 from data_communication_analysis.DAC_1 import send_instructions
+from resource_status_display.log_exception_with_suggestions import Warning, warning_list
+
 
 class in_interface:
     # 服务器硬盘和I/O负载信息接口  数据通信解析模块->资源调度分配模块
@@ -36,7 +38,7 @@ class in_interface:
         pass
 
     # 分配指令日志信息接口  资源调度分配模块->资源状态显示模块
-    def IN_RSA_RSD(self, ip, disk_id, instruction):
+    def IN_RSA_RSD(self, warning):
         pass
 
     # 硬盘故障预警接口  硬盘故障预测模块->资源状态显示模块
@@ -131,9 +133,10 @@ class in_interface_impl(in_interface):
         in_interface_impl.io_load_prediction_list = []
         return list1
 
-    def IN_RSA_RSD(self, ip, disk_id, instructions):
-        # 将分配指令日志信息添加到列表中
-        in_interface_impl.allocation_instruction_log_list.append([ip, disk_id, instructions])
+    def IN_RSA_RSD(self, warning):
+        # 将告警信息添加到列表中
+        warning_list.add_new_warning(warning)
+        # in_interface_impl.allocation_instruction_log_list.append([ip, disk_id, instructions])
 
     def getData_allocation_instruction_log(self):  # 获取分配指令日志信息
         list1 = in_interface_impl.allocation_instruction_log_list
