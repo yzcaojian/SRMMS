@@ -107,3 +107,4 @@ def get_server_detailed_info(server_ip, tag):
 # 通过update_info函数进行周期性地刷新
 server_storage_info_list = ServerInfoList()
 two_disk_info_list = TwoDiskInfoList()
+

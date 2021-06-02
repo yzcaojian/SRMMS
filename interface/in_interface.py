@@ -18,7 +18,7 @@ class in_interface:
         pass
 
     # 资源信息接口  数据通信解析模块->资源状态显示模块
-    def IN_DCA_RSD(self, ip, overall_info, detailed_info):
+    def IN_DCA_RSD(self, ip, server_info, detailed_info, two_disk_info=None):
         pass
 
     # SMART信息接口  数据通信解析模块->硬盘故障预测模块
@@ -52,9 +52,10 @@ class in_interface:
 
 class in_interface_impl(in_interface):
     # 存放总体信息 供资源状态显示模块使用
-    overall_info_list = []
+    server_info_dict = {}
+    two_info_dict = {}
     # 存放详细信息 供资源状态显示模块使用
-    detailed_info_list = []
+    detailed_info_dict = {}
     # 存放详细信息 供资源调度分配模块使用
     detailed_info_list_RSA = []
     # 存放smart数据
@@ -85,17 +86,38 @@ class in_interface_impl(in_interface):
         # 调用数据通信解析模块模块函数
         send_instructions(ip, instructions)
 
-    def IN_DCA_RSD(self, ip, overall_info, detailed_info):
+    # server_info = [totalCapacity, occupiedCapacity, occupiedRate]
+    # or server_info = [totalCapacity, occupiedCapacity, occupiedRate, totalIOPS]
+    # detailed_info = [[diskID, type, state, totalCapacity, occupiedCapacity, occupiedRate, diskIO], …]
+    # or detailed_info = [[logicVolumeID, totalCapacity, occupiedCapacity, occupiedRate], …]
+    # two_disk_info = [occupiedRate, hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity,
+    # hddOccupiedCapacity, ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate,
+    # ssdErrorRate, hddIOPS, ssdIOPS]
+    def IN_DCA_RSD(self, ip, server_info, detailed_info, two_disk_info=None):
         # 将总体信息和详细信息添加到列表中
-        in_interface_impl.overall_info_list.append([ip, overall_info])
-        in_interface_impl.detailed_info_list.append([ip, detailed_info])
+        if ip not in in_interface_impl().server_info_dict:
+            in_interface_impl().server_info_dict[ip] = []
+        in_interface_impl().server_info_dict[ip] = server_info
 
-    def getData_resource_info(self):  # 获取资源信息(总体信息和详细信息)
-        list1 = in_interface_impl.overall_info_list
-        in_interface_impl.overall_info_list = []
-        list2 = in_interface_impl.detailed_info_list
-        in_interface_impl.detailed_info_list = []
-        return list1, list2
+        if ip not in in_interface_impl().detailed_info_dict:
+            in_interface_impl().detailed_info_dict[ip] = []
+        in_interface_impl().detailed_info_dict[ip] = detailed_info
+
+        if two_disk_info is not None:
+            if ip not in in_interface_impl().two_info_dict:
+                in_interface_impl().two_info_dict[ip] = []
+            in_interface_impl().two_info_dict[ip] = two_disk_info
+
+    def getData_resource_info(self, ip):  # 获取资源信息(总体信息和详细信息)
+
+        server_info = in_interface_impl().server_info_dict[ip]
+        detailed_info = in_interface_impl().detailed_info_dict[ip]
+        if ip not in in_interface_impl().two_info_dict:
+            two_disk_info = None
+        else:
+            two_disk_info = in_interface_impl().two_info_dict[ip]
+
+        return server_info, detailed_info, two_disk_info
 
     def IN_DCA_HDFP(self, ip, smart_data):
         # 将smart数据添加到列表中
