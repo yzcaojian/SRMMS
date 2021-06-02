@@ -54,7 +54,9 @@ class in_interface:
 class in_interface_impl(in_interface):
     # 存放总体信息 供资源状态显示模块使用
     server_info_dict = {}
-    two_info_dict = {}
+    two_disk_info_dict = {}
+    two_disk_io_dict = {}
+    two_disk_io_dict_past = {}
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
     # 存放详细信息 供资源调度分配模块使用
@@ -96,18 +98,12 @@ class in_interface_impl(in_interface):
     # ssdErrorRate, hddIOPS, ssdIOPS]
     def IN_DCA_RSD(self, ip, server_info, detailed_info, two_disk_info=None):
         # 将总体信息和详细信息添加到列表中
-        if ip not in in_interface_impl.server_info_dict:
-            in_interface_impl.server_info_dict[ip] = []
         in_interface_impl.server_info_dict[ip] = server_info
 
-        if ip not in in_interface_impl.detailed_info_dict:
-            in_interface_impl.detailed_info_dict[ip] = []
         in_interface_impl.detailed_info_dict[ip] = detailed_info
 
         if two_disk_info is not None:
-            if ip not in in_interface_impl.two_info_dict:
-                in_interface_impl.two_info_dict[ip] = []
-            in_interface_impl.two_info_dict[ip] = two_disk_info
+            in_interface_impl.two_disk_info_dict[ip] = two_disk_info
 
     def get_server_overall_info(self, tag):
         server_info = []
@@ -126,8 +122,29 @@ class in_interface_impl(in_interface):
         return server_info
 
     def get_two_disk_info(self, ip):
-        two_disk_info = in_interface_impl.two_info_dict[ip]
+        two_disk_info = in_interface_impl.two_disk_info_dict[ip]
+        two_disk_io = two_disk_info[10:]  # two_disk_io =  [hddIOPS, ssdIOPS]
+
+        if ip not in in_interface_impl.two_disk_io_dict:
+            in_interface_impl.two_disk_io_dict[ip] = []
+        in_interface_impl.two_disk_io_dict[ip].append(two_disk_io)
+
         return TwoDiskInfo(two_disk_info)
+
+    def get_two_disk_io_info(self, ip):
+        # 最多保存600个数据
+        if len(in_interface_impl.two_disk_io_dict[ip]) >= 600:
+            if ip not in in_interface_impl.two_disk_io_dict_past:
+                in_interface_impl.two_disk_io_dict_past[ip] = []
+            # 将多的数据添加到历史数据中
+            in_interface_impl.two_disk_io_dict_past[ip].append(in_interface_impl.two_disk_io_dict[ip][0])
+            # 删除第一个数据
+            in_interface_impl.two_disk_io_dict[ip] = in_interface_impl.two_disk_io_dict[ip][1:]
+            # 历史数据最多保存3小时
+            if len(in_interface_impl.two_disk_io_dict_past[ip]) >= 3 * 60 * 60:
+                in_interface_impl.two_disk_io_dict_past[ip] = in_interface_impl.two_disk_io_dict_past[ip][1:]
+
+        return in_interface_impl.two_disk_io_dict[ip]
 
     def get_server_detailed_info(self, ip, tag):
         # 获取server_ip对应的服务器详细信息
