@@ -55,8 +55,8 @@ class in_interface_impl(in_interface):
     # 存放总体信息 供资源状态显示模块使用
     server_info_dict = {}
     two_disk_info_dict = {}
-    two_disk_io_dict = {}
-    two_disk_io_dict_past = {}
+    two_disk_io_dict = {}  # 两类硬盘实时I/O负载信息
+    two_disk_io_dict_past = {}  # 两类硬盘历史I/O负载信息
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
     # 存放详细信息 供资源调度分配模块使用
@@ -148,15 +148,11 @@ class in_interface_impl(in_interface):
                 in_interface_impl.two_disk_io_dict_past[ip]["hdd"] = in_interface_impl.two_disk_io_dict_past[ip]["hdd"][1:]
                 in_interface_impl.two_disk_io_dict_past[ip]["ssd"] = in_interface_impl.two_disk_io_dict_past[ip]["ssd"][1:]
 
-        return in_interface_impl.two_disk_io_dict[ip]["hdd"], in_interface_impl.two_disk_io_dict[ip]["ssd"]
-
     def get_hdd_disk_io_info(self, ip):
-        hdd_disk_io_info, _ = self.get_two_disk_info(ip)
-        return hdd_disk_io_info
+        return in_interface_impl.two_disk_io_dict[ip]["hdd"]
 
     def get_ssd_disk_io_info(self, ip):
-        _, ssd_disk_io_info = self.get_two_disk_info(ip)
-        return ssd_disk_io_info
+        return in_interface_impl.two_disk_io_dict[ip]["ssd"]
 
     def get_server_detailed_info(self, ip, tag):
         # 获取server_ip对应的服务器详细信息
