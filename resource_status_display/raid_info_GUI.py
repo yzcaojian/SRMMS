@@ -153,7 +153,7 @@ class RAIDInfoWidget(QWidget):
                     volume_storage_info_list = [] if len(self.server_detailed_info) == 0 else self.server_detailed_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    volume_storage_info_list = get_data.get_server_detailed_info(self.server_overall_info[server_selected[0].topRow()].serverIP, 1)
+                    volume_storage_info_list = get_data.get_server_detailed_info(self.selected_server_ip, 1)
             for i, single_volume_info in enumerate(volume_storage_info_list):
                 volume_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
@@ -309,12 +309,12 @@ class RAIDInfoWidget(QWidget):
         graph_layout.addWidget(splitter)
         self.graph_widget.setLayout(graph_layout)
 
-        def printSize():
-            print("graph_widget", self.graph_widget.size())
-            print("server_io_widget", server_io_widget.size())
-            print("server_storage_table", server_storage_table.size())
-            print("line_widget", line_widget.size())
-        printSize()
+        # def printSize():
+        #     print("graph_widget", self.graph_widget.size())
+        #     print("server_io_widget", server_io_widget.size())
+        #     print("server_storage_table", server_storage_table.size())
+        #     print("line_widget", line_widget.size())
+        # printSize()
 
         # 全局布局
         whole_layout = QVBoxLayout()

@@ -133,14 +133,14 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_storage_bar(server_selected, IsUpdate):
             if IsUpdate:
-                two_disk_list = self.two_disk_info[0]  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
+                two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
-                    two_disk_list = self.two_disk_info[0]
+                    two_disk_list = self.two_disk_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = self.two_disk_info[1]
+                    two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = two_disk_list.hddTotalCapacity
             hdd_used = two_disk_list.hddOccupiedCapacity
@@ -213,14 +213,14 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_error_rate_bar(server_selected, IsUpdate):
             if IsUpdate:
-                two_disk_list = self.two_disk_info[0]  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
+                two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
-                    two_disk_list = self.two_disk_info[0]
+                    two_disk_list = self.two_disk_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = self.two_disk_info[1]
+                    two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)
 
             hdd_rate = two_disk_list.hddErrorRate
             ssd_rate = two_disk_list.ssdErrorRate
@@ -320,7 +320,6 @@ class MultDisksInfoTabWidget(QTabWidget):
         first_line_widget = QWebEngineView()
 
         def draw_ssd_io_line():
-            # clearLayout(disks_io_left_layout)
             # 用于设置窗口宽高度，目前是设置固定高度
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
@@ -335,6 +334,8 @@ class MultDisksInfoTabWidget(QTabWidget):
             y_data = [820, 932, 901, 934, 1290, 1330, 1320, 1203, 1422, 1430, 1425, 1320, 1331, 990, 984, 663, 651, 520,
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1261, 1239, 1196, 1487, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
+            # 获取得到指定IP地址的SSD的IOPS信息
+            # y_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -395,6 +396,8 @@ class MultDisksInfoTabWidget(QTabWidget):
             y_data = [620, 732, 801, 834, 1090, 1130, 1220, 1293, 1422, 1430, 1425, 1320, 1331, 990, 984, 663, 651, 520,
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1461, 1339, 1296, 1187, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
+            # 获取得到指定IP地址的SSD的IOPS信息
+            # y_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -451,6 +454,8 @@ class MultDisksInfoTabWidget(QTabWidget):
                       1021,
                       665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411, 1511, 1004,
                       856]
+            # 获取得到指定IP地址的HDD的IOPS信息
+            # y_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -510,6 +515,8 @@ class MultDisksInfoTabWidget(QTabWidget):
                       1820, 1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465,
                       1411, 1511, 1004, 856, 788, 756, 732, 712, 754, 790, 880, 900, 992, 992, 994, 1289, 1340, 1440,
                       1520, 1562]
+            # 获取得到指定IP地址的HDD的IOPS信息
+            # y_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -625,7 +632,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # disk_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
         # 绑定事件
-        disk_storage_table.clicked.connect(lambda: printSize())
+        # disk_storage_table.clicked.connect(lambda: printSize())
         disk_storage_table.clicked.connect(lambda: self.set_selected_disk_id(disk_storage_table.selectedRanges()))
         disk_storage_table.clicked.connect(lambda: set_health_state(disk_storage_table.selectedRanges(), False))
         disk_storage_table.clicked.connect(lambda: set_disk_io_line(disk_storage_table.selectedRanges(), False))
@@ -884,13 +891,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         whole2_layout.addWidget(disk_detailed_info_widget)
         detailed_tab.setLayout(whole2_layout)
 
-        def printSize():
-            print("detailed...............")
-            print("disk_storage_table_widget", disk_storage_table_widget.size())
-            print("disk_detailed_info_widget", disk_detailed_info_widget.size())
-            print("detailed_tab", detailed_tab.size())
-
-        printSize()
+        # def printSize():
+        #     print("detailed...............")
+        #     print("disk_storage_table_widget", disk_storage_table_widget.size())
+        #     print("disk_detailed_info_widget", disk_detailed_info_widget.size())
+        #     print("detailed_tab", detailed_tab.size())
+        #
+        # printSize()
 
         self.addTab(detailed_tab, "详细信息")
 
