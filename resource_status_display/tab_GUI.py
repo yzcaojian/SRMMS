@@ -6,11 +6,12 @@ from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
+from interface.in_interface import in_interface_impl
 from resource_status_display.backward_thread import UpdateMDDataThread
 from resource_status_display.get_info_item import get_server_storage_info_item, get_disk_storage_info_item
 from resource_status_display.history_io_display import HistoryIO
-from resource_status_display.servers_and_disks_info import server_storage_info_list, two_disk_info_list, \
-    get_server_detailed_info, get_two_disk_info
+# from resource_status_display.servers_and_disks_info import server_storage_info_list, two_disk_info_list, \
+#     get_server_detailed_info, get_two_disk_info
 
 """
 -*- coding: utf-8 -*- 
@@ -19,6 +20,8 @@ from resource_status_display.servers_and_disks_info import server_storage_info_l
 @Time : 2021/5/11 20:24
 @Author : cao jian
 """
+
+get_data = in_interface_impl()
 
 
 # 清除布局
@@ -36,10 +39,10 @@ class MultDisksInfoTabWidget(QTabWidget):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
         self.exception_list = [[["192.168.1.1", 1], ], [["hdd-01", 1], ]]  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
-        self.server_overall_info = server_storage_info_list.md_server_info_list  # 多硬盘架构下服务器总体信息列表
+        self.server_overall_info = get_data.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
         # self.two_disk_info = two_disk_info_list.two_disk_info_list  # 所有服务器两类硬盘容量、I/O负载、数量、故障率信息列表
-        self.two_disk_info = get_two_disk_info(self.selected_server_ip)
-        self.server_detailed_info = get_server_detailed_info("", 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
+        self.two_disk_info = get_data.get_two_disk_info(self.selected_server_ip)
+        self.server_detailed_info = get_data.get_server_detailed_info("", 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.selected_disk_id = "" if len(self.server_detailed_info) == 0 else self.server_detailed_info[0].diskID  # 选中的硬盘ID，默认是第一个
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局

@@ -7,7 +7,7 @@ import json
 import os
 from interface.out_interface import out_interface_impl
 from interface.in_interface import in_interface_impl
-from data_communication_analysis.DCA_2 import send_data,send_data_RSD
+from data_communication_analysis.DCA_2 import send_data, send_data_RSD
 
 
 # 解析各类资源信息
@@ -22,13 +22,12 @@ def analyse_data(ip):
     overall_info = dict_data["overall_info"]
     detailed_info = dict_data["detailed_info"]
     if len(overall_info) > 5:  # 多硬盘架构
-        totalCapacity, occupiedCapacity, occupiedRate, hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity,\
+        totalCapacity, occupiedCapacity, occupiedRate, hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity, \
         hddOccupiedCapacity, ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate, ssdErrorRate, \
         hddIOPS, ssdIOPS = overall_info
         server_info = [totalCapacity, occupiedCapacity, occupiedRate]
-        two_disk_info = [occupiedRate, hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity,
-                          hddOccupiedCapacity, ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate,
-                          ssdErrorRate, hddIOPS, ssdIOPS]
+        two_disk_info = [hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity, hddOccupiedCapacity,
+                         ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate, ssdErrorRate, hddIOPS, ssdIOPS]
 
         send_data_RSD(ip, server_info, detailed_info, two_disk_info)
     else:  # RAID架构
@@ -43,12 +42,8 @@ def send_instructions(ip, instructions):
     # 调用外部接口发送调度指令
     out_interface_impl().OUT_SRMMS_SS(ip, instructions)
 
-
 # name_emb = {'a': '1111', 'b': '2222', 'c': '3333', 'd': '4444'}
 # filename = 'file.txt'
 # json_data = json.load(open(filename, 'r', encoding="utf-8"))
 # if 'e' not in json_data:
 #     print(True)
-
-
-

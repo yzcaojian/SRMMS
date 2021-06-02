@@ -19,29 +19,29 @@ class ServerInfo:
         self.occupiedRate = occupiedRate
 
 
-class ServerInfoList:
-    def __init__(self):
-        super().__init__()
-        # self.server_info_list = []
-        self.md_server_info_list = [ServerInfo("192.168.1.1", "50TB", "20TB", "40.0%"),
-                                    ServerInfo("192.168.1.2", "40TB", "20TB", "50.0%"),
-                                    ServerInfo("192.168.1.3", "80TB", "10TB", "12.5%"),
-                                    ServerInfo("192.168.20.1", "80TB", "20TB", "25.0%"),
-                                    ServerInfo("192.168.225.230", "10TB", "3TB", "33.3%")]
-        self.raid_server_info_list = [ServerInfo("192.168.20.1", "50TB", "20TB", "40.0%"),
-                                      ServerInfo("192.168.20.2", "40TB", "20TB", "50.0%"),
-                                      ServerInfo("192.168.20.3", "80TB", "10TB", "12.5%")]
-
-    def update_info(self, md_list, raid_list):
-        # list每个元素是一个包含ServerInfo除名称外所有字段信息的列表
-        if md_list:
-            self.md_server_info_list.clear()  # 先清空
-        for single in md_list:
-            self.md_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
-        if raid_list:
-            self.raid_server_info_list.clear()  # 先清空
-        for single in raid_list:
-            self.raid_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
+# class ServerInfoList:
+#     def __init__(self):
+#         super().__init__()
+#         # self.server_info_list = []
+#         self.md_server_info_list = [ServerInfo("192.168.1.1", "50TB", "20TB", "40.0%"),
+#                                     ServerInfo("192.168.1.2", "40TB", "20TB", "50.0%"),
+#                                     ServerInfo("192.168.1.3", "80TB", "10TB", "12.5%"),
+#                                     ServerInfo("192.168.20.1", "80TB", "20TB", "25.0%"),
+#                                     ServerInfo("192.168.225.230", "10TB", "3TB", "33.3%")]
+#         self.raid_server_info_list = [ServerInfo("192.168.20.1", "50TB", "20TB", "40.0%"),
+#                                       ServerInfo("192.168.20.2", "40TB", "20TB", "50.0%"),
+#                                       ServerInfo("192.168.20.3", "80TB", "10TB", "12.5%")]
+#
+#     def update_info(self, md_list, raid_list):
+#         # list每个元素是一个包含ServerInfo除名称外所有字段信息的列表
+#         if md_list:
+#             self.md_server_info_list.clear()  # 先清空
+#         for single in md_list:
+#             self.md_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
+#         if raid_list:
+#             self.raid_server_info_list.clear()  # 先清空
+#         for single in raid_list:
+#             self.raid_server_info_list.append(ServerInfo(single[0], single[1], single[2], single[3]))
 
 
 class TwoDiskInfo:
@@ -77,49 +77,49 @@ class TwoDiskInfo:
 #             self.two_disk_info_list.append(TwoDiskInfo(single))
 
 
-def get_two_disk_info(server_ip):
-    return TwoDiskInfo([20, 10, 500.0, 300.0, 140.0, 100.0, 0.28, 0.33, 0.03, 0.01, 2580, 2683])
+# def get_two_disk_info(server_ip):
+#     return TwoDiskInfo([20, 10, 500.0, 300.0, 140.0, 100.0, 0.28, 0.33, 0.03, 0.01, 2580, 2683])
 
 
 class DiskInfo:
-    def __init__(self, diskID, type, state, totalCapacity, occupiedCapacity, occupiedRate, healthDegree):
+    def __init__(self, info_list):
         super().__init__()
-        self.diskID = diskID
-        self.type = type
-        self.state = state
-        self.totalCapacity = totalCapacity
-        self.occupiedCapacity = occupiedCapacity
-        self.occupiedRate = occupiedRate
-        self.healthDegree = healthDegree
+        self.diskID = info_list[0]
+        self.type = info_list[1]
+        self.state = info_list[2]
+        self.totalCapacity = info_list[3]
+        self.occupiedCapacity = info_list[4]
+        self.occupiedRate = info_list[5]
+        self.diskIO = info_list[6]
 
 
 class LogicVolumeInfo:
-    def __init__(self, logicVolumeID, totalCapacity, occupiedCapacity, occupiedRate):
+    def __init__(self, info_list):
         super().__init__()
-        self.logicVolumeID = logicVolumeID
-        self.totalCapacity = totalCapacity
-        self.occupiedCapacity = occupiedCapacity
-        self.occupiedRate = occupiedRate
+        self.logicVolumeID = info_list[0]
+        self.totalCapacity = info_list[1]
+        self.occupiedCapacity = info_list[2]
+        self.occupiedRate = info_list[3]
 
 
-def get_server_detailed_info(server_ip, tag):
-    # 获取server_ip对应的服务器详细信息
-    if tag == 0:  # 硬盘详细信息
-        return [DiskInfo("hdd-01", "HDD", "正常", "1TB", "0.3TB", "30%", 6),
-                DiskInfo("hdd-02", "HDD", "正常", "1TB", "0.2TB", "20%", 6),
-                DiskInfo("hdd-03", "HDD", "正常", "0.9TB", "0.3TB", "33%", 6),
-                DiskInfo("hdd-04", "HDD", "正常", "2TB", "0.5TB", "25%", 5),
-                DiskInfo("ssd-01", "SSD", "正常", "4TB", "1.2TB", "30%", 4),
-                DiskInfo("ssd-01", "SSD", "正常", "8TB", "3TB", "37.5%", 1)]
-    else:  # 逻辑卷详细信息
-        return [LogicVolumeInfo("ssd-vol-01", "1TB", "0.3TB", "30%"),
-                LogicVolumeInfo("ssd-vol-02", "4TB", "0.7TB", "17.5%"),
-                LogicVolumeInfo("ssd-vol-03", "2TB", "0.34TB", "17%"),
-                LogicVolumeInfo("hdd-vol-01", "2TB", "0.7TB", "35%"),
-                LogicVolumeInfo("hdd-vol-01", "3TB", "0.52TB", "17.3%"),
-                LogicVolumeInfo("mix-01", "10TB", "7.2TB", "72%")]
+# def get_server_detailed_info(server_ip, tag):
+#     # 获取server_ip对应的服务器详细信息
+#     if tag == 0:  # 硬盘详细信息
+#         return [DiskInfo(["hdd-01", "HDD", "正常", "1TB", "0.3TB", "30%", 6]),
+#                 DiskInfo(["hdd-02", "HDD", "正常", "1TB", "0.2TB", "20%", 6]),
+#                 DiskInfo(["hdd-03", "HDD", "正常", "0.9TB", "0.3TB", "33%", 6]),
+#                 DiskInfo(["hdd-04", "HDD", "正常", "2TB", "0.5TB", "25%", 5]),
+#                 DiskInfo(["ssd-01", "SSD", "正常", "4TB", "1.2TB", "30%", 4]),
+#                 DiskInfo(["ssd-01", "SSD", "正常", "8TB", "3TB", "37.5%", 1])]
+#     else:  # 逻辑卷详细信息
+#         return [LogicVolumeInfo(["ssd-vol-01", "1TB", "0.3TB", "30%"]),
+#                 LogicVolumeInfo(["ssd-vol-02", "4TB", "0.7TB", "17.5%"]),
+#                 LogicVolumeInfo(["ssd-vol-03", "2TB", "0.34TB", "17%"]),
+#                 LogicVolumeInfo(["hdd-vol-01", "2TB", "0.7TB", "35%"]),
+#                 LogicVolumeInfo(["hdd-vol-01", "3TB", "0.52TB", "17.3%"]),
+#                 LogicVolumeInfo(["mix-01", "10TB", "7.2TB", "72%"])]
 
 
 # 通过update_info函数进行周期性地刷新
-server_storage_info_list = ServerInfoList()
+# server_storage_info_list = ServerInfoList()
 # two_disk_info_list = TwoDiskInfoList()

@@ -6,6 +6,7 @@
 
 from data_communication_analysis.DAC_1 import send_instructions
 from resource_status_display.log_exception_with_suggestions import Warning, warning_list
+from resource_status_display.servers_and_disks_info import TwoDiskInfo, DiskInfo, LogicVolumeInfo, ServerInfo
 
 
 class in_interface:
@@ -95,29 +96,61 @@ class in_interface_impl(in_interface):
     # ssdErrorRate, hddIOPS, ssdIOPS]
     def IN_DCA_RSD(self, ip, server_info, detailed_info, two_disk_info=None):
         # 将总体信息和详细信息添加到列表中
-        if ip not in in_interface_impl().server_info_dict:
-            in_interface_impl().server_info_dict[ip] = []
-        in_interface_impl().server_info_dict[ip] = server_info
+        if ip not in in_interface_impl.server_info_dict:
+            in_interface_impl.server_info_dict[ip] = []
+        in_interface_impl.server_info_dict[ip] = server_info
 
-        if ip not in in_interface_impl().detailed_info_dict:
-            in_interface_impl().detailed_info_dict[ip] = []
-        in_interface_impl().detailed_info_dict[ip] = detailed_info
+        if ip not in in_interface_impl.detailed_info_dict:
+            in_interface_impl.detailed_info_dict[ip] = []
+        in_interface_impl.detailed_info_dict[ip] = detailed_info
 
         if two_disk_info is not None:
-            if ip not in in_interface_impl().two_info_dict:
-                in_interface_impl().two_info_dict[ip] = []
-            in_interface_impl().two_info_dict[ip] = two_disk_info
+            if ip not in in_interface_impl.two_info_dict:
+                in_interface_impl.two_info_dict[ip] = []
+            in_interface_impl.two_info_dict[ip] = two_disk_info
 
-    def getData_resource_info(self, ip):  # 获取资源信息(总体信息和详细信息)
+    def get_server_overall_info(self, tag):
+        server_info = []
+        if tag == 0:  # 多硬盘架构
+            for ip in in_interface_impl.server_info_dict:
+                if len(in_interface_impl.server_info_dict[ip]) == 3:
+                    server_info.append(ServerInfo(ip, in_interface_impl.server_info_dict[ip][0],
+                                                  in_interface_impl.server_info_dict[ip][1],
+                                                  in_interface_impl.server_info_dict[ip][2]))
+        else:  # RAID架构
+            for ip in in_interface_impl.server_info_dict:
+                if len(in_interface_impl.server_info_dict[ip]) == 3:
+                    server_info.append(ServerInfo(ip, in_interface_impl.server_info_dict[ip][0],
+                                                  in_interface_impl.server_info_dict[ip][1],
+                                                  in_interface_impl.server_info_dict[ip][2]))
+        return server_info
 
-        server_info = in_interface_impl().server_info_dict[ip]
-        detailed_info = in_interface_impl().detailed_info_dict[ip]
-        if ip not in in_interface_impl().two_info_dict:
-            two_disk_info = None
-        else:
-            two_disk_info = in_interface_impl().two_info_dict[ip]
+    def get_two_disk_info(self, ip):
+        two_disk_info = in_interface_impl.two_info_dict[ip]
+        return TwoDiskInfo(two_disk_info)
 
-        return server_info, detailed_info, two_disk_info
+    def get_server_detailed_info(self, ip, tag):
+        # 获取server_ip对应的服务器详细信息
+        detailed_info = in_interface_impl.detailed_info_dict[ip]
+        server_detailed_info = []
+        if tag == 0:  # 硬盘详细信息
+            for disk in detailed_info:
+                server_detailed_info.append(DiskInfo(disk))
+        else:  # 逻辑卷详细信息
+            for volume in detailed_info:
+                server_detailed_info.append(LogicVolumeInfo(volume))
+        return server_detailed_info
+
+    # def getData_resource_info(self, ip):  # 获取资源信息(总体信息和详细信息)
+    #
+    #     server_info = in_interface_impl.server_info_dict[ip]
+    #     detailed_info = in_interface_impl.detailed_info_dict[ip]
+    #     if ip not in in_interface_impl.two_info_dict:
+    #         two_disk_info = None
+    #     else:
+    #         two_disk_info = in_interface_impl.two_info_dict[ip]
+    #
+    #     return server_info, detailed_info, two_disk_info
 
     def IN_DCA_HDFP(self, ip, smart_data):
         # 将smart数据添加到列表中

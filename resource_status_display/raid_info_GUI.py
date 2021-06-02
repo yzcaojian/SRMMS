@@ -6,11 +6,12 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButt
 from pyecharts import options as opts
 from pyecharts.charts import Line
 
+from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_GUI import ConfigurationWidget
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
 from resource_status_display.backward_thread import UpdateRAIDDataThread
 from resource_status_display.history_io_display import HistoryIO
-from resource_status_display.servers_and_disks_info import get_server_detailed_info, server_storage_info_list
+# from resource_status_display.servers_and_disks_info import get_server_detailed_info, server_storage_info_list
 
 """
 -*- coding: utf-8 -*- 
@@ -20,14 +21,16 @@ from resource_status_display.servers_and_disks_info import get_server_detailed_i
 @Author : cao jian
 """
 
+get_data = in_interface_impl()
+
 
 class RAIDInfoWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.configuration = None  # 配置界面
-        self.server_overall_info = server_storage_info_list.server_info_list  # 服务器总体信息列表
+        self.server_overall_info = get_data.get_server_overall_info(1)  # 服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.server_detailed_info = get_server_detailed_info("", 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
+        self.server_detailed_info = get_data.get_server_detailed_info("", 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -143,14 +146,14 @@ class RAIDInfoWidget(QWidget):
             # server_selected是获取的选择表格某行的范围信息
             # volume_storage_info_list = []
             if IsUpdate:
-                volume_storage_info_list = get_server_detailed_info(self.selected_server_ip, 1)  # 刷新的情况下直接用当前serverIP
+                volume_storage_info_list = get_data.get_server_detailed_info(self.selected_server_ip, 1)  # 刷新的情况下直接用当前serverIP
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
                     volume_storage_info_list = [] if len(self.server_detailed_info) == 0 else self.server_detailed_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    volume_storage_info_list = get_server_detailed_info(self.server_overall_info[server_selected[0].topRow()].serverIP, 1)
+                    volume_storage_info_list = get_data.get_server_detailed_info(self.server_overall_info[server_selected[0].topRow()].serverIP, 1)
             for i, single_volume_info in enumerate(volume_storage_info_list):
                 volume_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
