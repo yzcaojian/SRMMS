@@ -126,25 +126,37 @@ class in_interface_impl(in_interface):
         two_disk_io = two_disk_info[10:]  # two_disk_io =  [hddIOPS, ssdIOPS]
 
         if ip not in in_interface_impl.two_disk_io_dict:
-            in_interface_impl.two_disk_io_dict[ip] = []
-        in_interface_impl.two_disk_io_dict[ip].append(two_disk_io)
+            in_interface_impl.two_disk_io_dict[ip] = {"hdd": [], "ssd": []}
+        in_interface_impl.two_disk_io_dict[ip]["hdd"].append(two_disk_io[0])
+        in_interface_impl.two_disk_io_dict[ip]["ssd"].append(two_disk_io[1])
 
         return TwoDiskInfo(two_disk_info)
 
     def get_two_disk_io_info(self, ip):
         # 最多保存600个数据
-        if len(in_interface_impl.two_disk_io_dict[ip]) >= 600:
+        if len(in_interface_impl.two_disk_io_dict[ip]["hdd"]) >= 600:
             if ip not in in_interface_impl.two_disk_io_dict_past:
-                in_interface_impl.two_disk_io_dict_past[ip] = []
+                in_interface_impl.two_disk_io_dict_past[ip] = {"hdd": [], "ssd": []}
             # 将多的数据添加到历史数据中
-            in_interface_impl.two_disk_io_dict_past[ip].append(in_interface_impl.two_disk_io_dict[ip][0])
+            in_interface_impl.two_disk_io_dict_past[ip]["hdd"].append(in_interface_impl.two_disk_io_dict[ip]["hdd"][0])
+            in_interface_impl.two_disk_io_dict_past[ip]["ssd"].append(in_interface_impl.two_disk_io_dict[ip]["ssd"][0])
             # 删除第一个数据
-            in_interface_impl.two_disk_io_dict[ip] = in_interface_impl.two_disk_io_dict[ip][1:]
+            in_interface_impl.two_disk_io_dict[ip]["hdd"] = in_interface_impl.two_disk_io_dict[ip]["hdd"][1:]
+            in_interface_impl.two_disk_io_dict[ip]["ssd"] = in_interface_impl.two_disk_io_dict[ip]["ssd"][1:]
             # 历史数据最多保存3小时
-            if len(in_interface_impl.two_disk_io_dict_past[ip]) >= 3 * 60 * 60:
-                in_interface_impl.two_disk_io_dict_past[ip] = in_interface_impl.two_disk_io_dict_past[ip][1:]
+            if len(in_interface_impl.two_disk_io_dict_past[ip]["hdd"]) >= 3 * 60 * 60:
+                in_interface_impl.two_disk_io_dict_past[ip]["hdd"] = in_interface_impl.two_disk_io_dict_past[ip]["hdd"][1:]
+                in_interface_impl.two_disk_io_dict_past[ip]["ssd"] = in_interface_impl.two_disk_io_dict_past[ip]["ssd"][1:]
 
-        return in_interface_impl.two_disk_io_dict[ip]
+        return in_interface_impl.two_disk_io_dict[ip]["hdd"], in_interface_impl.two_disk_io_dict[ip]["ssd"]
+
+    def get_hdd_disk_io_info(self, ip):
+        hdd_disk_io_info, _ = self.get_two_disk_info(ip)
+        return hdd_disk_io_info
+
+    def get_ssd_disk_io_info(self, ip):
+        _, ssd_disk_io_info = self.get_two_disk_info(ip)
+        return ssd_disk_io_info
 
     def get_server_detailed_info(self, ip, tag):
         # 获取server_ip对应的服务器详细信息
