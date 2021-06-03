@@ -112,7 +112,7 @@ class in_interface_impl(in_interface):
         in_interface_impl.server_info_dict[ip] = server_info
         in_interface_impl.detailed_info_dict[ip] = detailed_info
 
-        now_time = time.strftime("%M:%S", time.localtime(time.time()))
+        now_time = time.strftime("%H:%M:%S", time.localtime(time.time()))
         if len(server_info) == 4:  # RAID架构下的数据
             if ip not in in_interface_impl.RAID_io_info_dict:
                 in_interface_impl.RAID_io_info_dict[ip] = []
@@ -147,6 +147,31 @@ class in_interface_impl(in_interface):
         time_list = arr[:, 1].tolist()
 
         return RAID_io_list, time_list
+
+    def get_RAID_overall_io_info_past(self, ip, time_begin, time_end):
+        # 将时间字符串转化为时间元组
+        begin = time.strptime(time_begin, "%H:%M")
+        end = time.strptime(time_end, "%H:%M")
+        base = in_interface_impl.RAID_io_info_dict_past[ip][0][1]  # 第一个数据的时间
+        base = time.strptime(base, "%H:%M:%S")
+        # 时间元组初始化为2000年1月1日
+        begin_tuple = (2000, 1, 1) + begin[3:]
+        end_tuple = (2000, 1, 1) + end[3:]
+        base_tuple = (2000, 1, 1) + base[3:]
+        # 将时间元组转化为浮点数
+        begin_time = time.mktime(begin_tuple)
+        end_time = time.mktime(end_tuple)
+        base = time.mktime(base_tuple)
+
+        start = int(begin_time - base) if (begin_time - base) > 0 else 0
+        end = int(end_time - base)
+        # 截取从start到end的数据
+        RAID_io_past = in_interface_impl.RAID_io_info_dict_past[ip][start:end+1]
+        arr = np.array(RAID_io_past)
+        RAID_io_past_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+
+        return RAID_io_past_list, time_list
 
     def get_server_overall_info(self, tag):
         server_info = []
@@ -195,11 +220,61 @@ class in_interface_impl(in_interface):
         time_list = arr[:, 1].tolist()
         return hdd_io_list, time_list
 
+    def get_hdd_disk_io_info_past(self, ip, time_begin, time_end):
+        # 将时间字符串转化为时间元组
+        begin = time.strptime(time_begin, "%H:%M")
+        end = time.strptime(time_end, "%H:%M")
+        base = in_interface_impl.two_disk_io_dict_past[ip]["hdd"][0][1]  # 第一个数据的时间
+        base = time.strptime(base, "%H:%M:%S")
+        # 时间元组初始化为2000年1月1日
+        begin_tuple = (2000, 1, 1) + begin[3:]
+        end_tuple = (2000, 1, 1) + end[3:]
+        base_tuple = (2000, 1, 1) + base[3:]
+        # 将时间元组转化为浮点数
+        begin_time = time.mktime(begin_tuple)
+        end_time = time.mktime(end_tuple)
+        base = time.mktime(base_tuple)
+
+        start = int(begin_time - base) if (begin_time - base) > 0 else 0
+        end = int(end_time - base)
+        # 截取从start到end的数据
+        hdd_io_past = in_interface_impl.two_disk_io_dict_past[ip]["hdd"][start:end + 1]
+        arr = np.array(hdd_io_past)
+        hdd_io_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+
+        return hdd_io_list, time_list
+
     def get_ssd_disk_io_info(self, ip):
         _, ssd_disk_list = self.get_two_disk_io_info(ip)
         arr = np.array(ssd_disk_list)
         ssd_io_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()
+        return ssd_io_list, time_list
+
+    def get_ssd_disk_io_info_past(self, ip, time_begin, time_end):
+        # 将时间字符串转化为时间元组
+        begin = time.strptime(time_begin, "%H:%M")
+        end = time.strptime(time_end, "%H:%M")
+        base = in_interface_impl.two_disk_io_dict_past[ip]["ssd"][0][1]  # 第一个数据的时间
+        base = time.strptime(base, "%H:%M:%S")
+        # 时间元组初始化为2000年1月1日
+        begin_tuple = (2000, 1, 1) + begin[3:]
+        end_tuple = (2000, 1, 1) + end[3:]
+        base_tuple = (2000, 1, 1) + base[3:]
+        # 将时间元组转化为浮点数
+        begin_time = time.mktime(begin_tuple)
+        end_time = time.mktime(end_tuple)
+        base = time.mktime(base_tuple)
+
+        start = int(begin_time - base) if (begin_time - base) > 0 else 0
+        end = int(end_time - base)
+        # 截取从start到end的数据
+        ssd_io_past = in_interface_impl.two_disk_io_dict_past[ip]["ssd"][start:end + 1]
+        arr = np.array(ssd_io_past)
+        ssd_io_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+
         return ssd_io_list, time_list
 
     def get_server_detailed_info(self, ip, tag):
@@ -291,6 +366,8 @@ class in_interface_impl(in_interface):
 
 
 # if __name__ == "__main__":
-#     list = [[1, 2, 3], [1, 2, 4]]
-#     list = np.array(list)
-#     print(list[:, 1], type(list[:, 1]))
+#     begin = time.strptime("20:10", "%H:%M")
+#     begin = (2000, 1) + begin[2:]
+#     begin = time.mktime(begin)
+#     # end = time.mktime(time.strptime("20:20", "%H:%M"))
+#     print(begin)
