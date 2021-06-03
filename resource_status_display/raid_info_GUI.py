@@ -30,7 +30,7 @@ class RAIDInfoWidget(QWidget):
         self.configuration = None  # 配置界面
         self.server_overall_info = get_data.get_server_overall_info(1)  # 服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.server_detailed_info = get_data.get_server_detailed_info("", 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
+        self.server_detailed_info = get_data.get_server_detailed_info(self.selected_server_ip, 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -150,7 +150,7 @@ class RAIDInfoWidget(QWidget):
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
-                    volume_storage_info_list = [] if len(self.server_detailed_info) == 0 else self.server_detailed_info
+                    volume_storage_info_list = self.server_detailed_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
                     volume_storage_info_list = get_data.get_server_detailed_info(self.selected_server_ip, 1)
@@ -208,6 +208,7 @@ class RAIDInfoWidget(QWidget):
                       720, 630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587, 1780, 1820,
                       1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411,
                       1511, 1004, 856]
+            # y_data, x_data = get_data.get_RAID_overall_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -267,6 +268,7 @@ class RAIDInfoWidget(QWidget):
                       1820, 1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287,1399, 1465,
                       1411, 1511, 1004, 856, 788, 756, 732, 712, 754, 790, 880, 900, 992, 992, 994, 1289, 1340, 1440,
                       1520, 1562]
+            # y_data, x_data = get_data.get_RAID_overall_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -288,13 +290,13 @@ class RAIDInfoWidget(QWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/server_io.html"))
+                    .render("./html/raid_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             # line_widget.setFixedSize(server_io_widget.size().width() - 24, server_io_widget.size().height() - 80)
             line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/server_io.html"))
+            line_widget.load(QUrl("file:///./html/raid_server_io.html"))
 
         draw_server_io_line()
 
@@ -339,6 +341,6 @@ class RAIDInfoWidget(QWidget):
         self.configuration = ConfigurationWidget()
 
     def show_history_io_line(self):
-        self.server_history_io = HistoryIO(self.selected_server_ip)
+        self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
         self.server_history_io.show()
 

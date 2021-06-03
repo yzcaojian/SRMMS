@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QPushButton, QTimeEdit, QHBoxLayout, QVBoxLayout, QW
 from pyecharts.charts import Line
 from pyecharts import options as opts
 
+from interface.in_interface import in_interface_impl
+
 """
 -*- coding: utf-8 -*- 
 @Project: GUI_beginning
@@ -12,15 +14,18 @@ from pyecharts import options as opts
 @Time : 2021/5/26 16:03
 @Author : cao jian
 """
+get_data = in_interface_impl()
 
 
 class HistoryIO(QWidget):
-    def __init__(self, server_ip):
+    def __init__(self, server_ip, disk_id, level):
         super().__init__()
         self.server_ip = server_ip
+        self.disk_id = disk_id
         self.time_end = QTime.currentTime()
-        self.time_start = self.time_end.addSecs(-60*60)
-        self.level = 0  # 历史信息显示分为显示秒级的和显示分钟级的，0表示服务器级以秒显示，1表示硬盘级以分钟显示
+        self.time_start = self.time_end.addSecs(-60 * 60)
+        self.level = level  # 历史负载信息显示分为显示秒级的和显示分钟级的，0表示服硬盘级以分钟显示，
+        # 1表示服务器级SSD总负载以秒显示，2表示服务器级HDD总负载以秒显示，3表示RAID架构服务器总负载以秒显示
         self.init_ui()
 
     def init_ui(self):
@@ -67,6 +72,9 @@ class HistoryIO(QWidget):
         def draw_server_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
             # self.server_ip, self.time_start, self.time_end
+            # if self.level == 1: y_data, x_data = get_data.get_ssd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            # elif self.level == 1: y_data, x_data = get_data.get_hdd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            # elif self.level == 1: y_data, x_data = get_data.get_RAID_overall_io_info_past(self.server_ip, self.time_start, self.time_end)
             # 可以稍加判断选择的时间范围不合理问题
 
             # 根据屏幕大小来确定I/O负载图的比例
@@ -105,7 +113,6 @@ class HistoryIO(QWidget):
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
                     .render("./html/history_server_io.html"))
-
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.resize(self.size().width(), self.size().height() - 70)
@@ -169,7 +176,7 @@ class HistoryIO(QWidget):
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/history_server_io.html"))
 
-        if self.level == 1:
+        if self.level == 0:
             draw_disk_io_line()
         else:
             draw_server_io_line()
