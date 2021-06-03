@@ -38,10 +38,10 @@ class HistoryIO(QWidget):
         time_layout = QHBoxLayout()
         time_widget = QWidget()
         time_start = QTimeEdit(QTime.currentTime())
-        time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 5))
+        time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3))
         time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60))
         time_end = QTimeEdit(QTime.currentTime())
-        time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 4))
+        time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 2))
         time_end.setMaximumTime(QTime.currentTime())
         # 时间段选择的改变刷新历史I/O事件
         time_start.timeChanged.connect(self.start_time_changed)
