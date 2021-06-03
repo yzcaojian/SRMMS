@@ -20,6 +20,7 @@ class HistoryIO(QWidget):
         self.server_ip = server_ip
         self.time_end = QTime.currentTime()
         self.time_start = self.time_end.addSecs(-60*60)
+        self.level = 0  # 历史信息显示分为显示秒级的和显示分钟级的，0表示服务器级以秒显示，1表示硬盘级以分钟显示
         self.init_ui()
 
     def init_ui(self):
@@ -38,10 +39,10 @@ class HistoryIO(QWidget):
         time_layout = QHBoxLayout()
         time_widget = QWidget()
         time_start = QTimeEdit(QTime.currentTime())
-        time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 5))
+        time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3))
         time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60))
         time_end = QTimeEdit(QTime.currentTime())
-        time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 4))
+        time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 2))
         time_end.setMaximumTime(QTime.currentTime())
         # 时间段选择的改变刷新历史I/O事件
         time_start.timeChanged.connect(self.start_time_changed)
@@ -64,6 +65,54 @@ class HistoryIO(QWidget):
         line_widget = QWebEngineView()
 
         def draw_server_io_line():
+            # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
+            # self.server_ip, self.time_start, self.time_end
+            # 可以稍加判断选择的时间范围不合理问题
+
+            # 根据屏幕大小来确定I/O负载图的比例
+            io_width = str(self.size().width() - 20) + "px"
+            io_height = str(self.size().height() - 100) + "px"
+
+            x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09", "12:10",
+                      "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20", "12:21",
+                      "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31", "12:32",
+                      "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42", "12:43",
+                      "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53", "12:54"]
+            y_data = [820, 652, 701, 934, 1190, 1330, 1340, 1433, 1672, 1630, 1725, 1720, 1691, 1530, 984, 663, 651,
+                      520, 630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587, 1780, 1820,
+                      1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411,
+                      1511, 1004, 856]
+
+            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
+                                                 animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
+                    .add_xaxis(xaxis_data=x_data)
+                    .add_yaxis(
+                series_name="实时I/O负载",
+                y_axis=y_data,
+                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                label_opts=opts.LabelOpts(is_show=False),
+                itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                    .set_global_opts(
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="IOPS",
+                    type_="value",
+                    axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                    splitline_opts=opts.SplitLineOpts(is_show=True)),
+                xaxis_opts=opts.AxisOpts(
+                    name="时间",
+                    type_="category",
+                    axistick_opts=opts.AxisTickOpts(is_inside=True),
+                    boundary_gap=False))
+                    .render("./html/history_server_io.html"))
+
+
+            line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
+            line_widget.resize(self.size().width(), self.size().height() - 70)
+            # 打开本地html文件
+            line_widget.load(QUrl("file:///./html/history_server_io.html"))
+
+        def draw_disk_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
             # self.server_ip, self.time_start, self.time_end
             # 可以稍加判断选择的时间范围不合理问题
@@ -120,7 +169,10 @@ class HistoryIO(QWidget):
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/history_server_io.html"))
 
-        draw_server_io_line()
+        if self.level == 1:
+            draw_disk_io_line()
+        else:
+            draw_server_io_line()
 
         server_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
         server_io_layout.addWidget(time_widget, alignment=Qt.AlignCenter)

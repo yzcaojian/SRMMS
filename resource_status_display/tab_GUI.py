@@ -335,7 +335,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1261, 1239, 1196, 1487, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
             # 获取得到指定IP地址的SSD的IOPS信息
-            # y_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -397,7 +397,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1461, 1339, 1296, 1187, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
             # 获取得到指定IP地址的SSD的IOPS信息
-            # y_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -455,7 +455,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411, 1511, 1004,
                       856]
             # 获取得到指定IP地址的HDD的IOPS信息
-            # y_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -516,7 +516,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       1411, 1511, 1004, 856, 788, 756, 732, 712, 754, 790, 880, 900, 992, 992, 994, 1289, 1340, 1440,
                       1520, 1562]
             # 获取得到指定IP地址的HDD的IOPS信息
-            # y_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画

@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/history_io_display.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/history_io_display.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +105,8 @@
       <workItem from="1622423082748" duration="18687000" />
       <workItem from="1622510029550" duration="20828000" />
       <workItem from="1622596405554" duration="8233000" />
-      <workItem from="1622625727363" duration="3947000" />
+      <workItem from="1622625727363" duration="6367000" />
+      <workItem from="1622683434769" duration="11260000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -346,7 +346,21 @@
       <option name="project" value="LOCAL" />
       <updated>1622634596306</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="更新前端获取I/O数据方式">
+      <created>1622639079338</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1622639079338</updated>
+    </task>
+    <task id="LOCAL-00036" summary="更新前端获取I/O数据方式">
+      <created>1622705832465</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1622705832465</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -381,7 +395,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="界面bug更改" />
     <MESSAGE value="html更新" />
     <MESSAGE value="外部接口更改" />
     <MESSAGE value="调整前端代码结构&#10;新增历史I/O负载信息查看、图标闪烁预警功能" />
@@ -406,13 +419,14 @@
     <MESSAGE value="改变实现方式" />
     <MESSAGE value="改变接口数据格式" />
     <MESSAGE value="优化函数实现" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化函数实现" />
+    <MESSAGE value="更新前端获取I/O数据方式" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新前端获取I/O数据方式" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-898" y="131" key="CommitChangelistDialog2" timestamp="1622634594356">
+    <state x="-898" y="131" key="CommitChangelistDialog2" timestamp="1622705829816">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-898" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622634594356" />
+    <state x="-898" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622705829816" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
     <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -439,24 +453,24 @@
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622450645208" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622634601587">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622706822476">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622634601587" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622706822476" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
-    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622596406572">
+    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622683453687">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622596406572" />
+    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622683453687" />
     <state x="449" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622423180756" />
     <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1622123247329">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622123247329" />
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622614401702">
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622701443274">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622614401702" />
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622701443274" />
     <state x="465" y="204" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622204211166" />
     <state x="-1233" y="385" key="git4idea.rebase.GitRebaseDialog" timestamp="1622469534213">
       <screen x="-1920" y="0" width="1920" height="1040" />
