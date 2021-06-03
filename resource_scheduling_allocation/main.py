@@ -59,7 +59,8 @@ while True:
     online_model_training(io_load_input_queue_train, mean_and_std, save_model)
 
     # IO负载预测
-    io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0])
+    io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
+                       average_io_load, warning_message_queue)
 
     # 检查是否有硬盘故障预警
     hard_disk_failure_prediction_list = in_interface_impl().getData_hard_disk_failure_prediction()

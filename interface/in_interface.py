@@ -4,9 +4,10 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/4/25 16:55
 
-from data_communication_analysis.DAC_1 import send_instructions
 from resource_status_display.log_exception_with_suggestions import Warning, warning_list
 from resource_status_display.servers_and_disks_info import TwoDiskInfo, DiskInfo, LogicVolumeInfo, ServerInfo
+import time
+import numpy as np
 
 
 class in_interface:
@@ -54,13 +55,17 @@ class in_interface:
 class in_interface_impl(in_interface):
     # 存放总体信息 供资源状态显示模块使用
     server_info_dict = {}
-    two_disk_info_dict = {}
+    RAID_io_info_dict = {}  # RAID架构下实时IO负载信息
+    RAID_io_info_dict_past = {}  # RAID架构下历史IO负载信息
+    two_disk_info_dict = {}  # 两类硬盘总体信息
     two_disk_io_dict = {}  # 两类硬盘实时I/O负载信息
     two_disk_io_dict_past = {}  # 两类硬盘历史I/O负载信息
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
     # 存放详细信息 供资源调度分配模块使用
     detailed_info_list_RSA = []
+    # # 存放来自资源调度分配模块的指令
+    # instructions_list = []
     # 存放smart数据
     smart_data_list = []
     # 存放健康度信息
@@ -86,8 +91,14 @@ class in_interface_impl(in_interface):
         return list1
 
     def IN_RSA_DCA(self, ip, instructions):
-        # 调用数据通信解析模块模块函数
+        from data_communication_analysis.DAC_1 import send_instructions
+        # 调用数据通信解析模块的函数发送指令
         send_instructions(ip, instructions)
+
+    # def getData_instructions(self):
+    #     list1 = in_interface_impl.instructions_list
+    #     in_interface_impl.instructions_list = []
+    #     return list1
 
     # server_info = [totalCapacity, occupiedCapacity, occupiedRate]
     # or server_info = [totalCapacity, occupiedCapacity, occupiedRate, totalIOPS]
@@ -99,11 +110,43 @@ class in_interface_impl(in_interface):
     def IN_DCA_RSD(self, ip, server_info, detailed_info, two_disk_info=None):
         # 将总体信息和详细信息添加到列表中
         in_interface_impl.server_info_dict[ip] = server_info
-
         in_interface_impl.detailed_info_dict[ip] = detailed_info
 
-        if two_disk_info is not None:
+        now_time = time.strftime("%M:%S", time.localtime(time.time()))
+        if len(server_info) == 4:  # RAID架构下的数据
+            if ip not in in_interface_impl.RAID_io_info_dict:
+                in_interface_impl.RAID_io_info_dict[ip] = []
+            RAID_io = server_info[-1]
+            in_interface_impl.RAID_io_info_dict[ip].append([RAID_io, now_time])
+        elif two_disk_info is not None:
             in_interface_impl.two_disk_info_dict[ip] = two_disk_info
+
+            two_disk_io = two_disk_info[10:]  # two_disk_io =  [hddIOPS, ssdIOPS]
+
+            if ip not in in_interface_impl.two_disk_io_dict:
+                in_interface_impl.two_disk_io_dict[ip] = {"hdd": [], "ssd": []}
+            in_interface_impl.two_disk_io_dict[ip]["hdd"].append([two_disk_io[0], now_time])
+            in_interface_impl.two_disk_io_dict[ip]["ssd"].append([two_disk_io[1], now_time])
+
+    def get_RAID_overall_io_info(self, ip):
+        # 最多保存600个数据
+        if len(in_interface_impl.RAID_io_info_dict[ip]) >= 600:
+            if ip not in in_interface_impl.RAID_io_info_dict_past:
+                in_interface_impl.RAID_io_info_dict_past[ip] = []
+            # 将多的数据添加到历史数据中
+            in_interface_impl.RAID_io_info_dict_past[ip].append(in_interface_impl.RAID_io_info_dict[ip][0])
+            # 删除第一个数据
+            in_interface_impl.RAID_io_info_dict[ip] = in_interface_impl.RAID_io_info_dict[ip][1:]
+            # 历史数据最多保存3小时
+            if len(in_interface_impl.RAID_io_info_dict_past[ip]) >= 3 * 60 * 60:
+                in_interface_impl.RAID_io_info_dict_past[ip] = in_interface_impl.RAID_io_info_dict_past[ip][1:]
+
+        RAID_io_info_list = in_interface_impl.RAID_io_info_dict[ip]
+        arr = np.array(RAID_io_info_list)
+        RAID_io_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+
+        return RAID_io_list, time_list
 
     def get_server_overall_info(self, tag):
         server_info = []
@@ -115,20 +158,15 @@ class in_interface_impl(in_interface):
                                                   in_interface_impl.server_info_dict[ip][2]))
         else:  # RAID架构
             for ip in in_interface_impl.server_info_dict:
-                if len(in_interface_impl.server_info_dict[ip]) == 3:
+                if len(in_interface_impl.server_info_dict[ip]) == 4:
                     server_info.append(ServerInfo(ip, in_interface_impl.server_info_dict[ip][0],
                                                   in_interface_impl.server_info_dict[ip][1],
                                                   in_interface_impl.server_info_dict[ip][2]))
+
         return server_info
 
     def get_two_disk_info(self, ip):
         two_disk_info = in_interface_impl.two_disk_info_dict[ip]
-        two_disk_io = two_disk_info[10:]  # two_disk_io =  [hddIOPS, ssdIOPS]
-
-        if ip not in in_interface_impl.two_disk_io_dict:
-            in_interface_impl.two_disk_io_dict[ip] = {"hdd": [], "ssd": []}
-        in_interface_impl.two_disk_io_dict[ip]["hdd"].append(two_disk_io[0])
-        in_interface_impl.two_disk_io_dict[ip]["ssd"].append(two_disk_io[1])
 
         return TwoDiskInfo(two_disk_info)
 
@@ -148,11 +186,21 @@ class in_interface_impl(in_interface):
                 in_interface_impl.two_disk_io_dict_past[ip]["hdd"] = in_interface_impl.two_disk_io_dict_past[ip]["hdd"][1:]
                 in_interface_impl.two_disk_io_dict_past[ip]["ssd"] = in_interface_impl.two_disk_io_dict_past[ip]["ssd"][1:]
 
+        return in_interface_impl.two_disk_io_dict[ip]["hdd"], in_interface_impl.two_disk_io_dict[ip]["ssd"]
+
     def get_hdd_disk_io_info(self, ip):
-        return in_interface_impl.two_disk_io_dict[ip]["hdd"]
+        hdd_disk_list, _ = self.get_two_disk_io_info(ip)
+        arr = np.array(hdd_disk_list)
+        hdd_io_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+        return hdd_io_list, time_list
 
     def get_ssd_disk_io_info(self, ip):
-        return in_interface_impl.two_disk_io_dict[ip]["ssd"]
+        _, ssd_disk_list = self.get_two_disk_io_info(ip)
+        arr = np.array(ssd_disk_list)
+        ssd_io_list = arr[:, 0].tolist()
+        time_list = arr[:, 1].tolist()
+        return ssd_io_list, time_list
 
     def get_server_detailed_info(self, ip, tag):
         # 获取server_ip对应的服务器详细信息
@@ -242,3 +290,7 @@ class in_interface_impl(in_interface):
         return list1
 
 
+# if __name__ == "__main__":
+#     list = [[1, 2, 3], [1, 2, 4]]
+#     list = np.array(list)
+#     print(list[:, 1], type(list[:, 1]))

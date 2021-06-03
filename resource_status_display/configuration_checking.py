@@ -13,7 +13,7 @@ class ConfigurationInfo:
         self.server_names, self.server_IPs = self.readFile()
 
     def readFile(self):
-        file = open('./txt/configuration.txt', 'r')
+        file = open('../resource_status_display/txt/configuration.txt', 'r')
         line = file.readline()
         server_names = []
         server_IPs = []
