@@ -664,16 +664,16 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def set_health_state(disk_selected, IsUpdate):
             # degree = 0
-            if IsUpdate:
-                degree = 4
-                pass  # 刷新的情况下直接用当前selected_disk_id[self.currentIndex() - 1]找到对应的健康度
-            else:
-                if disk_selected is None:
-                    print('默认选中第一个disk')
-                    degree = 6
-                else:
-                    print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
-                    degree = 2
+            # if IsUpdate:
+            #     degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
+            #     # 刷新的情况下直接用当前selected_disk_id[self.currentIndex() - 1]找到对应的健康度
+            # else:
+            #     if disk_selected is None:
+            #         print('默认选中第一个disk')
+            #         degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
+            #     else:
+            #         print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
+            degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
             clearLayout(health_degree_item_layout)
