@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/history_io_display.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/history_io_display.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +109,7 @@
       <workItem from="1622596405554" duration="8233000" />
       <workItem from="1622625727363" duration="6367000" />
       <workItem from="1622683434769" duration="21076000" />
-      <workItem from="1622769636224" duration="7505000" />
+      <workItem from="1622769636224" duration="8668000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -396,7 +398,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622777099309</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="更改tab页关闭事件">
+      <created>1622779725377</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1622779725377</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -431,7 +440,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="删除初版故障预测文件夹" />
     <MESSAGE value="前端代码结构调整" />
     <MESSAGE value="日立硬盘故障预测" />
     <MESSAGE value="旧日立硬盘故障预测" />
@@ -456,13 +464,14 @@
     <MESSAGE value="smart数据获取接口改写" />
     <MESSAGE value="多tab页下选中硬盘获取数据的逻辑实现" />
     <MESSAGE value="smart信息接口更改" />
-    <option name="LAST_COMMIT_MESSAGE" value="smart信息接口更改" />
+    <MESSAGE value="更改tab页关闭事件" />
+    <option name="LAST_COMMIT_MESSAGE" value="更改tab页关闭事件" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-898" y="131" key="CommitChangelistDialog2" timestamp="1622777097730">
+    <state x="-898" y="131" key="CommitChangelistDialog2" timestamp="1622779723755">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-898" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622777097730" />
+    <state x="-898" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622779723755" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
     <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -489,10 +498,10 @@
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622450645208" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622777550931">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622779727759">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622777550931" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622779727759" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
     <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622769665000">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -503,10 +512,10 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622123247329" />
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622769675255">
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622779902989">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622769675255" />
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622779902989" />
     <state x="465" y="204" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622204211166" />
     <state x="-1233" y="385" key="git4idea.rebase.GitRebaseDialog" timestamp="1622469534213">
       <screen x="-1920" y="0" width="1920" height="1040" />

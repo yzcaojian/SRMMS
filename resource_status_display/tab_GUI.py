@@ -21,8 +21,6 @@ from resource_status_display.history_io_display import HistoryIO
 @Author : cao jian
 """
 
-get_data = in_interface_impl()
-
 
 # 清除布局
 def clearLayout(layout):
@@ -41,9 +39,9 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素，默认是每个服务器第一个
         self.exception_list = [[["192.168.1.1", 1], ], [["hdd-01", 1], ]]  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
-        self.server_overall_info = get_data.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
-        self.two_disk_info = get_data.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
-        self.server_detailed_info = get_data.get_server_detailed_info(self.selected_server_ip, 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
+        self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
+        self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
+        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
         self.update_thread.start()
@@ -133,15 +131,15 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_storage_bar(server_selected, IsUpdate):
             if IsUpdate:
-                two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
+                two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
                     two_disk_list = self.two_disk_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)
-            # two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 待优化
+                    two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
+            # two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 待优化
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = two_disk_list.hddTotalCapacity
             hdd_used = two_disk_list.hddOccupiedCapacity
@@ -180,14 +178,14 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_error_rate_bar(server_selected, IsUpdate):
             if IsUpdate:
-                two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
+                two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
             else:
                 if server_selected is None:
                     print('默认选中第一个server')
                     two_disk_list = self.two_disk_info
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)
+                    two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
 
             hdd_rate = two_disk_list.hddErrorRate
             ssd_rate = two_disk_list.ssdErrorRate
@@ -302,7 +300,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1261, 1239, 1196, 1487, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
             # 获取得到指定IP地址的SSD的IOPS信息
-            # y_data, x_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = in_interface_impl.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -364,7 +362,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1461, 1339, 1296, 1187, 780, 120, 11, 13,
                       65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004, 856]
             # 获取得到指定IP地址的SSD的IOPS信息
-            # y_data, x_data = get_data.get_ssd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = in_interface_impl.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -422,7 +420,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411, 1511, 1004,
                       856]
             # 获取得到指定IP地址的HDD的IOPS信息
-            # y_data, x_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = in_interface_impl.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -483,7 +481,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                       1411, 1511, 1004, 856, 788, 756, 732, 712, 754, 790, 880, 900, 992, 992, 994, 1289, 1340, 1440,
                       1520, 1562]
             # 获取得到指定IP地址的HDD的IOPS信息
-            # y_data, x_data = get_data.get_hdd_disk_io_info(self.selected_server_ip)
+            # y_data, x_data = in_interface_impl.get_hdd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画

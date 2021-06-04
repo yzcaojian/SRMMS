@@ -14,7 +14,6 @@ from interface.in_interface import in_interface_impl
 @Time : 2021/5/26 16:03
 @Author : cao jian
 """
-get_data = in_interface_impl()
 
 
 class HistoryIO(QWidget):
@@ -72,9 +71,9 @@ class HistoryIO(QWidget):
         def draw_server_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
             # self.server_ip, self.time_start, self.time_end
-            # if self.level == 1: y_data, x_data = get_data.get_ssd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
-            # elif self.level == 1: y_data, x_data = get_data.get_hdd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
-            # elif self.level == 1: y_data, x_data = get_data.get_RAID_overall_io_info_past(self.server_ip, self.time_start, self.time_end)
+            # if self.level == 1: y_data, x_data = in_interface_impl.get_ssd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            # elif self.level == 1: y_data, x_data = in_interface_impl.get_hdd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            # elif self.level == 1: y_data, x_data = in_interface_impl.get_RAID_overall_io_info_past(self.server_ip, self.time_start, self.time_end)
             # 可以稍加判断选择的时间范围不合理问题
 
             # 根据屏幕大小来确定I/O负载图的比例
