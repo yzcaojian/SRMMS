@@ -32,7 +32,7 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
                 # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
                 warning_message_queue.append(warning)
                 # 服务器失联告警信息 to资源状态显示模块
-                in_interface_impl().IN_RSA_RSD(warning)
+                in_interface_impl.IN_RSA_RSD(warning)
             break
 
 
@@ -90,7 +90,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]
                 warning_message_queue.append(warning)
                 # 硬盘持续高I/O告警信息 to资源状态显示模块
-                in_interface_impl().IN_RSA_RSD(warning)
+                in_interface_impl.IN_RSA_RSD(warning)
 
 
 def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue):
@@ -102,4 +102,4 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_messag
         warning = Warning(errorID, timestamp, disk_id, configuration_info.IPtoName(ip), health_degree)
         warning_message_queue.append(warning)
         # 硬盘健康度下降告警信息 to资源状态显示模块
-        in_interface_impl().IN_RSA_RSD(warning)
+        in_interface_impl.IN_RSA_RSD(warning)
