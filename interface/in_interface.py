@@ -79,7 +79,7 @@ class in_interface_impl(in_interface):
     warning_message_queue = []  # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
 
     # 存放smart数据
-    smart_data_list = []
+    smart_data_dict = {}
     # 存放健康度信息
     health_degree_list = []
     # 存放硬盘故障预测处理信息
@@ -497,18 +497,31 @@ class in_interface_impl(in_interface):
 
     def IN_DCA_HDFP(self, ip, smart_data):
         # 将smart数据添加到列表中
-        in_interface_impl.smart_data_list.append([ip, smart_data])
+        # 优化，判断型号，如果不在可以预测的型号范围内，不接收数据
+        if ip not in in_interface_impl.smart_data_dict:
+            in_interface_impl.smart_data_dict[ip] = smart_data
+        # 将新的smart数据添加到字典中，至少保证采集20天的历史数据才能预测
+        else:
+            # 只需要保留20天的历史smart数据即可，多余进行删除
+            if len(in_interface_impl.smart_data_dict[ip][0][2]) >= 20:
+                for old in in_interface_impl.smart_data_dict[ip]:
+                    old[2] = old[2][1:]
+            # 这里需要保证硬盘按照disk_id排列顺序一致
+            for (old, new) in (in_interface_impl.smart_data_dict[ip], smart_data):
+                old[2].append(new[2])
 
-    def getData_smart_info(self):  # 获取smart信息
-        list1 = in_interface_impl.smart_data_list
-        in_interface_impl.smart_data_list = []
-        return list1
+    def get_smart_info(self, ip, disk_id):  # 获取smart信息
+        for disk in in_interface_impl.smart_data_dict[ip]:
+            # disk格式为[[diskID, model, smartID, smartData],[...]...]
+            if disk_id == disk[0] and len(disk[2] > 19):
+                return disk[2]
+        return []
 
     def IN_HDFP_RSD(self, ip, disk_id, health_degree):
         # 将健康度信息添加到列表中
         in_interface_impl.health_degree_list.append([ip, disk_id, health_degree])
 
-    def getData_health_degree(self):  # 获取健康度信息
+    def get_health_degree(self):  # 获取健康度信息
         list1 = in_interface_impl.health_degree_list
         in_interface_impl.health_degree_list = []
         return list1

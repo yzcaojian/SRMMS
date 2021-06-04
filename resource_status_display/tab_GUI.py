@@ -38,13 +38,12 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
+        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素，默认是每个服务器第一个
         self.exception_list = [[["192.168.1.1", 1], ], [["hdd-01", 1], ]]  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = get_data.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
-        # self.two_disk_info = two_disk_info_list.two_disk_info_list  # 所有服务器两类硬盘容量、I/O负载、数量、故障率信息列表
-        self.two_disk_info = get_data.get_two_disk_info(self.selected_server_ip)
-        self.server_detailed_info = get_data.get_server_detailed_info("", 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.selected_disk_id = "" if len(self.server_detailed_info) == 0 else self.server_detailed_info[0].diskID  # 选中的硬盘ID，默认是第一个
+        self.two_disk_info = get_data.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
+        self.server_detailed_info = get_data.get_server_detailed_info(self.selected_server_ip, 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
         self.update_thread.start()
@@ -96,7 +95,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 定义内部函数事件，初始化或者是到刷新周期后，从server_storage_info_list中取数据放入server_storage_table中去
         def show_server_storage_list(server_storage_info_list):
             global line
-            server_storage_table.setRowCount(len(self.server_overall_info))
+            server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
             # server_storage_table.clear()  # 清空刷新前的所有项
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
@@ -108,6 +107,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                         if single_server_info.serverIP == e[0]:
                             e[1] = 0 - e[1]  # 将标志反转
                             line = get_server_storage_info_item(single_server_info, e[1])
+                            break  # 图标闪烁待优化
                         else:
                             line = get_server_storage_info_item(single_server_info)
                 for j, cell in enumerate(line):
@@ -141,6 +141,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                 else:
                     print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
                     two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)
+            # two_disk_list = get_data.get_two_disk_info(self.selected_server_ip)  # 待优化
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = two_disk_list.hddTotalCapacity
             hdd_used = two_disk_list.hddOccupiedCapacity
@@ -176,40 +177,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             first_bar_widget.load(QUrl("file:///./html/first.html"))
 
         bar_layout.addWidget(first_bar_widget, alignment=Qt.AlignCenter)
-
-        # def set_two_disk_storage_bar(two_disk_list):
-        #     # clearLayout(bar_layout)  # 清除之前的布局
-        #     hdd_all = two_disk_list.hddTotalCapacity
-        #     hdd_used = two_disk_list.hddOccupiedCapacity
-        #     ssd_all = two_disk_list.ssdTotalCapacity
-        #     ssd_used = two_disk_list.ssdOccupiedCapacity
-        #     used = [hdd_used, ssd_used]
-        #     all = [hdd_all - hdd_used, ssd_all - ssd_used]
-        #
-        #     bar_width = str(bar_widget.size().width() / 2) + "px"
-        #     bar_height = str(bar_widget.size().height()) + "px"
-        #
-        #     bar = (Bar(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
-        #                                        animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-        #            .add_xaxis(["HDD", "SSD"], )
-        #            .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
-        #            .add_yaxis("剩余容量", all, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
-        #            .set_global_opts(
-        #         yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
-        #         xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
-        #            .set_series_opts(
-        #         label_opts=opts.LabelOpts(
-        #             position="right",
-        #             formatter=JsCode("function(x){return Number(x.data).toFixed() + 'TB';}"))
-        #     ).render("first.html"))
-        #
-        #     # first_bar_widget = QWebEngineView()
-        #     first_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
-        #                                              False)  # 将滑动条隐藏，避免遮挡内容
-        #     first_bar_widget.resize(bar_widget.size().width() / 2, bar_widget.size().height())
-        #     # 打开本地html文件
-        #     first_bar_widget.load(QUrl("file:///first.html"))
-        #     # bar_layout.addWidget(first_bar_widget, alignment=Qt.AlignCenter)
 
         def draw_two_disk_error_rate_bar(server_selected, IsUpdate):
             if IsUpdate:
@@ -313,8 +280,8 @@ class MultDisksInfoTabWidget(QTabWidget):
                                 border-width:2px; border-style:solid; border-color:black; border-radius:12px}
                                 QPushButton:pressed{background-color:#bbbbbb}''')
         # 绑定I/O负载历史信息弹窗事件
-        left_button.clicked.connect(self.show_history_io_line)
-        right_button.clicked.connect(self.show_history_io_line)
+        left_button.clicked.connect(lambda: self.show_history_io_line(1))
+        right_button.clicked.connect(lambda: self.show_history_io_line(2))
 
         # 左边I/O负载图
         first_line_widget = QWebEngineView()
@@ -605,6 +572,9 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
 
     def add_detailed_tab(self, server_selected):
+        # 添加详细信息tab页后默认选中第一块硬盘
+        if len(self.server_detailed_info) != 0:
+            self.selected_disk_id.append(self.server_detailed_info[0].diskID)
         # server_selected是获取的选择表格某行的范围信息
         print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
         # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
@@ -698,7 +668,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             # degree = 0
             if IsUpdate:
                 degree = 4
-                pass  # 刷新的情况下直接用当前selected_disk_id找到对应的健康度
+                pass  # 刷新的情况下直接用当前selected_disk_id[self.currentIndex() - 1]找到对应的健康度
             else:
                 if disk_selected is None:
                     print('默认选中第一个disk')
@@ -796,13 +766,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/disk1_io.html"))
+                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))  # 各硬盘有单独的IO图
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height())
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/disk1_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
             disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
 
         def set_disk_io_line(disk_selected, IsUpdate):
@@ -860,13 +830,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/disk1_io.html"))
+                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(detailed_tab.size().width() / 2 - 20, disk_detailed_info_widget.size().height() / 2 + 40)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/disk1_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
 
         draw_disk_io_line()
 
@@ -876,7 +846,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
                                         border-width:2px; border-style:solid; border-color:black; border-radius:12px}
                                         QPushButton:pressed{background-color:#bbbbbb}''')
-        io_button.clicked.connect(self.show_history_io_line)
+        io_button.clicked.connect(lambda: self.show_history_io_line(0))  # 绑定事件
         disk_io_layout.addWidget(io_button, alignment=Qt.AlignTop | Qt.AlignCenter)
 
         disk_detailed_info_layout.addLayout(disk_health_state_layout)
@@ -906,7 +876,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_health_state(None, True))
         self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
 
-    def tabClose(self, index):  # 定义关闭tab页事件
+    def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
+        self.selected_disk_id.remove(index - 1)
         self.removeTab(index)
 
     def set_selected_server_ip(self, server_selected):
@@ -914,15 +885,16 @@ class MultDisksInfoTabWidget(QTabWidget):
         # print("selected:", self.selected_server_ip)
 
     def set_selected_disk_id(self, disk_selected):
+        # index 表示当前tab页在selected_disk_id列表中对应的索引
         # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_list删除
         for e in self.exception_list[1]:
-            if e[0] == self.selected_disk_id:
+            if e[0] == self.selected_disk_id[self.currentIndex() - 1]:
                 self.exception_list[1].remove(e)
                 break
-        self.selected_disk_id = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
+        self.selected_disk_id[self.currentIndex() - 1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
 
-    def show_history_io_line(self):
-        self.server_history_io = HistoryIO(self.selected_server_ip)
+    def show_history_io_line(self, level):
+        self.server_history_io = HistoryIO(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1], level)
         self.server_history_io.show()
 
     def show_disk_error_warning(self):
