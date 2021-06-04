@@ -125,8 +125,6 @@ def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):
                 io_load_input_queue_minute[ip][disk_id] = []
             # //整除  时间需要取平均值
             io_load_input_queue_minute[ip][disk_id].append([total_io, total_time // 60])
-            # 将前面60个数据删除
-            io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
 
 
 class OnlineModelTrainingThread(threading.Thread):

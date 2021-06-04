@@ -6,7 +6,7 @@
 
 import time
 from interface.in_interface import in_interface_impl
-from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute,online_model_training
+from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute, online_model_training
 from resource_scheduling_allocation.RSA_2 import io_load_prediction
 from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, filtering_io_data, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
@@ -37,7 +37,7 @@ while True:
         for disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io in detailed_info:
             # 将信息添加到详细信息字典中
             if ip not in disk_detailed_info:
-                disk_detailed_info = {}
+                disk_detailed_info[ip] = {}
             if disk_id not in disk_detailed_info[ip]:
                 disk_detailed_info[ip][disk_id] = []
             disk_detailed_info[ip][disk_id].append([type, state, total_capacity, occupied_capacity, occupied_rate])
