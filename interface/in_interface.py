@@ -318,7 +318,7 @@ class in_interface_impl(in_interface):
     def get_smart_info(self, ip, disk_id):  # 获取smart信息
         for disk in in_interface_impl.smart_data_dict[ip]:
             # disk格式为[[diskID, model, smartID, smartData],[...]...]
-            if disk_id == disk[0]:
+            if disk_id == disk[0] and len(disk[2] > 19):
                 return disk[2]
         return []
 
