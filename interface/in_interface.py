@@ -6,6 +6,7 @@
 
 from resource_status_display.log_exception_with_suggestions import Warning, warning_list
 from resource_status_display.servers_and_disks_info import TwoDiskInfo, DiskInfo, LogicVolumeInfo, ServerInfo
+from hard_disk_failure_prediction.predict import predict_disk_health_state
 import time
 import numpy as np
 
@@ -34,7 +35,7 @@ class in_interface:
 
     # 硬盘健康度预测接口  硬盘故障预测模块->资源状态显示模块
     @classmethod
-    def IN_HDFP_RSD(cls, ip, disk_id, health_degree):
+    def IN_HDFP_RSD(cls, ip, disk_id):
         pass
 
     # 硬盘故障预测处理接口  硬盘故障预测模块->资源调度分配模块
@@ -92,7 +93,7 @@ class in_interface_impl(in_interface):
     # 存放smart数据
     smart_data_dict = {}
     # 存放健康度信息
-    health_degree_list = []
+    health_degree_dict = {}
     # 存放硬盘故障预测处理信息
     hard_disk_failure_prediction_list = []
     # 存放I/O负载预测信息
@@ -536,31 +537,40 @@ class in_interface_impl(in_interface):
         # 将新的smart数据添加到字典中，至少保证采集20天的历史数据才能预测
         else:
             # 只需要保留20天的历史smart数据即可，多余进行删除
-            if len(cls.smart_data_dict[ip][0][2]) >= 20:
+            if len(cls.smart_data_dict[ip][0][3]) > 19:
                 for old in cls.smart_data_dict[ip]:
-                    old[2] = old[2][1:]
+                    old[3] = old[3][1:]
             # 这里需要保证硬盘按照disk_id排列顺序一致
             for (old, new) in (cls.smart_data_dict[ip], smart_data):
-                old[2].append(new[2])
+                old[3].append(new[3])
+                # 每当有新的SMART数据添加进列表时，做一次健康度预测
+                cls.IN_HDFP_RSD(ip, old)
+
+    # @classmethod
+    # def get_smart_info(cls, ip, disk_id):  # 获取smart信息
+    #     for disk in cls.smart_data_dict[ip]:
+    #         # disk格式为[[diskID, model, smartID, smartData],[...]...]
+    #         if disk_id == disk[0] and len(disk[3]) > 19:
+    #             return disk
+    #     return []
 
     @classmethod
-    def get_smart_info(cls, ip, disk_id):  # 获取smart信息
-        for disk in cls.smart_data_dict[ip]:
-            # disk格式为[[diskID, model, smartID, smartData],[...]...]
-            if disk_id == disk[0] and len(disk[2] > 19):
-                return disk[2]
-        return []
-
-    @classmethod
-    def IN_HDFP_RSD(cls, ip, disk_id, health_degree):
+    def IN_HDFP_RSD(cls, ip, disk):
         # 将健康度信息添加到列表中
-        cls.health_degree_list.append([ip, disk_id, health_degree])
+        # disk = cls.get_smart_info(ip, disk_id)
+        health_degree = predict_disk_health_state(disk)
+        if ip not in cls.health_degree_dict:
+            cls.health_degree_dict[ip] = {}
+        cls.health_degree_dict[ip][disk[0]] = health_degree  # disk_id和健康度
 
     @classmethod
-    def get_health_degree(cls):  # 获取健康度信息
-        list1 = cls.health_degree_list
-        cls.health_degree_list = []
-        return list1
+    def get_health_degree(cls, server_ip, disk_id):  # 获取健康度信息
+        for ip in cls.health_degree_dict:
+            if server_ip == ip:
+                for ID in cls.health_degree_dict[ip]:
+                    if disk_id == ID:
+                        return cls.health_degree_dict[ip][ID]  # 返回对应的健康度信息
+        return 0  # 表示没有对应型号的预测模型
 
     @classmethod
     def IN_HDFP_RSA(cls, ip, disk_id, failure_info):

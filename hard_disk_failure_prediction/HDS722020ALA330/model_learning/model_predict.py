@@ -14,7 +14,8 @@ n_input = 9
 n_steps = 20
 n_hidden = 128
 n_classes = 6
-classes = ["R1", "R2", "R3", "R4", "R5", "R6"]
+# classes = ["R1", "R2", "R3", "R4", "R5", "R6"]
+classes = [1, 2, 3, 4, 5, 6]
 
 # Define weights
 weights = {
@@ -46,7 +47,7 @@ def mulitGRU(x):
     return output
 
 
-def predict_1st(smart_data):
+def predict_1st(smart_data, smart_id):
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：3、4、5、9、12、192、193、196、197
     # 根据提前准备好的训练集中最大最小值进行数据归一化
     smart_data = smart_data.astype(np.float32)
