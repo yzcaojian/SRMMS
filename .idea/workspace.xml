@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/history_io_display.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/history_io_display.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/raid_info_GUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +109,7 @@
       <workItem from="1622596405554" duration="8233000" />
       <workItem from="1622625727363" duration="6367000" />
       <workItem from="1622683434769" duration="21076000" />
-      <workItem from="1622769636224" duration="18145000" />
+      <workItem from="1622769636224" duration="19905000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -417,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622793425647</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="更改前端健康度获取方式">
+      <created>1622794509494</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1622794509494</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -452,7 +461,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="旧日立硬盘故障预测" />
     <MESSAGE value="希捷硬盘故障预测" />
     <MESSAGE value="修改timeSlot变量名错误" />
     <MESSAGE value="更改监控到异常时系统行为是生成异常对象" />
@@ -477,13 +485,14 @@
     <MESSAGE value="更改tab页关闭事件" />
     <MESSAGE value="更改获取数据方式通过类调用" />
     <MESSAGE value="更改硬盘故障预测接口函数" />
-    <option name="LAST_COMMIT_MESSAGE" value="更改硬盘故障预测接口函数" />
+    <MESSAGE value="更改前端健康度获取方式" />
+    <option name="LAST_COMMIT_MESSAGE" value="更改前端健康度获取方式" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1622793422944">
+    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1622794507913">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622793422944" />
+    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622794507913" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
     <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -510,10 +519,10 @@
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622450645208" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622793507864">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622796292399">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622793507864" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622796292399" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
     <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622769665000">
       <screen x="-1920" y="0" width="1920" height="1040" />
