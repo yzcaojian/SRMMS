@@ -645,7 +645,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         remaining_days_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
         days_title_layout.addWidget(remaining_days_title)
 
-        def set_health_state(disk_selected, IsUpdate):
+        def set_health_state():
             # degree = 0
             # if IsUpdate:
             #     degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
@@ -657,33 +657,70 @@ class MultDisksInfoTabWidget(QTabWidget):
             #     else:
             #         print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
             degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
+            # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
             clearLayout(health_degree_item_layout)
             clearLayout(health_degree_text_layout)
-            color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
-            days = ['<10', '<30', '<70', '<150', '<310', '>=310']
-            for i in range(6):
-                item1 = QLabel()
-                item2 = QLabel()
-                if i == degree - 1:
-                    item1.setStyleSheet(
-                        "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                    item2.setStyleSheet(
-                        "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                else:
+            if 0 < degree < 7:  # 一级健康度
+                color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
+                days = ['<10', '<30', '<70', '<150', '<310', '>=310']
+                for i in range(6):
+                    item1 = QLabel()
+                    item2 = QLabel()
+                    if i == degree - 1:
+                        item1.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                        item2.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                    else:
+                        item1.setStyleSheet("background-color:%s" % color[i])
+                        item2.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                    text2 = QLabel(days[i])
+                    text2.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    remaining_days_item_layout.addWidget(item2)
+                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+            elif degree >= 7:  # 二级健康度
+                color = ['#cf0000', '#f55c47', '#ff7b54']
+                days = ['<2', '<5', '<10']
+                for i in range(3):
+                    item1 = QLabel()
+                    item2 = QLabel()
+                    if i == degree - 7:
+                        item1.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                        item2.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                    else:
+                        item1.setStyleSheet("background-color:%s" % color[i])
+                        item2.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R1-' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                    text2 = QLabel(days[i])
+                    text2.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    remaining_days_item_layout.addWidget(item2)
+                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+            else:  # 无法预测健康度
+                color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
+                days = ['<10', '<30', '<70', '<150', '<310', '>=310']
+                for i in range(6):
+                    item1 = QLabel()
                     item1.setStyleSheet("background-color:%s" % color[i])
-                    item2.setStyleSheet("background-color:%s" % color[i])
-                text1 = QLabel('R' + str(i + 1))
-                text1.setStyleSheet("font-size:20px; font-family:'黑体'")
-                health_degree_item_layout.addWidget(item1)
-                health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                text2 = QLabel(days[i])
-                text2.setStyleSheet("font-size:20px; font-family:'黑体'")
-                remaining_days_item_layout.addWidget(item2)
-                remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+                    text1 = QLabel('R' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                    text2 = QLabel("该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。")
+                    # remaining_days_item_layout.addWidget(item2)  # 没有item
+                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
-        set_health_state(None, False)
+        set_health_state()
         # 健康度标题、条状图、文字布局
         health_degree_layout.addLayout(heath_title_layout)
         health_degree_layout.addLayout(health_degree_item_layout)
@@ -845,7 +882,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # 定时刷新
         self.update_thread.update_data.connect(lambda: show_disks_storage_list(self.server_detailed_info))
-        self.update_thread.update_data.connect(lambda: set_health_state(None, True))
+        self.update_thread.update_data.connect(lambda: set_health_state())
         self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
