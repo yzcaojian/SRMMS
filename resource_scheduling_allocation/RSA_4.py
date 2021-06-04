@@ -25,7 +25,7 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         scheduling_list.add_new_scheduling(scheduling)
 
         # 发送分配指令 to数据通信解析模块
-        in_interface_impl().IN_RSA_DCA(serverIP, scheduling.suggestion)
+        in_interface_impl.IN_RSA_DCA(serverIP, scheduling.suggestion)
 
         # # 硬盘故障预警信息
         # if errorID == 1:
@@ -33,7 +33,7 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         #     # instructions = "位于服务器" + serverName + "的硬盘" + diskID + "在" + past_minutes \
         #     #                + "分钟前预测到即将出现故障，当前健康度为" + health_degree
         #     # 发送分配指令 to数据通信解析模块
-        #     in_interface_impl().IN_RSA_DCA(serverIP, scheduling.suggestion)
+        #     in_interface_impl.IN_RSA_DCA(serverIP, scheduling.suggestion)
         #
         # # IO高负载预警
         # elif errorID == 2:
@@ -43,9 +43,9 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         #     # instructions = "位于服务器" + serverName + "的硬盘" + diskID + "在" + past_minutes \
         #     #                + "分钟前预测到即将出现高I/O负载，最大负载量为" + io_prediction
         #     # 分配指令日志信息 to资源状态显示模块
-        #     in_interface_impl().IN_RSA_RSD(serverName, diskID, instructions)
+        #     in_interface_impl.IN_RSA_RSD(serverName, diskID, instructions)
         #     # 发送分配指令 to数据通信解析模块
-        #     in_interface_impl().IN_RSA_DCA(serverIP, instructions)
+        #     in_interface_impl.IN_RSA_DCA(serverIP, instructions)
         #
         # # 服务器失联告警
         # elif errorID == 3:
@@ -53,9 +53,9 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         #     past_minutes = (now_time - timeslot) / 60
         #     instructions = "由于未知原因，服务器" + serverName + "在" + past_minutes + "分钟前失联"
         #     # 分配指令日志信息 to资源状态显示模块
-        #     in_interface_impl().IN_RSA_RSD(serverName, -1, instructions)
+        #     in_interface_impl.IN_RSA_RSD(serverName, -1, instructions)
         #     # # 发送分配指令 to数据通信解析模块
-        #     # in_interface_impl().IN_RSA_DCA(severIP, instructions)
+        #     # in_interface_impl.IN_RSA_DCA(severIP, instructions)
         #
         # # 硬盘持续高IO
         # elif errorID == 4:
@@ -65,9 +65,9 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         #     instructions = "位于服务器" + serverName + "的硬盘" + diskID + "在" + past_minutes + \
         #                    "分钟前开始处于高I/O状态， I/O负载平均量为" + io_average
         #     # 分配指令日志信息 to资源状态显示模块
-        #     in_interface_impl().IN_RSA_RSD(serverName, diskID, instructions)
+        #     in_interface_impl.IN_RSA_RSD(serverName, diskID, instructions)
         #     # 发送分配指令 to数据通信解析模块
-        #     in_interface_impl().IN_RSA_DCA(serverIP, instructions)
+        #     in_interface_impl.IN_RSA_DCA(serverIP, instructions)
 
     # 处理完所有请求,将异常消息列表清空
     warning_message_queue.clear()

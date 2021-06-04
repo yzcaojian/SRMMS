@@ -12,11 +12,13 @@ Send_Instructions = 1
 
 class out_interface:
     # 资源状态信息接口  服务器->系统
-    def OUT_SS_SRMMS(self, ip_addr):
+    @classmethod
+    def OUT_SS_SRMMS(cls, ip_addr):
         pass
 
     # 调度指令分配接口  系统->服务器
-    def OUT_SRMMS_SS(self, ip_addr, instructions):
+    @classmethod
+    def OUT_SRMMS_SS(cls, ip_addr, instructions):
         pass
 
 
@@ -24,10 +26,11 @@ class out_interface_impl(out_interface):
     # 端口号
     port = 8888
 
-    def OUT_SS_SRMMS(self, ip):
+    @classmethod
+    def OUT_SS_SRMMS(cls, ip):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
-        ip_addr = (ip, self.port)
+        ip_addr = (ip, cls.port)
         client.connect(ip_addr)
 
         # 构建json格式
@@ -44,10 +47,11 @@ class out_interface_impl(out_interface):
         # 将接收到的数据返回
         return data
 
-    def OUT_SRMMS_SS(self, ip, instructions):
+    @classmethod
+    def OUT_SRMMS_SS(cls, ip, instructions):
         # 连接服务器 ip_addr=("localhost",8888)
         client = socket.socket()
-        ip_addr = (ip, self.port)
+        ip_addr = (ip, cls.port)
         client.connect(ip_addr)
         # 构建json格式
         file_msg = {"action": Send_Instructions, "instructions": instructions}

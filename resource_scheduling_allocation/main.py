@@ -32,7 +32,7 @@ mean_and_std = []
 save_model = ['../IO_load_prediction_model_training/model/Financial4/', 'Model']
 
 while True:
-    detailed_info_list = in_interface_impl().getData_disk_io()
+    detailed_info_list = in_interface_impl.getData_disk_io()
     for ip, detailed_info in detailed_info_list:
         for disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io in detailed_info:
             # 将信息添加到详细信息字典中
@@ -63,7 +63,7 @@ while True:
                        average_io_load, warning_message_queue)
 
     # 检查是否有硬盘故障预警
-    hard_disk_failure_prediction_list = in_interface_impl().getData_hard_disk_failure_prediction()
+    hard_disk_failure_prediction_list = in_interface_impl.getData_hard_disk_failure_prediction()
     hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
     # 判断服务器失联告警
     sever_disconnection_warning(io_load_input_queue, warning_message_queue)
