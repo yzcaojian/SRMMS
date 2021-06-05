@@ -902,9 +902,11 @@ class MultDisksInfoTabWidget(QTabWidget):
                 break
         self.selected_disk_id[self.currentIndex() - 1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
 
+    # 查看历史I/O负载信息
     def show_history_io_line(self, level):
         self.server_history_io = HistoryIO(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1], level)
         self.server_history_io.show()
 
+    # 当出现对硬盘故障预警的情况时弹窗告警
     def show_disk_error_warning(self):
         QMessageBox.warning(self, "警告", "服务器<‘192.168.1.1’, server1>上机械硬盘<hdd-01>预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)

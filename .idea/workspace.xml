@@ -107,7 +107,8 @@
       <workItem from="1622596405554" duration="8233000" />
       <workItem from="1622625727363" duration="6367000" />
       <workItem from="1622683434769" duration="21076000" />
-      <workItem from="1622769636224" duration="23702000" />
+      <workItem from="1622769636224" duration="25944000" />
+      <workItem from="1622867545446" duration="1102000" />
     </task>
     <task id="LOCAL-00001" summary="update a new directory disk_failure_prediction">
       <created>1618995924490</created>
@@ -431,7 +432,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622796325435</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="添加二级健康度和无法预测的显示方式">
+      <created>1622804818062</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1622804818062</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -466,7 +474,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="修改timeSlot变量名错误" />
     <MESSAGE value="更改监控到异常时系统行为是生成异常对象" />
     <MESSAGE value="增加异常类定义" />
     <MESSAGE value="增加根据服务器名称查找IP地址的函数" />
@@ -491,13 +498,14 @@
     <MESSAGE value="更改硬盘故障预测接口函数" />
     <MESSAGE value="更改前端健康度获取方式" />
     <MESSAGE value="前端tab页获取I/O实时和预测数据" />
-    <option name="LAST_COMMIT_MESSAGE" value="前端tab页获取I/O实时和预测数据" />
+    <MESSAGE value="添加二级健康度和无法预测的显示方式" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加二级健康度和无法预测的显示方式" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1622796323724">
+    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1622804815939">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622796323724" />
+    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622804815939" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
     <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -524,15 +532,15 @@
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622450645208" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622796512403">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622809746642">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622796512403" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622809746642" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
-    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622769665000">
+    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622867964825">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622769665000" />
+    <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622867964825" />
     <state x="449" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622423180756" />
     <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1622123247329">
       <screen x="-1920" y="0" width="1920" height="1040" />
