@@ -1,12 +1,19 @@
 import sys
 import time
 
-from PyQt5.QtCore import Qt, QSize, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
+    QMessageBox
 
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
+
+from interface.in_interface import in_interface_impl
+from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute, online_model_training
+from resource_scheduling_allocation.RSA_2 import io_load_prediction
+from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, filtering_io_data, hard_disk_high_io_warning, hard_disk_failutre_warning
+from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
 
 """
 -*- coding: utf-8 -*- 
@@ -31,7 +38,7 @@ class MainWidget(QWidget):
         self.setWindowIcon(QIcon('./png/software.png'))  # 设置窗体图标
         self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
 
-        self.initUI("192.168.1.1")
+        self.initUI()
         # 全局布局
         # whole_layout = QVBoxLayout()
         self.whole_layout.setContentsMargins(0, 0, 0, 10)
@@ -40,9 +47,7 @@ class MainWidget(QWidget):
         self.setLayout(self.whole_layout)
         self.show()
 
-    def initUI(self, server_ip):
-        print(server_ip)
-
+    def initUI(self):
         # 标题
         title_widget = QWidget()
         title_layout = QHBoxLayout()
@@ -78,9 +83,9 @@ class MainWidget(QWidget):
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.whole_layout.addWidget(self.mult_disks_info_widget)
 
-    # # 当出现对硬盘故障预警的情况时弹窗告警
-    # def show_disk_error_warning(self):
-    #     QMessageBox.warning(self, "警告", "服务器<‘192.168.1.1’, server1>上机械硬盘<hdd-01>预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
+    # 当出现对硬盘故障预警的情况时弹窗告警
+    def show_disk_error_warning(self, server_ip, disk_id):
+        QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
 
 
 class MainWindow(QMainWindow):
@@ -92,4 +97,68 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main = MainWindow()
-    sys.exit(app.exec_())
+
+    # I/O负载输入队列
+    io_load_input_queue = {}
+    io_load_input_queue_predict = {}  # 预测用
+    io_load_input_queue_train = {}  # 训练用
+    # I/O负载输出队列
+    io_load_output_queue = {}
+    # 高负载队列
+    high_io_load_queue = {}
+    # 记录平均I/O负载  average_io_load[ip][diskID]:[count, averageIO]
+    average_io_load = {}
+    # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
+    warning_message_queue = []
+    # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
+    disk_detailed_info = {}
+    # 存放IO的平均值和标准差
+    mean_and_std = []
+
+    save_model = ['../IO_load_prediction_model_training/model/Financial4/', 'Model']
+
+    while True:
+        detailed_info_list = in_interface_impl.getData_disk_io()
+        for ip, detailed_info in detailed_info_list:
+            for disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io in detailed_info:
+                # 将信息添加到详细信息字典中
+                if ip not in disk_detailed_info:
+                    disk_detailed_info[ip] = {}
+                if disk_id not in disk_detailed_info[ip]:
+                    disk_detailed_info[ip][disk_id] = []
+                disk_detailed_info[ip][disk_id].append([type, state, total_capacity, occupied_capacity, occupied_rate])
+                now_time = time.time()
+                # I/O负载进入输入队列之前先检测是否高负载
+                filtering_io_data(ip, [disk_id, disk_io, now_time], average_io_load, high_io_load_queue)
+                # 将I/O负载信息添加到输入队列中
+                if ip not in io_load_input_queue:
+                    io_load_input_queue[ip] = {}
+                if disk_id not in io_load_input_queue[ip]:
+                    io_load_input_queue[ip][disk_id] = []
+                io_load_input_queue[ip][disk_id].append([disk_io, now_time])
+
+        # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
+        io_second_to_io_minute(io_load_input_queue, io_load_input_queue_predict)
+        io_second_to_io_minute(io_load_input_queue, io_load_input_queue_train)
+
+        # 线上训练
+        online_model_training(io_load_input_queue_train, mean_and_std, save_model)
+
+        # IO负载预测
+        io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
+                           average_io_load, warning_message_queue)
+
+        # 检查是否有硬盘故障预警
+        hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
+        failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
+        for failure in failure_list:
+            main.main_ui.show_disk_error_warning(failure[0], failure[1])
+        # 判断服务器失联告警
+        sever_disconnection_warning(io_load_input_queue, warning_message_queue)
+        # 判断硬盘持续高I/O需求
+        hard_disk_high_io_warning(high_io_load_queue, warning_message_queue)
+
+        # 处理异常消息
+        resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
+
+        sys.exit(app.exec_())  # 表示界面退出

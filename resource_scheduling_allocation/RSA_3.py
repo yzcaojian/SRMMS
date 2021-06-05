@@ -95,6 +95,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
 
 # 硬盘故障预警
 def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_queue):
+    failure_list = []  # 包括故障预警的server_ip和disk_id的列表
     # 如果列表不为空
     for hard_disk_failure_prediction_list in hard_disk_failure_prediction:
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
@@ -111,3 +112,6 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
         else:
             in_interface_impl.exception_list[0].append(ip, 1)
             in_interface_impl.exception_list[1].append(disk_id, 1)
+        # 预警前端弹窗
+        failure_list.append([ip, disk_id])
+    return failure_list
