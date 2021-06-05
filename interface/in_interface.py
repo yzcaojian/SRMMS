@@ -97,6 +97,8 @@ class in_interface_impl(in_interface):
     health_degree_dict = {}
     # 存放硬盘故障预测处理信息
     hard_disk_failure_prediction_list = []
+    # 关于图标闪烁的两种需求下的预警方式
+    exception_list = []
     # # 存放I/O负载预测信息
     # io_load_prediction_list = []
     # # 存放分配指令日志信息
@@ -587,6 +589,10 @@ class in_interface_impl(in_interface):
         list1 = cls.hard_disk_failure_prediction_list
         cls.hard_disk_failure_prediction_list.clear()
         return list1
+
+    @classmethod
+    def get_exception_list(cls):
+        return cls.exception_list
 
     # @classmethod
     # def IN_LP_RSD(cls, ip, disk_id, io_pred):

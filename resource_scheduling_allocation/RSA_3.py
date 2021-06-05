@@ -93,9 +93,10 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                 in_interface_impl.IN_RSA_RSD(warning)
 
 
-def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue):
+# 硬盘故障预警
+def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_queue):
     # 如果列表不为空
-    if hard_disk_failure_prediction_list:
+    for hard_disk_failure_prediction_list in hard_disk_failure_prediction:
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
         health_degree, timestamp = failure_info
         errorID = 1
@@ -103,3 +104,10 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_messag
         warning_message_queue.append(warning)
         # 硬盘健康度下降告警信息 to资源状态显示模块
         in_interface_impl.IN_RSA_RSD(warning)
+        # 预警前端图标闪烁
+        if not in_interface_impl.exception_list:
+            in_interface_impl.exception_list.append([[ip, 1]])
+            in_interface_impl.exception_list.append([[disk_id, 1]])
+        else:
+            in_interface_impl.exception_list[0].append(ip, 1)
+            in_interface_impl.exception_list[1].append(disk_id, 1)

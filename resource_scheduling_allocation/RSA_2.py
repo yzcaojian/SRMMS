@@ -101,6 +101,13 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                         warning_message_queue.append(warning)
                         # 服务器失联告警信息 to资源状态显示模块
                         in_interface_impl.IN_RSA_RSD(warning)
+                        # 预警前端图标闪烁
+                        if not in_interface_impl.exception_list:
+                            in_interface_impl.exception_list.append([[ip, 1]])
+                            in_interface_impl.exception_list.append([[disk_id, 1]])
+                        else:
+                            in_interface_impl.exception_list[0].append(ip, 1)
+                            in_interface_impl.exception_list[1].append(disk_id, 1)
 
 
 # if __name__ == "__main__":

@@ -78,6 +78,10 @@ class MainWidget(QWidget):
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.whole_layout.addWidget(self.mult_disks_info_widget)
 
+    # # 当出现对硬盘故障预警的情况时弹窗告警
+    # def show_disk_error_warning(self):
+    #     QMessageBox.warning(self, "警告", "服务器<‘192.168.1.1’, server1>上机械硬盘<hdd-01>预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
