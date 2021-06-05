@@ -63,7 +63,7 @@ while True:
                        average_io_load, warning_message_queue)
 
     # 检查是否有硬盘故障预警
-    hard_disk_failure_prediction_list = in_interface_impl.getData_hard_disk_failure_prediction()
+    hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
     hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
     # 判断服务器失联告警
     sever_disconnection_warning(io_load_input_queue, warning_message_queue)

@@ -72,6 +72,7 @@ class in_interface_impl(in_interface):
     two_disk_info_dict = {}  # 两类硬盘总体信息
     two_disk_io_dict = {}  # 两类硬盘实时I/O负载信息
     two_disk_io_dict_past = {}  # 两类硬盘历史I/O负载信息
+
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
 
@@ -96,8 +97,8 @@ class in_interface_impl(in_interface):
     health_degree_dict = {}
     # 存放硬盘故障预测处理信息
     hard_disk_failure_prediction_list = []
-    # 存放I/O负载预测信息
-    io_load_prediction_list = []
+    # # 存放I/O负载预测信息
+    # io_load_prediction_list = []
     # # 存放分配指令日志信息
     # allocation_instruction_log_list = []
     # # 存放硬盘故障预警信息
@@ -560,7 +561,11 @@ class in_interface_impl(in_interface):
         # disk = cls.get_smart_info(ip, disk_id)
         health_degree = predict_disk_health_state(disk)
         if ip not in cls.health_degree_dict:
-            cls.health_degree_dict[ip] = {}
+            cls.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
+        if disk[0] in cls.health_degree_dict[ip]:
+            if cls.health_degree_dict[ip][disk[0]] > health_degree: #健康度下降
+                timestamp = time.strptime("%H:%M", time.localtime(time.time()))
+                cls.hard_disk_failure_prediction_list.append([ip, disk[0], [health_degree, timestamp]])
         cls.health_degree_dict[ip][disk[0]] = health_degree  # disk_id和健康度
 
     @classmethod
@@ -578,26 +583,26 @@ class in_interface_impl(in_interface):
         cls.hard_disk_failure_prediction_list.append([ip, disk_id, failure_info])
 
     @classmethod
-    def getData_hard_disk_failure_prediction(cls):  # 获取硬盘故障预测处理信息
+    def get_hard_disk_failure_prediction(cls):  # 获取硬盘故障预警信息
         list1 = cls.hard_disk_failure_prediction_list
-        cls.hard_disk_failure_prediction_list = []
+        cls.hard_disk_failure_prediction_list.clear()
         return list1
 
-    @classmethod
-    def IN_LP_RSD(cls, ip, disk_id, io_pred):
-        # 将I/O负载预测信息添加到列表中
-        cls.io_load_prediction_list.append([ip, disk_id, io_pred])
-
-    @classmethod
-    def getData_io_load_prediction(cls):  # 获取I/O负载预测信息
-        list1 = cls.io_load_prediction_list
-        cls.io_load_prediction_list = []
-        return list1
-
-    @classmethod
-    def IN_RSA_RSD(cls, warning):
-        # 将告警信息添加到列表中
-        warning_list.add_new_warning(warning)
+    # @classmethod
+    # def IN_LP_RSD(cls, ip, disk_id, io_pred):
+    #     # 将I/O负载预测信息添加到列表中
+    #     cls.io_load_prediction_list.append([ip, disk_id, io_pred])
+    #
+    # @classmethod
+    # def getData_io_load_prediction(cls):  # 获取I/O负载预测信息
+    #     list1 = cls.io_load_prediction_list
+    #     cls.io_load_prediction_list = []
+    #     return list1
+    #
+    # @classmethod
+    # def IN_RSA_RSD(cls, warning):
+    #     # 将告警信息添加到列表中
+    #     warning_list.add_new_warning(warning)
         # cls.allocation_instruction_log_list.append([ip, disk_id, instructions])
 
     # @classmethod
