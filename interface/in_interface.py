@@ -18,6 +18,66 @@ class in_interface:
     def IN_DCA_RSA(cls, ip, detailed_info):
         pass
 
+    # 通过ip、disk_id来显示单个硬盘的实时IO信息
+    @classmethod
+    def get_io_load_input_queue_display(cls, ip, id):
+        pass
+
+    # 通过ip、disk_id以及起止时间来显示硬盘的历史IO信息
+    @classmethod
+    def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
+        pass
+
+    # 通过ip、disk_id来显示单个硬盘的实时IO预测信息
+    @classmethod
+    def get_io_load_output_queue_display(cls, ip, id):
+        pass
+
+    # 通过ip、disk_id以及起止时间来显示硬盘的历史IO预测信息
+    @classmethod
+    def get_io_load_output_queue_display_past(cls, ip, disk_id, time_begin, time_end):
+        pass
+
+    # 获得IO负载输入队列 for predict
+    @classmethod
+    def get_io_load_input_queue_predict(cls):
+        pass
+
+    # 获得IO负载输入队列 for train
+    @classmethod
+    def get_io_load_input_queue_train(cls):
+        pass
+
+    # 获得IO负载输出队列 给前端显示
+    @classmethod
+    def get_io_load_output_queue(cls):
+        pass
+
+    # 获得IO高负载队列
+    @classmethod
+    def get_high_io_load_queue(cls):
+        pass
+
+    # 获得平均IO负载队列(判断是否高IO负载)
+    @classmethod
+    def get_average_io_load(cls):
+        pass
+
+    # 获得训练集的平均数和标准差
+    @classmethod
+    def get_mean_and_std(cls):
+        pass
+
+    # 获得硬盘详细信息字典 格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
+    @classmethod
+    def get_disk_detailed_info(cls):
+        pass
+
+    # 获得告警消息队列
+    @classmethod
+    def get_warning_message_queue(cls):
+        pass
+
     # 调度分配指令接口  资源调度分配模块->数据通信解析模块
     @classmethod
     def IN_RSA_DCA(cls, ip, instructions):
@@ -28,6 +88,56 @@ class in_interface:
     def IN_DCA_RSD(cls, ip, server_info, detailed_info, two_disk_info=None):
         pass
 
+    # 获得RAID架构下总体IO信息
+    @classmethod
+    def get_RAID_overall_io_info(cls, ip):
+        pass
+
+    # 获得RAID架构下总体IO信息(历史)
+    @classmethod
+    def get_RAID_overall_io_info_past(cls, ip, time_begin, time_end):
+        pass
+
+    # 获得服务器的总体信息
+    @classmethod
+    def get_server_overall_info(cls, tag):
+        pass
+
+    # 根据ip,获得两类硬盘的总体信息
+    @classmethod
+    def get_two_disk_info(cls, ip):
+        pass
+
+    # 根据ip,获得两类硬盘的IO信息
+    @classmethod
+    def get_two_disk_io_info(cls, ip):
+        pass
+
+    # 根据ip,获得hdd硬盘的IO信息
+    @classmethod
+    def get_hdd_disk_io_info(cls, ip):
+        pass
+
+    # 根据ip以及起止时间,获得hdd硬盘的历史IO信息
+    @classmethod
+    def get_hdd_disk_io_info_past(cls, ip, time_begin, time_end):
+        pass
+
+    # 根据ip,获得ssd硬盘的IO信息
+    @classmethod
+    def get_ssd_disk_io_info(cls, ip):
+        pass
+
+    # 根据ip以及起止时间,获得ssd硬盘的历史IO信息
+    @classmethod
+    def get_ssd_disk_io_info_past(cls, ip, time_begin, time_end):
+        pass
+
+    # 根据ip获得服务器的详细信息
+    @classmethod
+    def get_server_detailed_info(cls, ip, tag):
+        pass
+
     # SMART信息接口  数据通信解析模块->硬盘故障预测模块
     @classmethod
     def IN_DCA_HDFP(cls, ip, smart_data):
@@ -35,7 +145,17 @@ class in_interface:
 
     # 硬盘健康度预测接口  硬盘故障预测模块->资源状态显示模块
     @classmethod
-    def IN_HDFP_RSD(cls, ip, disk_id):
+    def IN_HDFP_RSD(cls, ip, disk):
+        pass
+
+    # 根据ip、disk_id来获得该硬盘的健康度信息
+    @classmethod
+    def get_health_degree(cls, server_ip, disk_id):
+        pass
+
+    # 硬盘健康度下降告警信息 to资源状态显示模块
+    @classmethod
+    def IN_RSA_RSD(cls, warning):
         pass
 
     # 硬盘故障预测处理接口  硬盘故障预测模块->资源调度分配模块
@@ -43,24 +163,14 @@ class in_interface:
     def IN_HDFP_RSA(cls, ip, disk_id, failure_info):
         pass
 
-    # I/O负载预测接口  资源调度分配模块->资源状态显示模块
+    # 获得硬盘故障预警信息
     @classmethod
-    def IN_LP_RSD(cls, ip, disk_id, io_pred):
+    def get_hard_disk_failure_prediction(cls):
         pass
 
-    # 分配指令日志信息接口  资源调度分配模块->资源状态显示模块
+    # 关于图标闪烁的两种需求下的预警方式
     @classmethod
-    def IN_RSA_RSD(cls, warning):
-        pass
-
-    # 硬盘故障预警接口  硬盘故障预测模块->资源状态显示模块
-    @classmethod
-    def IN_HDW(cls, ip, disk_id, disk_warning):
-        pass
-
-    # I/O高负载预警接口  资源调度分配模块->资源状态显示模块
-    @classmethod
-    def IN_IOW(cls, ip, disk_id, io_warning):
+    def get_exception_list(cls):
         pass
 
 
@@ -77,7 +187,6 @@ class in_interface_impl(in_interface):
     detailed_info_dict = {}
 
     # 存放详细信息 供资源调度分配模块使用
-    detailed_info_list_RSA = []
     io_load_input_queue = {}  # 输入队列 单位为秒
     io_load_input_queue_display = {}  # 前端绘图用
     io_load_input_queue_display_past = {}  # 前端绘图用  历史信息
@@ -99,14 +208,6 @@ class in_interface_impl(in_interface):
     hard_disk_failure_prediction_list = []
     # 关于图标闪烁的两种需求下的预警方式
     exception_list = []
-    # # 存放I/O负载预测信息
-    # io_load_prediction_list = []
-    # # 存放分配指令日志信息
-    # allocation_instruction_log_list = []
-    # # 存放硬盘故障预警信息
-    # hard_disk_failure_warning_list = []
-    # # 存放I/O高负载预警信息
-    # io_load_warning_list = []
     
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info):
@@ -293,22 +394,10 @@ class in_interface_impl(in_interface):
         return cls.warning_message_queue
 
     @classmethod
-    def getData_disk_io(cls):  # 获取服务器硬盘和I/O负载信息(详细信息)
-        list1 = cls.detailed_info_list_RSA
-        cls.detailed_info_list_RSA = []
-        return list1
-
-    @classmethod
     def IN_RSA_DCA(cls, ip, instructions):
         from data_communication_analysis.DAC_1 import send_instructions
         # 调用数据通信解析模块的函数发送指令
         send_instructions(ip, instructions)
-
-    # @classmethod
-    # def getData_instructions(cls):
-    #     list1 = cls.instructions_list
-    #     cls.instructions_list = []
-    #     return list1
 
     # server_info = [totalCapacity, occupiedCapacity, occupiedRate]
     # or server_info = [totalCapacity, occupiedCapacity, occupiedRate, totalIOPS]
@@ -317,7 +406,6 @@ class in_interface_impl(in_interface):
     # two_disk_info = [occupiedRate, hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity,
     # hddOccupiedCapacity, ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate,
     # ssdErrorRate, hddIOPS, ssdIOPS]
-    
     @classmethod
     def IN_DCA_RSD(cls, ip, server_info, detailed_info, two_disk_info=None):
         # 将总体信息和详细信息添加到列表中
@@ -518,18 +606,6 @@ class in_interface_impl(in_interface):
             for volume in detailed_info:
                 server_detailed_info.append(LogicVolumeInfo(volume))
         return server_detailed_info
-
-    # @classmethod
-    # def getData_resource_info(cls, ip):  # 获取资源信息(总体信息和详细信息)
-    #
-    #     server_info = cls.server_info_dict[ip]
-    #     detailed_info = cls.detailed_info_dict[ip]
-    #     if ip not in cls.two_info_dict:
-    #         two_disk_info = None
-    #     else:
-    #         two_disk_info = cls.two_info_dict[ip]
-    #
-    #     return server_info, detailed_info, two_disk_info
     
     @classmethod
     def IN_DCA_HDFP(cls, ip, smart_data):
@@ -549,14 +625,6 @@ class in_interface_impl(in_interface):
                 # 每当有新的SMART数据添加进列表时，做一次健康度预测
                 cls.IN_HDFP_RSD(ip, old)
 
-    # @classmethod
-    # def get_smart_info(cls, ip, disk_id):  # 获取smart信息
-    #     for disk in cls.smart_data_dict[ip]:
-    #         # disk格式为[[diskID, model, smartID, smartData],[...]...]
-    #         if disk_id == disk[0] and len(disk[3]) > 19:
-    #             return disk
-    #     return []
-
     @classmethod
     def IN_HDFP_RSD(cls, ip, disk):
         # 将健康度信息添加到列表中
@@ -565,7 +633,7 @@ class in_interface_impl(in_interface):
         if ip not in cls.health_degree_dict:
             cls.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
         if disk[0] in cls.health_degree_dict[ip]:
-            if cls.health_degree_dict[ip][disk[0]] > health_degree: #健康度下降
+            if cls.health_degree_dict[ip][disk[0]] > health_degree:  # 健康度下降
                 timestamp = time.strptime("%H:%M", time.localtime(time.time()))
                 cls.hard_disk_failure_prediction_list.append([ip, disk[0], [health_degree, timestamp]])
         cls.health_degree_dict[ip][disk[0]] = health_degree  # disk_id和健康度
@@ -580,6 +648,10 @@ class in_interface_impl(in_interface):
         return 0  # 表示没有对应型号的预测模型
 
     @classmethod
+    def IN_RSA_RSD(cls, warning):
+        warning_list.add_new_warning(warning)
+
+    @classmethod
     def IN_HDFP_RSA(cls, ip, disk_id, failure_info):
         # 将硬盘故障预测处理信息添加到列表中
         cls.hard_disk_failure_prediction_list.append([ip, disk_id, failure_info])
@@ -587,62 +659,17 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_hard_disk_failure_prediction(cls):  # 获取硬盘故障预警信息
         list1 = cls.hard_disk_failure_prediction_list
-        cls.hard_disk_failure_prediction_list.clear()
+        cls.hard_disk_failure_prediction_list = []
         return list1
 
     @classmethod
     def get_exception_list(cls):
         return cls.exception_list
 
-    # @classmethod
-    # def IN_LP_RSD(cls, ip, disk_id, io_pred):
-    #     # 将I/O负载预测信息添加到列表中
-    #     cls.io_load_prediction_list.append([ip, disk_id, io_pred])
-    #
-    # @classmethod
-    # def getData_io_load_prediction(cls):  # 获取I/O负载预测信息
-    #     list1 = cls.io_load_prediction_list
-    #     cls.io_load_prediction_list = []
-    #     return list1
-    #
-    # @classmethod
-    # def IN_RSA_RSD(cls, warning):
-    #     # 将告警信息添加到列表中
-    #     warning_list.add_new_warning(warning)
-        # cls.allocation_instruction_log_list.append([ip, disk_id, instructions])
 
-    # @classmethod
-    # def getData_allocation_instruction_log(cls):  # 获取分配指令日志信息
-    #     list1 = cls.allocation_instruction_log_list
-    #     cls.allocation_instruction_log_list = []
-    #     return list1
-    #
-    # @classmethod
-    # def IN_HDW(cls, ip, disk_id, disk_warning):
-    #     # 将硬盘故障预警信息添加到列表中
-    #     cls.hard_disk_failure_warning_list.append([ip, disk_id, disk_warning])
-    #
-    # @classmethod
-    # def getData_hard_disk_failure_warning(cls):  # 获取硬盘故障预警信息
-    #     list1 = cls.hard_disk_failure_warning_list
-    #     cls.hard_disk_failure_warning_list = []
-    #     return list1
-    #
-    # @classmethod
-    # def IN_IOW(cls, ip, disk_id, io_warning):
-    #     # 将I/O高负载预警信息添加到列表中
-    #     cls.io_load_warning_list.append([ip, disk_id, io_warning])
-    #
-    # @classmethod
-    # def getData_io_load_warning(cls):  # 获取I/O高负载预警信息
-    #     list1 = cls.io_load_warning_list
-    #     cls.io_load_warning_list = []
-    #     return list1
-
-# if __name__ == "__main__":
-#     begin = time.strptime("20:10", "%H:%M")
-#     begin = (2000, 1) + begin[2:]
-#     begin = time.mktime(begin)
-#     # end = time.mktime(time.strptime("20:20", "%H:%M"))
-#     print(begin)
-
+if __name__ == "__main__":
+    list1 = [1, 2, 3, 4]
+    list2 = list1
+    print(list2)
+    list1.clear()
+    print(list2)

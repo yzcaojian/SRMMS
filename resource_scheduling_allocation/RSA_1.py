@@ -70,7 +70,7 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                 if len(io_load_input_queue[ip][disk_id]) > 500:  # 数量大于500时，更改mean和std
                     mean, std = np.mean(data_list, axis=0).tolist(), np.std(data_list, axis=0).tolist()
                     if mean_and_std:  # 不为空,清空列表
-                        mean_and_std = mean_and_std[2:]
+                        mean_and_std.clear()
                     mean_and_std.append(mean)
                     mean_and_std.append(std)
                 elif mean_and_std:
@@ -140,30 +140,30 @@ class OnlineModelTrainingThread(threading.Thread):
         print("退出线程:")
 
 
-if __name__ == "__main__":
-    f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
-    df = pd.read_csv(f)  # 读入数据
-    data = df.values
-    data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
-    data = data.reshape(len(data), 1)
-    newdata = data
-    for i in range(2, len(data) - 2):
-        for j in range(0, 1):
-            newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
-    data = newdata
-    data_list = data[:int(len(data) * 0.9)]
-    io_load_input_queue = {"123.123.1.1": {"czw": []}}
-
-    io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
-    Mean_and_std = [[13304.76842105], [4681.6388205]]
-    for i in range(1):
-        tf.reset_default_graph()
-        thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
-                                            ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
-        thread1.start()
-        thread1.join()
-        # online_model_training(io_load_input_queue, Mean_and_std,
-        #                       ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+# if __name__ == "__main__":
+#     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
+#     df = pd.read_csv(f)  # 读入数据
+#     data = df.values
+#     data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
+#     data = data.reshape(len(data), 1)
+#     newdata = data
+#     for i in range(2, len(data) - 2):
+#         for j in range(0, 1):
+#             newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
+#     data = newdata
+#     data_list = data[:int(len(data) * 0.9)]
+#     io_load_input_queue = {"123.123.1.1": {"czw": []}}
+#
+#     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
+#     Mean_and_std = [[13304.76842105], [4681.6388205]]
+#     for i in range(1):
+#         tf.reset_default_graph()
+#         thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
+#                                             ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+#         thread1.start()
+#         thread1.join()
+#         # online_model_training(io_load_input_queue, Mean_and_std,
+#         #                       ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
 
 
 
