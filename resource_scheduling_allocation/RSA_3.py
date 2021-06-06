@@ -20,6 +20,8 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
         disk_io_data = io_load_queue[ip]
         # 取出输入队列中最新入队的元素
         for diskID in disk_io_data:
+            if not disk_io_data[diskID]:  # 如果该列表为空 说明没有失联(刚刚进行了删除操作)
+                break
             io_data = disk_io_data[diskID][-1]
             # 获得插入该数据的时间戳  每个时间戳都以自从1970年1月1日午夜（历元）经过了多长时间来表示,单位为秒
             time_stamp = io_data[-1]
