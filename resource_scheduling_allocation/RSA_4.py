@@ -27,6 +27,9 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         # 发送分配指令 to数据通信解析模块
         in_interface_impl.IN_RSA_DCA(serverIP, scheduling.suggestion)
 
+        # 处理完所有请求,将异常消息列表清空
+        warning_message_queue.clear()
+
         # # 硬盘故障预警信息
         # if errorID == 1:
         #     # past_minutes = (now_time - timeslot) / 60
@@ -69,5 +72,3 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         #     # 发送分配指令 to数据通信解析模块
         #     in_interface_impl.IN_RSA_DCA(serverIP, instructions)
 
-    # 处理完所有请求,将异常消息列表清空
-    warning_message_queue.clear()

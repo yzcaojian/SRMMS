@@ -99,48 +99,25 @@ if __name__ == '__main__':
     main = MainWindow()
 
     # I/O负载输入队列
-    io_load_input_queue = {}
-    io_load_input_queue_predict = {}  # 预测用
-    io_load_input_queue_train = {}  # 训练用
+    io_load_input_queue = in_interface_impl.get_io_load_input_queue()
+    io_load_input_queue_predict = in_interface_impl.get_io_load_input_queue_predict()  # 预测用
+    io_load_input_queue_train = in_interface_impl.get_io_load_input_queue_train()  # 训练用
     # I/O负载输出队列
-    io_load_output_queue = {}
+    io_load_output_queue = in_interface_impl.get_io_load_output_queue()
     # 高负载队列
-    high_io_load_queue = {}
+    high_io_load_queue = in_interface_impl.get_high_io_load_queue()
     # 记录平均I/O负载  average_io_load[ip][diskID]:[count, averageIO]
-    average_io_load = {}
+    average_io_load = in_interface_impl.get_average_io_load()
     # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
-    warning_message_queue = []
+    warning_message_queue = in_interface_impl.get_warning_message_queue()
     # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
-    disk_detailed_info = {}
+    disk_detailed_info = in_interface_impl.get_disk_detailed_info()
     # 存放IO的平均值和标准差
-    mean_and_std = []
+    mean_and_std = in_interface_impl.get_mean_and_std()
 
     save_model = ['../IO_load_prediction_model_training/model/Financial4/', 'Model']
 
     while True:
-        detailed_info_list = in_interface_impl.getData_disk_io()
-        for ip, detailed_info in detailed_info_list:
-            for disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io in detailed_info:
-                # 将信息添加到详细信息字典中
-                if ip not in disk_detailed_info:
-                    disk_detailed_info[ip] = {}
-                if disk_id not in disk_detailed_info[ip]:
-                    disk_detailed_info[ip][disk_id] = []
-                disk_detailed_info[ip][disk_id].append([type, state, total_capacity, occupied_capacity, occupied_rate])
-                now_time = time.time()
-                # I/O负载进入输入队列之前先检测是否高负载
-                filtering_io_data(ip, [disk_id, disk_io, now_time], average_io_load, high_io_load_queue)
-                # 将I/O负载信息添加到输入队列中
-                if ip not in io_load_input_queue:
-                    io_load_input_queue[ip] = {}
-                if disk_id not in io_load_input_queue[ip]:
-                    io_load_input_queue[ip][disk_id] = []
-                io_load_input_queue[ip][disk_id].append([disk_io, now_time])
-
-        # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
-        io_second_to_io_minute(io_load_input_queue, io_load_input_queue_predict)
-        io_second_to_io_minute(io_load_input_queue, io_load_input_queue_train)
-
         # 线上训练
         online_model_training(io_load_input_queue_train, mean_and_std, save_model)
 

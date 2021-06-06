@@ -38,6 +38,11 @@ class in_interface:
     def get_io_load_output_queue_display_past(cls, ip, disk_id, time_begin, time_end):
         pass
 
+    # 获得I/O负载队列 用于监控失联告警
+    @classmethod
+    def get_io_load_input_queue(cls):
+        pass
+
     # 获得IO负载输入队列 for predict
     @classmethod
     def get_io_load_input_queue_predict(cls):
@@ -360,6 +365,10 @@ class in_interface_impl(in_interface):
         time_list = arr[:, 1].tolist()
 
         return io_load_past_list, time_list
+
+    @classmethod
+    def get_io_load_input_queue(cls):
+        return cls.io_load_input_queue
 
     @classmethod
     def get_io_load_input_queue_predict(cls):
