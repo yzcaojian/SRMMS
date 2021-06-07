@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="" />
+    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning/model_predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning/model_predict.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,73 +66,7 @@
       <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\resource_status_display" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.RSA_2">
-    <configuration name="RSA_1" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SRMMS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/resource_scheduling_allocation" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/resource_scheduling_allocation/RSA_1.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="RSA_2" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SRMMS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/resource_scheduling_allocation" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SRMMS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IO_load_prediction_model_training" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IO_load_prediction_model_training/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.model_predict">
     <configuration name="model_predict (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SRMMS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,6 +81,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="model_predict (2)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SRMMS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning/model_predict.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -174,13 +133,57 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="model_predict_2 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SRMMS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="model_predict_2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SRMMS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning/model_predict_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.RSA_2" />
-        <item itemvalue="Python.main (1)" />
-        <item itemvalue="Python.RSA_1" />
-        <item itemvalue="Python.model_predict (1)" />
         <item itemvalue="Python.model_predict" />
+        <item itemvalue="Python.model_predict_2 (1)" />
+        <item itemvalue="Python.model_predict (1)" />
+        <item itemvalue="Python.model_predict_2" />
+        <item itemvalue="Python.model_predict (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -222,14 +225,7 @@
       <workItem from="1622867545446" duration="11768000" />
       <workItem from="1622975522178" duration="3705000" />
       <workItem from="1622980891091" duration="16834000" />
-      <workItem from="1623059135332" duration="19000" />
-    </task>
-    <task id="LOCAL-00009" summary="html更新">
-      <created>1621339122993</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1621339122993</updated>
+      <workItem from="1623059135332" duration="1441000" />
     </task>
     <task id="LOCAL-00010" summary="外部接口更改">
       <created>1621341109992</created>
@@ -567,7 +563,14 @@
       <option name="project" value="LOCAL" />
       <updated>1623055943505</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="前端bug">
+      <created>1623059278753</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1623059278753</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -602,7 +605,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="修改now_time时间格式" />
     <MESSAGE value="整合告警与日志信息实现" />
     <MESSAGE value="时间格式修改" />
     <MESSAGE value="清空语句改正" />
@@ -627,43 +629,44 @@
     <MESSAGE value="故障预警前端弹窗逻辑实现" />
     <MESSAGE value="修改服务器失联告警函数" />
     <MESSAGE value="小改动" />
-    <option name="LAST_COMMIT_MESSAGE" value="小改动" />
+    <MESSAGE value="前端bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="前端bug" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1622883211146">
+    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1623059277101">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622883211146" />
+    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059277101" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
-    <state width="1877" height="215" key="GridCell.Tab.0.bottom" timestamp="1622084698554">
+    <state width="935" height="332" key="GridCell.Tab.0.bottom" timestamp="1623069197082">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="215" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="935" height="332" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623069197082" />
     <state width="1493" height="141" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1877" height="215" key="GridCell.Tab.0.center" timestamp="1622084698554">
+    <state width="935" height="332" key="GridCell.Tab.0.center" timestamp="1623069197082">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="215" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="935" height="332" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623069197082" />
     <state width="1493" height="141" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1877" height="215" key="GridCell.Tab.0.left" timestamp="1622084698554">
+    <state width="935" height="332" key="GridCell.Tab.0.left" timestamp="1623069197082">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="215" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="935" height="332" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623069197082" />
     <state width="1493" height="141" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1877" height="215" key="GridCell.Tab.0.right" timestamp="1622084698554">
+    <state width="935" height="332" key="GridCell.Tab.0.right" timestamp="1623069197082">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
+    <state width="935" height="332" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623069197082" />
     <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
     <state x="-1551" y="139" key="SettingsEditor" timestamp="1623059153894">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059153894" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622883544033">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1623059336563">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622883544033" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059336563" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
     <state x="-1359" y="299" key="com.intellij.ide.util.TipDialog" timestamp="1622867964825">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -697,15 +700,18 @@
     <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622775683704" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SRMMS$RSA_3.coverage" NAME="RSA_3 Coverage Results" MODIFIED="1622982627411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
     <SUITE FILE_PATH="coverage/SRMMS$model_train.coverage" NAME="model_train Coverage Results" MODIFIED="1623048226899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$RSA_1.coverage" NAME="RSA_1 Coverage Results" MODIFIED="1623054715249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict__2_.coverage" NAME="model_predict (2) Coverage Results" MODIFIED="1623068808643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict_2.coverage" NAME="model_predict_2 Coverage Results" MODIFIED="1623068836695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HMS5C4040ALE640/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$RSA_2.coverage" NAME="RSA_2 Coverage Results" MODIFIED="1623055590555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict__1_.coverage" NAME="model_predict (1) Coverage Results" MODIFIED="1623068909880" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$RSA_3.coverage" NAME="RSA_3 Coverage Results" MODIFIED="1622982627411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
     <SUITE FILE_PATH="coverage/SRMMS$model_train_2.coverage" NAME="model_train_2 Coverage Results" MODIFIED="1623048252970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1623047955099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
-    <SUITE FILE_PATH="coverage/SRMMS$RSA_1.coverage" NAME="RSA_1 Coverage Results" MODIFIED="1623054715249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict_2__1_.coverage" NAME="model_predict_2 (1) Coverage Results" MODIFIED="1623068941484" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1623054863939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IO_load_prediction_model_training" />
     <SUITE FILE_PATH="coverage/SRMMS$mult_disks_info_GUI.coverage" NAME="mult_disks_info_GUI Coverage Results" MODIFIED="1623047321171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
-    <SUITE FILE_PATH="coverage/SRMMS$model_predict.coverage" NAME="model_predict Coverage Results" MODIFIED="1623049192692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning" />
-    <SUITE FILE_PATH="coverage/SRMMS$RSA_2.coverage" NAME="RSA_2 Coverage Results" MODIFIED="1623055590555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
-    <SUITE FILE_PATH="coverage/SRMMS$model_predict__1_.coverage" NAME="model_predict (1) Coverage Results" MODIFIED="1623053725193" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict.coverage" NAME="model_predict Coverage Results" MODIFIED="1623069197072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning" />
   </component>
 </project>
