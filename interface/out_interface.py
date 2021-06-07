@@ -28,23 +28,33 @@ class out_interface_impl(out_interface):
 
     @classmethod
     def OUT_SS_SRMMS(cls, ip):
-        # 连接服务器 ip_addr=("localhost",8888)
-        client = socket.socket()
-        ip_addr = (ip, cls.port)
-        client.connect(ip_addr)
+        # # 连接服务器 ip_addr=("localhost",8888)
+        # client = socket.socket()
+        # ip_addr = (ip, cls.port)
+        # client.connect(ip_addr)
+        #
+        # # 构建json格式
+        # file_msg = {"action": Request_Resources}
+        # # 发送json信息
+        # client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
+        #
+        # # 首先接收数据的长度
+        # length = int(client.recv(1024).decode())
+        # # 接收指定长度的数据 类型为string
+        # data = client.recv(length).decode()
+        #
+        # client.close()
+        # # 将接收到的数据返回
 
-        # 构建json格式
-        file_msg = {"action": Request_Resources}
-        # 发送json信息
-        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
+        # 读取文件模拟数据
+        filename = 'D:/test_SRMMS/' + ip + '_test_data.txt'
+        with open(filename, "r", encoding='utf-8') as f:
+            dataps = f.readlines()
 
-        # 首先接收数据的长度
-        length = int(client.recv(1024).decode())
-        # 接收指定长度的数据 类型为string
-        data = client.recv(length).decode()
-
-        client.close()
-        # 将接收到的数据返回
+            data = json.loads(dataps[0])
+            # print(type(data))
+            # print(data["overall_info"])
+        
         return data
 
     @classmethod
@@ -59,3 +69,11 @@ class out_interface_impl(out_interface):
         client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
         client.close()
 
+
+# with open('D:/test_SRMMS/192.168.225.1_test_data.txt', "r", encoding='utf-8') as f:
+#     dataps = f.readlines()
+#
+#     print(dataps[0])
+#     data = json.loads(dataps[0])
+#     print(type(data))
+#     print(data["overall_info"])

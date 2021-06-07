@@ -508,8 +508,10 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_two_disk_info(cls, ip):
+        if ip == "": return []
         two_disk_info = cls.two_disk_info_dict[ip]
 
+        # return [] if two_disk_info == [] else TwoDiskInfo(two_disk_info)
         return TwoDiskInfo(two_disk_info)
 
     @classmethod
@@ -605,6 +607,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_server_detailed_info(cls, ip, tag):
+        if ip == "": return []
         # 获取server_ip对应的服务器详细信息
         detailed_info = cls.detailed_info_dict[ip]
         server_detailed_info = []
