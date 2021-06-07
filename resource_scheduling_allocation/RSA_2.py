@@ -12,7 +12,7 @@ from IO_load_prediction_model_training.offline_model_training import lstm
 from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.log_exception_with_suggestions import Warning
-
+import matplotlib.pyplot as plt
 
 # I/O负载预测
 def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load, warning_message_queue):
@@ -80,8 +80,8 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     # 将浮点数类型的时间戳转化为时间元组，并按照X时X分的格式转化为字符串
                     now_time = time.time()
                     local_time = time.strftime("%H:%M", time.localtime(now_time))
-                    now_time = time.strftime("%Y年%m月%d日%H:%M", time.localtime(now_time))
-
+                    now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月',
+                                                                                                       d='日')
                     # 将预测值添加到输出队列中
                     if ip not in io_load_output_queue:
                         io_load_output_queue[ip] = {}
@@ -130,7 +130,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 #     while(len(io_load_input_queue["123.123.1.1"]["czw"]) > 19):
 #         tf.reset_default_graph()
 #         io_load_prediction(io_load_input_queue, io_load_output_queue, [],
-#                            '../IO_load_prediction_model_training/model/Financial3/')
+#                            '../IO_load_prediction_model_training/model/Financial2/', {}, [])
 #
 #     predict_list = np.array(io_load_output_queue["123.123.1.1"]["czw"])
 #
@@ -155,7 +155,5 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 
 
 # now_time = time.time()
-# local_time = time.localtime(now_time)
-# string = time.strftime("%H:%M", local_time)
-# print("local_time:", local_time)
-# print(string, type(string))
+# now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
+# print(now_time)

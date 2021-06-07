@@ -133,7 +133,7 @@ pre6 = [[0, 625, 17, 35365, 17, 926, 926, 0, 0], [0, 625, 17, 35390, 17, 927, 92
 # predict(pre2)
 pre3 = np.array(pre3)
 pre3 = pre3[np.newaxis, :, :]
-predict_1st(pre3)
+predict_1st(pre3, "")
 # predict(pre4)
 # predict(pre5)
 # pre6 = np.array(pre6)

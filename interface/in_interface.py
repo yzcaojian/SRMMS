@@ -643,7 +643,8 @@ class in_interface_impl(in_interface):
             cls.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
         if disk[0] in cls.health_degree_dict[ip]:
             if cls.health_degree_dict[ip][disk[0]] > health_degree:  # 健康度下降
-                timestamp = time.strptime("%H:%M", time.localtime(time.time()))
+                timestamp = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(time.time())).format(y='年', m='月',
+                                                                                                       d='日')
                 cls.hard_disk_failure_prediction_list.append([ip, disk[0], [health_degree, timestamp]])
         cls.health_degree_dict[ip][disk[0]] = health_degree  # disk_id和健康度
 
