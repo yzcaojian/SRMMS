@@ -658,6 +658,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def IN_RSA_RSD(cls, warning):
+        # 将告警信息添加到列表中
         warning_list.add_new_warning(warning)
 
     @classmethod
