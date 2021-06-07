@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 
 
 # I/O负载预测
-def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load, warning_message_queue):
+def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
+                       warning_message_queue):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
     rnn_unit, time_step = [20, 20]
@@ -57,6 +58,9 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     # 截取前面time_step个数据
                     data_list = io_load_input_queue[ip][disk_id][:time_step]
 
+                    # 去除前面一个数据
+                    io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][1:]
+
                     data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                     data_list = data_list.reshape(len(data_list), 1)
 
@@ -90,9 +94,6 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     if disk_id not in io_load_output_queue[ip]:
                         io_load_output_queue[ip][disk_id] = []
                     io_load_output_queue[ip][disk_id].append([predict, local_time])
-
-                    # 去除前面一个数据
-                    io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][1:]
 
                     _, averageIO = average_io_load[ip][disk_id]
                     # 高于平均负载的1.2倍或者高于10w视作高负载
