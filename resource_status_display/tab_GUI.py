@@ -36,10 +36,10 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素，默认是每个服务器第一个
         self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局

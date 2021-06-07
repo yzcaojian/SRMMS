@@ -1,82 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py" afterDir="false" />
-    </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource_status_display/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="123" column="21" selection-start-line="123" selection-start-column="21" selection-end-line="123" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/interface/in_interface.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8274">
-              <caret line="646" column="103" selection-start-line="646" selection-start-column="103" selection-end-line="646" selection-end-column="103" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_1.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1748">
-              <caret line="141" lean-forward="true" selection-start-line="141" selection-end-line="141" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="22" column="14" lean-forward="true" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
-              <folding>
-                <element signature="e#119#130#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IO_load_prediction_model_training/offline_model_training.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3745">
-              <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning/model_predict.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="133" selection-start-line="133" selection-end-line="135" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -97,21 +26,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/resource_status_display/mult_disks_info_GUI.py" />
-        <option value="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning/model_predict.py" />
-        <option value="$PROJECT_DIR$/interface/in_interface.py" />
-        <option value="$PROJECT_DIR$/resource_scheduling_allocation/RSA_3.py" />
-        <option value="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict.py" />
-        <option value="$PROJECT_DIR$/resource_scheduling_allocation/RSA_1.py" />
-        <option value="$PROJECT_DIR$/IO_load_prediction_model_training/main.py" />
-        <option value="$PROJECT_DIR$/resource_status_display/main.py" />
-        <option value="$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py" />
-      </list>
-    </option>
-  </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1912" />
     <option name="y" value="-8" />
@@ -121,63 +35,6 @@
   <component name="ProjectId" id="1rTMOS2nxQcjrRL6uTDQvKVbXRZ" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="hard_disk_failure_prediction" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="hard_disk_failure_prediction" type="462c0819:PsiDirectoryNode" />
-              <item name="WD30EFRX" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="hard_disk_failure_prediction" type="462c0819:PsiDirectoryNode" />
-              <item name="WD30EFRX" type="462c0819:PsiDirectoryNode" />
-              <item name="model_learning" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="interface" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="IO_load_prediction_model_training" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="resource_scheduling_allocation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SRMMS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SRMMS" type="462c0819:PsiDirectoryNode" />
-              <item name="resource_status_display" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -205,18 +62,6 @@
       <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\hard_disk_failure_prediction\HGST HMS5C4040ALE640" />
       <recent name="D:\Program Files (x86)\JetBrains\PyCharm 2019.3.1\projects\SRMMS\resource_status_display" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Python.RSA_2">
     <configuration name="RSA_1" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -377,6 +222,7 @@
       <workItem from="1622867545446" duration="11768000" />
       <workItem from="1622975522178" duration="3705000" />
       <workItem from="1622980891091" duration="16834000" />
+      <workItem from="1623059135332" duration="19000" />
     </task>
     <task id="LOCAL-00009" summary="html更新">
       <created>1621339122993</created>
@@ -724,36 +570,6 @@
     <option name="localTasksCounter" value="58" />
     <servers />
   </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16834000" />
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14818764" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info active="true" anchor="bottom" id="Event Log" sideWeight="0.50159913" side_tool="true" visible="true" weight="0.329718" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49840087" visible="true" weight="0.329718" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4989339" weight="0.3991323" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="SciView" weight="0.40778252" />
-      <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
@@ -763,12 +579,6 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
               <option name="COLUMN_ORDER" />
             </State>
           </value>
@@ -845,10 +655,10 @@
     </state>
     <state width="1877" height="215" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622084698554" />
     <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state x="-1551" y="139" key="SettingsEditor" timestamp="1622450645208">
+    <state x="-1551" y="139" key="SettingsEditor" timestamp="1623059153894">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622450645208" />
+    <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059153894" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
     <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1622883544033">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -864,10 +674,10 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1168" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622123247329" />
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1622979784828">
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog" timestamp="1623059144973">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622979784828" />
+    <state x="-1339" y="257" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059144973" />
     <state x="465" y="204" key="git4idea.merge.GitPullDialog/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622204211166" />
     <state x="-1233" y="385" key="git4idea.rebase.GitRebaseDialog" timestamp="1622469534213">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -887,145 +697,15 @@
     <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1622775683704" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SRMMS$model_predict.coverage" NAME="model_predict Coverage Results" MODIFIED="1623049192692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$RSA_3.coverage" NAME="RSA_3 Coverage Results" MODIFIED="1622982627411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
-    <SUITE FILE_PATH="coverage/SRMMS$RSA_2.coverage" NAME="RSA_2 Coverage Results" MODIFIED="1623055590555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
-    <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1623047955099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
     <SUITE FILE_PATH="coverage/SRMMS$model_train.coverage" NAME="model_train Coverage Results" MODIFIED="1623048226899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$model_train_2.coverage" NAME="model_train_2 Coverage Results" MODIFIED="1623048252970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning" />
-    <SUITE FILE_PATH="coverage/SRMMS$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1623054863939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IO_load_prediction_model_training" />
+    <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1623047955099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
     <SUITE FILE_PATH="coverage/SRMMS$RSA_1.coverage" NAME="RSA_1 Coverage Results" MODIFIED="1623054715249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
+    <SUITE FILE_PATH="coverage/SRMMS$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1623054863939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IO_load_prediction_model_training" />
     <SUITE FILE_PATH="coverage/SRMMS$mult_disks_info_GUI.coverage" NAME="mult_disks_info_GUI Coverage Results" MODIFIED="1623047321171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
+    <SUITE FILE_PATH="coverage/SRMMS$model_predict.coverage" NAME="model_predict Coverage Results" MODIFIED="1623049192692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning" />
+    <SUITE FILE_PATH="coverage/SRMMS$RSA_2.coverage" NAME="RSA_2 Coverage Results" MODIFIED="1623055590555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
     <SUITE FILE_PATH="coverage/SRMMS$model_predict__1_.coverage" NAME="model_predict (1) Coverage Results" MODIFIED="1623053725193" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resource_status_display/mult_disks_info_GUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="22" column="36" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_status_display/tab_GUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="46" column="34" lean-forward="true" selection-start-line="46" selection-start-column="34" selection-end-line="46" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-895" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning/model_train_2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning/model_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-171">
-          <caret line="63" column="37" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction/predict.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-114" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_3.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="551">
-          <caret line="34" column="53" lean-forward="true" selection-start-line="34" selection-start-column="53" selection-end-line="34" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/interface/in_interface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8274">
-          <caret line="646" column="103" selection-start-line="646" selection-start-column="103" selection-end-line="646" selection-end-column="103" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning/model_predict.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="139" selection-start-line="139" selection-start-column="2" selection-end-line="144" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://D:/anaconda3/envs/SRMMS/Lib/site-packages/tensorflow/python/framework/ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="5656" lean-forward="true" selection-start-line="5656" selection-end-line="5656" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_status_display/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="123" column="21" selection-start-line="123" selection-start-column="21" selection-end-line="123" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IO_load_prediction_model_training/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="74" column="33" lean-forward="true" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IO_load_prediction_model_training/offline_model_training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3745">
-          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hard_disk_failure_prediction/WD30EFRX/model_learning/model_predict.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="133" selection-start-line="133" selection-end-line="135" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1748">
-          <caret line="141" lean-forward="true" selection-start-line="141" selection-end-line="141" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource_scheduling_allocation/RSA_2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="131">
-          <caret line="22" column="14" lean-forward="true" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
-          <folding>
-            <element signature="e#119#130#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>
