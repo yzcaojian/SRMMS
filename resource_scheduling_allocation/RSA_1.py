@@ -163,7 +163,7 @@ def start_online_model_training(io_load_input_queue, mean_and_std, save_model):
 #
 #     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
 #     Mean_and_std = [[13304.76842105], [4681.6388205]]
-#     for i in range(1):
+#     for i in range(2):
         # tf.reset_default_graph()
         # thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
         #                                     ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])

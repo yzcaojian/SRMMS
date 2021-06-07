@@ -11,7 +11,7 @@ from resource_status_display.raid_info_GUI import RAIDInfoWidget
 
 from interface.in_interface import in_interface_impl
 from resource_scheduling_allocation.RSA_1 import start_online_model_training
-from resource_scheduling_allocation.RSA_2 import io_load_prediction
+from resource_scheduling_allocation.RSA_2 import start_io_load_prediction
 from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
 
@@ -118,11 +118,11 @@ if __name__ == '__main__':
     save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 
     while True:
-        # 线上训练
+        # 线上训练 开辟线程
         start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
 
-        # IO负载预测
-        io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
+        # IO负载预测 开辟线程
+        start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
                            average_io_load, warning_message_queue)
 
         # 检查是否有硬盘故障预警

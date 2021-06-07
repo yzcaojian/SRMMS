@@ -66,9 +66,13 @@ if __name__ == "__main__":
         'out': tf.Variable(tf.constant(0.1, shape=[output_size, ]))
     }
     t0 = time.time()
-    train_lstm(data, input_size, output_size, lr, train_time, rnn_unit,
-               weights, biases, train_end, batch_size, time_step, predict_step, kp,
-               [save_model_path, save_model_name], train_begin)
-    # io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step, save_model_path, 100, 300)
+    # train_lstm(data, input_size, output_size, lr, train_time, rnn_unit,
+    #            weights, biases, train_end, batch_size, time_step, predict_step, kp,
+    #            [save_model_path, save_model_name], train_begin)
+    tf.reset_default_graph()
+    io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step, save_model_path, 100, 300)
     t1 = time.time()
     print("时间:%.4fs" % (t1 - t0))
+    # tf.reset_default_graph()
+    # io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step,
+    #                    save_model_path, 100, 300)

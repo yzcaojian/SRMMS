@@ -7,12 +7,14 @@
 import time
 import tensorflow as tf
 import numpy as np
+import threading
 import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
 from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.log_exception_with_suggestions import Warning
 import matplotlib.pyplot as plt
+
 
 # I/O负载预测
 def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load, warning_message_queue):
@@ -110,6 +112,32 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                             in_interface_impl.exception_list[1].append(disk_id, 1)
 
 
+class IoLoadPredictionThread(threading.Thread):
+    def __init__(self, io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
+                 warning_message_queue):
+        threading.Thread.__init__(self)
+        self.io_load_input_queue = io_load_input_queue
+        self.io_load_output_queue = io_load_output_queue
+        self.mean_and_std = mean_and_std
+        self.save_model_path = save_model_path
+        self.average_io_load = average_io_load
+        self.warning_message_queue = warning_message_queue
+
+    def run(self):
+        print("开始线程:")
+        io_load_prediction(self.io_load_input_queue, self.io_load_output_queue, self.mean_and_std,
+                           self. save_model_path, self.average_io_load, self.warning_message_queue)
+        print("退出线程:")
+
+
+def start_io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
+                             warning_message_queue):
+    tf.reset_default_graph()
+    mythread = IoLoadPredictionThread(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path,
+                                        average_io_load, warning_message_queue)
+    mythread.start()
+
+
 # if __name__ == "__main__":
 #     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
 #     df = pd.read_csv(f)  # 读入数据
@@ -128,10 +156,8 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 #     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
 #
 #     while(len(io_load_input_queue["123.123.1.1"]["czw"]) > 19):
-#         tf.reset_default_graph()
-#         io_load_prediction(io_load_input_queue, io_load_output_queue, [],
-#                            '../IO_load_prediction_model_training/model/Financial2/', {}, [])
-#
+#         start_io_load_prediction(io_load_input_queue, io_load_output_queue, [],
+#                                  '../IO_load_prediction_model_training/model/Financial2/', {}, [])
 #     predict_list = np.array(io_load_output_queue["123.123.1.1"]["czw"])
 #
 #     # 画图表示结果
