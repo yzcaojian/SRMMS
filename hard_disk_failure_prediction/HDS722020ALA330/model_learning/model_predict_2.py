@@ -108,13 +108,13 @@ pre3 = [[0, 625, 23, 34770, 1062, 1062, 21, 1, 1], [0, 625, 23, 34794, 1063, 106
 
 pre1 = np.array(pre1)
 pre1 = pre1[np.newaxis, :, :]
-predict_2nd(pre1)
+predict_2nd(pre1, "")
 # pre2 = np.array(pre2)
 # pre2 = pre2[np.newaxis, :, :]
-# predict_2nd(pre2)
+# predict_2nd(pre2, "")
 # pre3 = np.array(pre3)
 # pre3 = pre3[np.newaxis, :, :]
-# predict_2nd(pre3)
+# predict_2nd(pre3, "")
 
 # 2nd
 # max 3831944120 min 0

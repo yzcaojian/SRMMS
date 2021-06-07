@@ -129,20 +129,20 @@ pre6 = [[625, 17, 0, 35365, 17, 926, 926, 0, 0], [625, 17, 0, 35390, 17, 927, 92
 
 # pre1 = np.array(pre1)
 # pre1 = pre1[np.newaxis, :, :]
-# predict_1st(pre1)
+# predict_1st(pre1, "")
 # pre2 = np.array(pre2)
 # pre2 = pre2[np.newaxis, :, :]
-# predict_1st(pre2)
+# predict_1st(pre2, "")
 # pre3 = np.array(pre3)
 # pre3 = pre3[np.newaxis, :, :]
-# predict_1st(pre3)
+# predict_1st(pre3, "")
 # predict(pre4)
 # pre5 = np.array(pre5)
 # pre5 = pre5[np.newaxis, :, :]
 # predict_1st(pre5, "")
-# pre6 = np.array(pre6)
-# pre6 = pre6[np.newaxis, :, :]
-# predict_1st(pre6, "")
+pre6 = np.array(pre6)
+pre6 = pre6[np.newaxis, :, :]
+predict_1st(pre6, "")
 
 # 1st
 # max 3831944120 min 0
