@@ -10,9 +10,9 @@ from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
 
 from interface.in_interface import in_interface_impl
-from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute, online_model_training
+from resource_scheduling_allocation.RSA_1 import start_online_model_training
 from resource_scheduling_allocation.RSA_2 import io_load_prediction
-from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, filtering_io_data, hard_disk_high_io_warning, hard_disk_failutre_warning
+from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
 
 """
@@ -115,11 +115,11 @@ if __name__ == '__main__':
     # 存放IO的平均值和标准差
     mean_and_std = in_interface_impl.get_mean_and_std()
 
-    save_model = ['../IO_load_prediction_model_training/model/Financial4/', 'Model']
+    save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 
     while True:
         # 线上训练
-        online_model_training(io_load_input_queue_train, mean_and_std, save_model)
+        start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
 
         # IO负载预测
         io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],

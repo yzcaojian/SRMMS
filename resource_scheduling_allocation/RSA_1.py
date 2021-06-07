@@ -62,7 +62,8 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                     continue
                 elif len(io_load_input_queue[ip][disk_id]) >= 720:  # 当大于720时，维持数目在660
                     io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
-
+                if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
+                    continue
                 data_list = io_load_input_queue[ip][disk_id]
                 data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                 data_list = data_list.reshape(len(data_list), 1)
@@ -140,6 +141,12 @@ class OnlineModelTrainingThread(threading.Thread):
         print("退出线程:")
 
 
+def start_online_model_training(io_load_input_queue, mean_and_std, save_model):
+    tf.reset_default_graph()
+    mythread = OnlineModelTrainingThread(io_load_input_queue, mean_and_std, save_model)
+    mythread.start()
+
+
 # if __name__ == "__main__":
 #     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
 #     df = pd.read_csv(f)  # 读入数据
@@ -157,13 +164,14 @@ class OnlineModelTrainingThread(threading.Thread):
 #     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
 #     Mean_and_std = [[13304.76842105], [4681.6388205]]
 #     for i in range(1):
-#         tf.reset_default_graph()
-#         thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
-#                                             ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
-#         thread1.start()
-#         thread1.join()
+        # tf.reset_default_graph()
+        # thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
+        #                                     ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+        # thread1.start()
+        # thread1.join()
 #         # online_model_training(io_load_input_queue, Mean_and_std,
 #         #                       ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
-
+#         start_online_model_training(io_load_input_queue, Mean_and_std,
+#                                     ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
 
 
