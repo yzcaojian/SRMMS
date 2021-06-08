@@ -314,7 +314,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),
@@ -368,7 +368,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),
@@ -426,7 +426,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),
@@ -478,7 +478,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),
@@ -723,9 +723,9 @@ class MultDisksInfoTabWidget(QTabWidget):
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                    text2 = QLabel("该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。")
-                    # remaining_days_item_layout.addWidget(item2)  # 没有item
-                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+                text2 = QLabel('''<font color=black face='黑体' size=6>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
+                # remaining_days_item_layout.addWidget(item2)  # 没有item
+                remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
         set_health_state()
         # 健康度标题、条状图、文字布局
@@ -789,7 +789,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True)),
@@ -846,7 +846,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True)),
@@ -912,14 +912,15 @@ class MultDisksInfoTabWidget(QTabWidget):
     def set_selected_disk_id(self, disk_selected):
         # index 表示当前tab页在selected_disk_id列表中对应的索引
         # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_list删除
-        for e in self.exception_list[1]:
-            if e[0] == self.selected_disk_id[self.currentIndex() - 1][1]:
-                self.exception_list[1].remove(e)
-                break
+        if self.exception_list:
+            for e in self.exception_list[1]:
+                if e[0] == self.selected_disk_id[self.currentIndex() - 1][1]:
+                    self.exception_list[1].remove(e)
+                    break
         self.selected_disk_id[self.currentIndex() - 1][1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
 
     # 查看历史I/O负载信息
     def show_history_io_line(self, level):
-        self.server_history_io = HistoryIO(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1], level)
+        self.server_history_io = HistoryIO(self.selected_disk_id[self.currentIndex() - 1][0], self.selected_disk_id[self.currentIndex() - 1][1], level)
         self.server_history_io.show()
 

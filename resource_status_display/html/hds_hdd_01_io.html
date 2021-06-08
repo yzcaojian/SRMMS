@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="1929327f161b4401b7995f87f6927212" class="chart-container" style="width:290.5px; height:328px;"></div>
+    <div id="44d933e5d52641fab50804020ba8ea5a" class="chart-container" style="width:754.5px; height:432.5px;"></div>
     <script>
-        var chart_1929327f161b4401b7995f87f6927212 = echarts.init(
-            document.getElementById('1929327f161b4401b7995f87f6927212'), 'white', {renderer: 'canvas'});
-        var option_1929327f161b4401b7995f87f6927212 = {
+        var chart_44d933e5d52641fab50804020ba8ea5a = echarts.init(
+            document.getElementById('44d933e5d52641fab50804020ba8ea5a'), 'white', {renderer: 'canvas'});
+        var option_44d933e5d52641fab50804020ba8ea5a = {
     "backgroundColor": "#ffffff",
     "animation": false,
     "animationThreshold": 2000,
@@ -22,8 +22,6 @@
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
     "color": [
-        "#4d5c6e",
-        "#7eca9c",
         "#c23531",
         "#2f4554",
         "#61a0a8",
@@ -51,83 +49,89 @@
     ],
     "series": [
         {
-            "type": "bar",
-            "name": "\u5df2\u4f7f\u7528\u5bb9\u91cf",
-            "legendHoverLink": true,
-            "data": [
-                3.2,
-                10.8
-            ],
-            "showBackground": false,
-            "stack": "stack1",
-            "barWidth": "40%",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
+            "type": "line",
+            "name": "\u5b9e\u65f6I/O\u8d1f\u8f7d",
+            "connectNulls": false,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
             "clip": true,
-            "zlevel": 0,
-            "z": 2,
+            "step": false,
+            "data": [
+                [
+                    "12:00",
+                    0
+                ]
+            ],
+            "hoverAnimation": true,
             "label": {
-                "show": true,
-                "position": "right",
-                "margin": 8,
-                "formatter": function(x){return Number(x.data).toFixed() + 'TB';}
+                "show": false,
+                "position": "top",
+                "margin": 8
             },
-            "rippleEffect": {
+            "lineStyle": {
                 "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
-            }
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "areaStyle": {
+                "opacity": 0.5
+            },
+            "itemStyle": {
+                "color": "#ce1212"
+            },
+            "zlevel": 0,
+            "z": 0
         },
         {
-            "type": "bar",
-            "name": "\u5269\u4f59\u5bb9\u91cf",
-            "legendHoverLink": true,
-            "data": [
-                6.8,
-                19.2
-            ],
-            "showBackground": false,
-            "stack": "stack1",
-            "barWidth": "40%",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
+            "type": "line",
+            "name": "\u9884\u6d4bI/O\u8d1f\u8f7d",
+            "connectNulls": false,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
             "clip": true,
-            "zlevel": 0,
-            "z": 2,
+            "step": false,
+            "data": [
+                [
+                    "12:00",
+                    0
+                ]
+            ],
+            "hoverAnimation": true,
             "label": {
-                "show": true,
-                "position": "right",
-                "margin": 8,
-                "formatter": function(x){return Number(x.data).toFixed() + 'TB';}
+                "show": false,
+                "position": "top",
+                "margin": 8
             },
-            "rippleEffect": {
+            "lineStyle": {
                 "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
-            }
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "areaStyle": {
+                "opacity": 0.5
+            },
+            "itemStyle": {
+                "color": "#19d3da"
+            },
+            "zlevel": 0,
+            "z": 0
         }
     ],
     "legend": [
         {
             "data": [
-                "\u5df2\u4f7f\u7528\u5bb9\u91cf",
-                "\u5269\u4f59\u5bb9\u91cf"
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d",
+                "\u9884\u6d4bI/O\u8d1f\u8f7d"
             ],
             "selected": {
-                "\u5df2\u4f7f\u7528\u5bb9\u91cf": true,
-                "\u5269\u4f59\u5bb9\u91cf": true
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d": true,
+                "\u9884\u6d4bI/O\u8d1f\u8f7d": true
             },
             "show": true,
             "padding": 5,
@@ -138,10 +142,10 @@
     ],
     "tooltip": {
         "show": true,
-        "trigger": "item",
+        "trigger": "axis",
         "triggerOn": "mousemove|click",
         "axisPointer": {
-            "type": "line"
+            "type": "cross"
         },
         "showContent": true,
         "alwaysShowContent": false,
@@ -156,6 +160,7 @@
     "xAxis": [
         {
             "type": "category",
+            "name": "\u65f6\u95f4",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -169,6 +174,7 @@
             "inverse": false,
             "offset": 0,
             "splitNumber": 5,
+            "boundaryGap": false,
             "minInterval": 0,
             "splitLine": {
                 "show": false,
@@ -181,14 +187,14 @@
                 }
             },
             "data": [
-                "HDD",
-                "SSD"
+                "12:00"
             ]
         }
     ],
     "yAxis": [
         {
-            "name": "\u5bb9\u91cf\n\u5355\u4f4dTB",
+            "type": "value",
+            "name": "IOPS/KB",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -204,7 +210,7 @@
             "splitNumber": 5,
             "minInterval": 0,
             "splitLine": {
-                "show": false,
+                "show": true,
                 "lineStyle": {
                     "show": true,
                     "width": 1,
@@ -222,7 +228,7 @@
         }
     ]
 };
-        chart_1929327f161b4401b7995f87f6927212.setOption(option_1929327f161b4401b7995f87f6927212);
+        chart_44d933e5d52641fab50804020ba8ea5a.setOption(option_44d933e5d52641fab50804020ba8ea5a);
     </script>
 </body>
 </html>

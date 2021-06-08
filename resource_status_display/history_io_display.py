@@ -139,8 +139,12 @@ class HistoryIO(QWidget):
             # 1650, 1550, 997, 753, 671, 560, 627, 970, 955, 973, 1203, 1210, 1112, 1122, 1128, 1181, 1251, 1339,
             # 1416, 1523, 1647, 1708, 1120, 1074, 675, 633, 479, 373, 430, 546, 663, 769, 829, 724, 634, 711, 853,
             # 1019, 1155, 1221, 1504, 984, 843]
-            y_data, _ = in_interface_impl.get_io_load_input_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
-            y_predict_data, x_data = in_interface_impl.get_io_load_output_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
+            if not y_predict_data:
+                y_predict_data = [0] * len(y_data)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -160,7 +164,7 @@ class HistoryIO(QWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True)),
