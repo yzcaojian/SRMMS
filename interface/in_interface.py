@@ -272,6 +272,8 @@ class in_interface_impl(in_interface):
                         if _length > 24 * 60:
                             cls.io_load_input_queue_display_past[server_ip][disk_id] = cls.io_load_input_queue_display_past[server_ip][disk_id][_length - 24 * 60:]
 
+        if ip not in cls.io_load_input_queue_display or id not in cls.io_load_input_queue_display[ip]:  # 如果为空
+            return [], []
         io_load = cls.io_load_input_queue_display[ip][id]
         arr = np.array(io_load)
         io_load_list = arr[:, 0].tolist()
@@ -284,6 +286,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
+        if ip not in cls.io_load_input_queue_display_past or id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
+            return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
@@ -331,8 +335,10 @@ class in_interface_impl(in_interface):
                         if _length > 24 * 60:
                             cls.io_load_output_queue_past[server_ip][disk_id] = cls.io_load_output_queue_past[server_ip][disk_id][_length - 24 * 60:]
 
+        if ip not in cls.io_load_output_queue or id not in cls.io_load_output_queue[ip]:  # 如果为空
+            return [], []
         # 输出队列里的时间数据为 %H:%M 的字符串格式
-        io_load = cls.io_load_output_queue_past[ip][id]
+        io_load = cls.io_load_output_queue[ip][id]
         arr = np.array(io_load)
         io_load_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()
@@ -341,6 +347,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_io_load_output_queue_display_past(cls, ip, disk_id, time_begin, time_end):
+        if ip not in cls.io_load_output_queue_past or id not in cls.io_load_output_queue_past[ip]:  # 如果为空
+            return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
