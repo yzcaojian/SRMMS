@@ -473,6 +473,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_RAID_overall_io_info_past(cls, ip, time_begin, time_end):
+        if ip not in cls.RAID_io_info_dict_past:  # 如果为空
+            return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
@@ -556,6 +558,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_hdd_disk_io_info_past(cls, ip, time_begin, time_end):
+        if ip not in cls.two_disk_io_dict_past:  # 如果为空
+            return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
@@ -590,6 +594,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_ssd_disk_io_info_past(cls, ip, time_begin, time_end):
+        if ip not in cls.two_disk_io_dict_past:  # 如果为空
+            return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
@@ -616,7 +622,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_server_detailed_info(cls, ip, tag):
-        if ip == "": return []
+        if ip == "":
+            return []
         # 获取server_ip对应的服务器详细信息
         detailed_info = cls.detailed_info_dict[ip]
         server_detailed_info = []
@@ -690,9 +697,10 @@ class in_interface_impl(in_interface):
         return cls.exception_list
 
 
-if __name__ == "__main__":
-    list1 = [1, 2, 3, 4]
-    list2 = list1
-    print(list2)
-    list1.clear()
-    print(list2)
+# if __name__ == "__main__":
+#     list1 = {}
+#     if "1" not in list1:
+#         print(123)
+#     else:
+#         print((321))
+
