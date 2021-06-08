@@ -558,12 +558,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         if len(self.server_detailed_info) != 0:
             self.selected_disk_id.append(self.server_detailed_info[0].diskID)
         # server_selected是获取的选择表格某行的范围信息
-        print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
+        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP，生成详细信息界面
         # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
-        for e in self.exception_list[0]:
-            if e[0] == self.selected_server_ip:
-                self.exception_list[0].remove(e)
-                break
+        if self.exception_list:
+            for e in self.exception_list[0]:
+                if e[0] == self.selected_server_ip:
+                    self.exception_list[0].remove(e)
+                    break
 
         # 详细信息的tab页
         # 服务器详细信息表和硬盘健康度、I/O负载图的布局
@@ -586,7 +587,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 绑定事件
         # disk_storage_table.clicked.connect(lambda: printSize())
         disk_storage_table.clicked.connect(lambda: self.set_selected_disk_id(disk_storage_table.selectedRanges()))
-        disk_storage_table.clicked.connect(lambda: set_health_state(disk_storage_table.selectedRanges(), False))
+        disk_storage_table.clicked.connect(lambda: set_health_state())
         disk_storage_table.clicked.connect(lambda: set_disk_io_line(disk_storage_table.selectedRanges(), False))
 
         disk_storage_table_widget = QWidget()
@@ -657,7 +658,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             #         degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
             #     else:
             #         print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
-            degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
+            degree = in_interface_impl.get_health_degree(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1])
             # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
