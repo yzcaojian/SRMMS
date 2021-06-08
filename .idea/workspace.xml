@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="略">
+    <list default="true" id="85a9f18f-b422-4222-8f1a-0bc17a1d3a59" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_communication_analysis/DAC_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_communication_analysis/DAC_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interface/in_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/in_interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/html/first.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/first.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/html/hdd_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/hdd_io.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/raid_server_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/raid_server_io.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/html/second.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/second.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource_status_display/html/server_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/server_io.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/html/ssd_io.html" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/html/ssd_io.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_status_display/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/tab_GUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resource_status_display/txt/configuration.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resource_status_display/txt/configuration.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -225,14 +223,7 @@
       <workItem from="1622975522178" duration="3705000" />
       <workItem from="1622980891091" duration="16834000" />
       <workItem from="1623059135332" duration="6338000" />
-      <workItem from="1623133366545" duration="4892000" />
-    </task>
-    <task id="LOCAL-00015" summary="删除初版故障预测文件夹">
-      <created>1622084163448</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1622084163448</updated>
+      <workItem from="1623133366545" duration="5700000" />
     </task>
     <task id="LOCAL-00016" summary="前端代码结构调整">
       <created>1622085017351</created>
@@ -570,7 +561,14 @@
       <option name="project" value="LOCAL" />
       <updated>1623133928021</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="前后端数据交接">
+      <created>1623138438648</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1623138438648</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -605,7 +603,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="改变接口数据格式" />
     <MESSAGE value="优化函数实现" />
     <MESSAGE value="更新前端获取I/O数据方式" />
     <MESSAGE value="历史I/O数据不同显示方式" />
@@ -630,33 +627,34 @@
     <MESSAGE value="硬盘健康度预测代码调用参数修正" />
     <MESSAGE value="外部接口发送模拟数据" />
     <MESSAGE value="略" />
-    <option name="LAST_COMMIT_MESSAGE" value="略" />
+    <MESSAGE value="前后端数据交接" />
+    <option name="LAST_COMMIT_MESSAGE" value="前后端数据交接" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1623136116428">
+    <state x="-1220" y="131" key="CommitChangelistDialog2" timestamp="1623138436318">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623136116428" />
+    <state x="-1220" y="131" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138436318" />
     <state x="338" y="6" key="CommitChangelistDialog2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1622443678888" />
-    <state width="1076" height="240" key="GridCell.Tab.0.bottom" timestamp="1623138287015">
+    <state width="1076" height="341" key="GridCell.Tab.0.bottom" timestamp="1623138851859">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1076" height="240" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138287015" />
+    <state width="1076" height="341" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138851859" />
     <state width="1493" height="141" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1076" height="240" key="GridCell.Tab.0.center" timestamp="1623138287015">
+    <state width="1076" height="341" key="GridCell.Tab.0.center" timestamp="1623138851859">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1076" height="240" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138287015" />
+    <state width="1076" height="341" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138851859" />
     <state width="1493" height="141" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1076" height="240" key="GridCell.Tab.0.left" timestamp="1623138287015">
+    <state width="1076" height="341" key="GridCell.Tab.0.left" timestamp="1623138851859">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1076" height="240" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138287015" />
+    <state width="1076" height="341" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138851859" />
     <state width="1493" height="141" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
-    <state width="1076" height="240" key="GridCell.Tab.0.right" timestamp="1623138287015">
+    <state width="1076" height="341" key="GridCell.Tab.0.right" timestamp="1623138851859">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1076" height="240" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138287015" />
+    <state width="1076" height="341" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138851859" />
     <state width="1493" height="141" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621346834864" />
     <state width="1353" height="239" key="GridCell.Tab.1.bottom" timestamp="1623136854089">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -679,10 +677,10 @@
     </state>
     <state x="-1551" y="139" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623059153894" />
     <state x="295" y="110" key="SettingsEditor/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1618995737435" />
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1623134275707">
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2" timestamp="1623138655727">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623134275707" />
+    <state x="-1469" y="169" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1623138655727" />
     <state x="361" y="134" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1621342740776" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1623072255688">
       <screen x="-1920" y="0" width="1920" height="1040" />
@@ -739,7 +737,7 @@
     <SUITE FILE_PATH="coverage/SRMMS$model_predict__1_.coverage" NAME="model_predict (1) Coverage Results" MODIFIED="1623068909880" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$RSA_3.coverage" NAME="RSA_3 Coverage Results" MODIFIED="1622982627411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_scheduling_allocation" />
     <SUITE FILE_PATH="coverage/SRMMS$model_train_2.coverage" NAME="model_train_2 Coverage Results" MODIFIED="1623048252970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction_model_training/WD30EFRX/model_learning" />
-    <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1623138287005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
+    <SUITE FILE_PATH="coverage/SRMMS$main.coverage" NAME="main Coverage Results" MODIFIED="1623138851849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resource_status_display" />
     <SUITE FILE_PATH="coverage/SRMMS$out_interface.coverage" NAME="out_interface Coverage Results" MODIFIED="1623072692307" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/interface" />
     <SUITE FILE_PATH="coverage/SRMMS$model_predict_2__1_.coverage" NAME="model_predict_2 (1) Coverage Results" MODIFIED="1623068941484" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hard_disk_failure_prediction/HDS722020ALA330/model_learning" />
     <SUITE FILE_PATH="coverage/SRMMS$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1623054863939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IO_load_prediction_model_training" />
