@@ -21,8 +21,10 @@ class HistoryIO(QWidget):
         super().__init__()
         self.server_ip = server_ip
         self.disk_id = disk_id
-        self.time_end = QTime.currentTime()
-        self.time_start = self.time_end.addSecs(-60 * 60)
+        time = QTime.currentTime()
+        self.time_end = str(time.hour()) + ":" + str(time.minute())
+        time = time.addSecs(-60 * 60)
+        self.time_start = str(time.hour()) + ":" + str(time.minute())
         self.level = level  # 历史负载信息显示分为显示秒级的和显示分钟级的，0表示服硬盘级以分钟显示，
         # 1表示服务器级SSD总负载以秒显示，2表示服务器级HDD总负载以秒显示，3表示RAID架构服务器总负载以秒显示
         self.init_ui()
@@ -58,7 +60,10 @@ class HistoryIO(QWidget):
         io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
                     border-width:2px; border-style:solid; border-color:black; border-radius:12px} 
                     QPushButton:pressed{background-color:#bbbbbb}''')
-        io_button.clicked.connect(lambda: draw_server_io_line())  # 绑定历史I/O负载图刷新事件
+        if self.level == 0:
+            io_button.clicked.connect(lambda: draw_disk_io_line())  # 绑定历史I/O负载图刷新事件
+        else:
+            io_button.clicked.connect(lambda: draw_server_io_line())  # 绑定历史I/O负载图刷新事件
 
         time_layout.addWidget(time_start)
         time_layout.addWidget(time_end)
@@ -71,24 +76,18 @@ class HistoryIO(QWidget):
         def draw_server_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
             # self.server_ip, self.time_start, self.time_end
-            # if self.level == 1: y_data, x_data = in_interface_impl.get_ssd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
-            # elif self.level == 1: y_data, x_data = in_interface_impl.get_hdd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
-            # elif self.level == 1: y_data, x_data = in_interface_impl.get_RAID_overall_io_info_past(self.server_ip, self.time_start, self.time_end)
+            global x_data, y_data
+            if self.level == 1: y_data, x_data = in_interface_impl.get_ssd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            elif self.level == 2: y_data, x_data = in_interface_impl.get_hdd_disk_io_info_past(self.server_ip, self.time_start, self.time_end)
+            elif self.level == 3: y_data, x_data = in_interface_impl.get_RAID_overall_io_info_past(self.server_ip, self.time_start, self.time_end)
             # 可以稍加判断选择的时间范围不合理问题
 
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 20) + "px"
             io_height = str(self.size().height() - 100) + "px"
 
-            x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09", "12:10",
-                      "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20", "12:21",
-                      "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31", "12:32",
-                      "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42", "12:43",
-                      "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53", "12:54"]
-            y_data = [820, 652, 701, 934, 1190, 1330, 1340, 1433, 1672, 1630, 1725, 1720, 1691, 1530, 984, 663, 651,
-                      520, 630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587, 1780, 1820,
-                      1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411,
-                      1511, 1004, 856]
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -139,8 +138,8 @@ class HistoryIO(QWidget):
             # 1650, 1550, 997, 753, 671, 560, 627, 970, 955, 973, 1203, 1210, 1112, 1122, 1128, 1181, 1251, 1339,
             # 1416, 1523, 1647, 1708, 1120, 1074, 675, 633, 479, 373, 430, 546, 663, 769, 829, 724, 634, 711, 853,
             # 1019, 1155, 1221, 1504, 984, 843]
-            y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
-            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.selected_server_ip, self.selected_disk_id, self.time_start, self.time_end)
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
             if not y_predict_data:
