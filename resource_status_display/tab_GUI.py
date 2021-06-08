@@ -98,7 +98,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
-                if not self.exception_list[0]:  # 还有服务器图标闪烁
+                if not self.exception_list:  # 还有服务器图标闪烁
                     line = get_server_storage_info_item(single_server_info)
                 else:
                     for e in self.exception_list[0]:
@@ -141,10 +141,10 @@ class MultDisksInfoTabWidget(QTabWidget):
                     two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
             # two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 待优化
             # clearLayout(bar_layout)  # 清除之前的布局
-            hdd_all = two_disk_list.hddTotalCapacity
-            hdd_used = two_disk_list.hddOccupiedCapacity
-            ssd_all = two_disk_list.ssdTotalCapacity
-            ssd_used = two_disk_list.ssdOccupiedCapacity
+            hdd_all = float(two_disk_list.hddTotalCapacity[:-2])
+            hdd_used = float(two_disk_list.hddOccupiedCapacity[:-2])
+            ssd_all = float(two_disk_list.ssdTotalCapacity[:-2])
+            ssd_used = float(two_disk_list.ssdOccupiedCapacity[:-2])
             used = [hdd_used, ssd_used]
             all = [hdd_all - hdd_used, ssd_all - ssd_used]
 
@@ -259,11 +259,12 @@ class MultDisksInfoTabWidget(QTabWidget):
         disks_io_right_layout = QVBoxLayout()
 
         # 两个负载图各自的label和button
-        left_label = QLabel("SSD数量 " + str(self.two_disk_info[0].ssdCounts))
+        # 改正！！！！！！！！！！！
+        left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts))
         left_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
         # "border-width:1px; border-style:solid; border-color:black")
         left_label.setContentsMargins(0, 0, 50, 0)
-        right_label = QLabel("HDD数量 " + str(self.two_disk_info[0].hddCounts))
+        right_label = QLabel("HDD数量 " + str(self.two_disk_info.hddCounts))
         right_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
         # "border-width:1px; border-style:solid; border-color:black")
         right_label.setContentsMargins(0, 0, 50, 0)
@@ -602,7 +603,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             for i, single_disk_info in enumerate(disks_storage_info_list):
                 disk_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
-                if not self.exception_list[1]:  # 还有硬盘图标闪烁
+                if not self.exception_list:  # 还有硬盘图标闪烁
                     line = get_disk_storage_info_item(single_disk_info)
                 else:
                     for e in self.exception_list[1]:

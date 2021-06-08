@@ -8,12 +8,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushBut
 
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
+from resource_status_display.configuration_checking import configuration_info
 
 from interface.in_interface import in_interface_impl
 from resource_scheduling_allocation.RSA_1 import start_online_model_training
 from resource_scheduling_allocation.RSA_2 import start_io_load_prediction
 from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
+
+from data_communication_analysis.DAC_1 import analyse_data
 
 """
 -*- coding: utf-8 -*- 
@@ -95,6 +98,11 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+
+    # 根据配置文件所有的IP地址进行读取数据
+    for ip in configuration_info.server_IPs:
+        analyse_data(ip)
+
     app = QApplication(sys.argv)
     main = MainWindow()
 

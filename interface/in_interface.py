@@ -215,40 +215,41 @@ class in_interface_impl(in_interface):
     exception_list = []
     
     @classmethod
-    def IN_DCA_RSA(cls, ip, detailed_info):
+    def IN_DCA_RSA(cls, ip, detailed_info_list):
         from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute
         from resource_scheduling_allocation.RSA_3 import filtering_io_data
 
-        # detailed_info = [disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io]
-        disk_id, disk_io = detailed_info[0], detailed_info[-1]
-        # 将信息添加到详细信息字典中
-        if ip not in cls.disk_detailed_info:
-            cls.disk_detailed_info[ip] = {}
-        # [type, state, total_capacity, occupied_capacity, occupied_rate]
-        cls.disk_detailed_info[ip][disk_id] = detailed_info[1:6]
+        # detailed_info = [[disk_id, type, state, total_capacity, occupied_capacity, occupied_rate, disk_io],...]
+        for detailed_info in detailed_info_list:
+            disk_id, disk_io = detailed_info[0], detailed_info[-1]
+            # 将信息添加到详细信息字典中
+            if ip not in cls.disk_detailed_info:
+                cls.disk_detailed_info[ip] = {}
+            # [type, state, total_capacity, occupied_capacity, occupied_rate]
+            cls.disk_detailed_info[ip][disk_id] = detailed_info[1:6]
 
-        now_time = time.time()
-        # I/O负载进入输入队列之前先检测是否高负载
-        filtering_io_data(ip, [disk_id, disk_io, now_time], cls.average_io_load, cls.high_io_load_queue)
-        # 将I/O负载信息添加到输入队列中
-        if ip not in cls.io_load_input_queue:
-            cls.io_load_input_queue[ip] = {}
-        if disk_id not in cls.io_load_input_queue[ip]:
-            cls.io_load_input_queue[ip][disk_id] = []
-        cls.io_load_input_queue[ip][disk_id].append([disk_io, now_time])
+            now_time = time.time()
+            # I/O负载进入输入队列之前先检测是否高负载
+            filtering_io_data(ip, [disk_id, disk_io, now_time], cls.average_io_load, cls.high_io_load_queue)
+            # 将I/O负载信息添加到输入队列中
+            if ip not in cls.io_load_input_queue:
+                cls.io_load_input_queue[ip] = {}
+            if disk_id not in cls.io_load_input_queue[ip]:
+                cls.io_load_input_queue[ip][disk_id] = []
+            cls.io_load_input_queue[ip][disk_id].append([disk_io, now_time])
 
-        # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
-        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_display)
-        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_predict)
-        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
+            # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
+            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_display)
+            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_predict)
+            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
 
-        for ip in cls.io_load_input_queue:
-            for disk_id in cls.io_load_input_queue[ip]:
-                if len(cls.io_load_input_queue[ip][disk_id]) < 60:
-                    continue
-                else:
-                    # 将前面60个数据删除
-                    cls.io_load_input_queue[ip][disk_id] = cls.io_load_input_queue[ip][disk_id][60:]
+            for ip in cls.io_load_input_queue:
+                for disk_id in cls.io_load_input_queue[ip]:
+                    if len(cls.io_load_input_queue[ip][disk_id]) < 60:
+                        continue
+                    else:
+                        # 将前面60个数据删除
+                        cls.io_load_input_queue[ip][disk_id] = cls.io_load_input_queue[ip][disk_id][60:]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
