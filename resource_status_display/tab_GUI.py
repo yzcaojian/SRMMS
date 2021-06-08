@@ -36,7 +36,7 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素，默认是每个服务器第一个
+        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
         self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
@@ -554,11 +554,16 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
 
     def add_detailed_tab(self, server_selected):
-        # 添加详细信息tab页后默认选中第一块硬盘
-        if len(self.server_detailed_info) != 0:
-            self.selected_disk_id.append(self.server_detailed_info[0].diskID)
         # server_selected是获取的选择表格某行的范围信息
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP，生成详细信息界面
+        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
+        # 添加详细信息tab页后默认选中第一块硬盘
+        if len(self.server_detailed_info) != 0:
+            for selected_disk in self.selected_disk_id:
+                if self.selected_server_ip == selected_disk[0]:  # 当前选择的服务器已经打开一个tab页
+                    return
+            self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[0].diskID])
+
         # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
         if self.exception_list:
             for e in self.exception_list[0]:
@@ -658,7 +663,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             #         degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
             #     else:
             #         print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
-            degree = in_interface_impl.get_health_degree(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1])
+            degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.currentIndex() - 1][0], self.selected_disk_id[self.currentIndex() - 1][1])
             # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
@@ -758,8 +763,13 @@ class MultDisksInfoTabWidget(QTabWidget):
             #                   671, 560, 627, 970, 955, 973, 1203, 1210, 1312, 1322, 1228, 1181, 1251, 1339, 1416, 1523,
             #                   1647, 1708, 1120, 1074, 675, 633, 479, 373, 430, 546, 763, 869, 929, 624, 934, 1111, 1253,
             #                   1419, 1455, 1421, 1504, 984, 843]
-            y_data, _ = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id)
-            y_predict_data, x_data = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id)
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            # 起始一分钟内并没有I/O负载数据
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
+            if not y_predict_data:
+                y_predict_data = [0] * len(y_data)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -788,13 +798,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))  # 各硬盘有单独的IO图
+                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))  # 各硬盘有单独的IO图
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height())
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
             disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
 
         def set_disk_io_line(disk_selected, IsUpdate):
@@ -811,8 +821,12 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_width = str(detailed_tab.size().width() / 2 - 40) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
 
-            y_data, _ = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id)
-            y_predict_data, x_data = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id)
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
+            if not y_predict_data:
+                y_predict_data = [0] * len(y_data)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -841,13 +855,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
+                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(detailed_tab.size().width() / 2 - 20, disk_detailed_info_widget.size().height() / 2 + 40)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1] + "_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
 
         draw_disk_io_line()
 
@@ -899,13 +913,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         # index 表示当前tab页在selected_disk_id列表中对应的索引
         # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_list删除
         for e in self.exception_list[1]:
-            if e[0] == self.selected_disk_id[self.currentIndex() - 1]:
+            if e[0] == self.selected_disk_id[self.currentIndex() - 1][1]:
                 self.exception_list[1].remove(e)
                 break
-        self.selected_disk_id[self.currentIndex() - 1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
+        self.selected_disk_id[self.currentIndex() - 1][1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
 
     # 查看历史I/O负载信息
     def show_history_io_line(self, level):
-        self.server_history_io = HistoryIO(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1], level)
+        self.server_history_io = HistoryIO(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1], level)
         self.server_history_io.show()
 
