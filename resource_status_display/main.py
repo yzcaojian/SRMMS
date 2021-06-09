@@ -103,11 +103,12 @@ class RequestResourceThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        print("请求资源开始:")
-        for ip in configuration_info.server_IPs:
-            analyse_data(ip)
-        print("请求资源结束:")
-        time.sleep(1)
+        while True:
+            print("请求资源开始:")
+            for ip in configuration_info.server_IPs:
+                analyse_data(ip)
+            print("请求资源结束:")
+            time.sleep(1)
 
 
 def start_request_resource():

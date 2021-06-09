@@ -902,7 +902,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
 
     def tabClose(self):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
-        self.selected_disk_id.remove(self.currentIndex() - 1)
+        # self.selected_disk_id.remove(self.currentIndex() - 1)
+        del self.selected_disk_id[self.currentIndex() - 1]
         self.removeTab(self.currentIndex())
 
     def set_selected_server_ip(self, server_selected):
