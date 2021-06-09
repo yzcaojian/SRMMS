@@ -745,21 +745,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_width = str(disk_detailed_info_widget.size().width()) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() - 70) + "px"
 
-            # x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09", "12:10",
-            #           "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20", "12:21",
-            #           "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31", "12:32",
-            #           "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42", "12:43",
-            #           "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53", "12:54"]
-            # y_data = [820, 652, 701, 934, 1190, 1330, 1340, 1433, 1672, 1630, 1725, 1720, 1691, 1530, 984, 663, 651,
-            #           520,
-            #           630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587, 1780, 1820, 1100,
-            #           1021,
-            #           665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411, 1511, 1004,
-            #           856]
-            # y_predict_data = [620, 632, 665, 734, 1030, 1290, 1305, 1343, 1441, 1538, 1639, 1685, 1650, 1550, 997, 753,
-            #                   671, 560, 627, 970, 955, 973, 1203, 1210, 1312, 1322, 1228, 1181, 1251, 1339, 1416, 1523,
-            #                   1647, 1708, 1120, 1074, 675, 633, 479, 373, 430, 546, 763, 869, 929, 624, 934, 1111, 1253,
-            #                   1419, 1455, 1421, 1504, 984, 843]
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
             y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
             # 起始一分钟内并没有I/O负载数据
@@ -821,40 +806,70 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
 
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
-            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
-            if not y_predict_data:
-                y_predict_data = [0] * len(y_data)
 
-            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
-                                                 animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-                    .add_xaxis(xaxis_data=x_data)
-                    .add_yaxis(
-                series_name="实时I/O负载",
-                y_axis=y_data,
-                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-                label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
-                    .add_yaxis(
-                series_name="预测I/O负载",
-                y_axis=y_predict_data,
-                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-                label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))
-                    .set_global_opts(
-                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
-                yaxis_opts=opts.AxisOpts(
-                    name="IOPS/KB",
-                    type_="value",
-                    axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
-                    splitline_opts=opts.SplitLineOpts(is_show=True)),
-                xaxis_opts=opts.AxisOpts(
-                    name="时间",
-                    type_="category",
-                    axistick_opts=opts.AxisTickOpts(is_inside=True),
-                    boundary_gap=False))
-                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+            if not x_predict_data:
+                line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
+                                                     animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
+                        .add_xaxis(xaxis_data=x_data)
+                        .add_yaxis(
+                    series_name="实时I/O负载",
+                    y_axis=y_data,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                        .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                    yaxis_opts=opts.AxisOpts(
+                        name="IOPS/KB",
+                        type_="value",
+                        axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                        splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    xaxis_opts=opts.AxisOpts(
+                        name="时间",
+                        type_="category",
+                        axistick_opts=opts.AxisTickOpts(is_inside=True),
+                        boundary_gap=False))
+                        .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+            else:
+                if len(y_predict_data) != len(y_data):
+                    y_predict_data_ = [0] * (len(y_data) - len(y_predict_data)) + y_predict_data
+                    x_predict_data_ = x_data[0:(len(y_data) - len(y_predict_data))] + x_predict_data
+                else:
+                    x_predict_data_ = x_predict_data
+                    y_predict_data_ = y_predict_data
+                line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
+                                                     animation_opts=opts.AnimationOpts(
+                                                         animation=False)))  # 设置宽高度，去掉加载动画
+                        .add_xaxis(xaxis_data=x_data)
+                        .extend_axis(xaxis_data=x_predict_data_)
+                        .add_yaxis(
+                    series_name="实时I/O负载",
+                    y_axis=y_data,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                        .add_yaxis(
+                    series_name="预测I/O负载",
+                    y_axis=y_predict_data_,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))
+                        .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                    yaxis_opts=opts.AxisOpts(
+                        name="IOPS/KB",
+                        type_="value",
+                        axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                        splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    xaxis_opts=opts.AxisOpts(
+                        name="时间",
+                        type_="category",
+                        axistick_opts=opts.AxisTickOpts(is_inside=True),
+                        boundary_gap=False))
+                        .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
