@@ -219,7 +219,7 @@ class RAIDInfoWidget(QWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),
@@ -268,7 +268,7 @@ class RAIDInfoWidget(QWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS",
+                    name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True), ),

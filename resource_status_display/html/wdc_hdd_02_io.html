@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="7e152cd8c2304e1c9cdcf447532f1271" class="chart-container" style="width:590px; height:140.0px;"></div>
+    <div id="8e2f4c3f04e54a0d968872015b68fad9" class="chart-container" style="width:644.5px; height:373.5px;"></div>
     <script>
-        var chart_7e152cd8c2304e1c9cdcf447532f1271 = echarts.init(
-            document.getElementById('7e152cd8c2304e1c9cdcf447532f1271'), 'white', {renderer: 'canvas'});
-        var option_7e152cd8c2304e1c9cdcf447532f1271 = {
+        var chart_8e2f4c3f04e54a0d968872015b68fad9 = echarts.init(
+            document.getElementById('8e2f4c3f04e54a0d968872015b68fad9'), 'white', {renderer: 'canvas'});
+        var option_8e2f4c3f04e54a0d968872015b68fad9 = {
     "backgroundColor": "#ffffff",
     "animation": false,
     "animationThreshold": 2000,
@@ -50,7 +50,7 @@
     "series": [
         {
             "type": "line",
-            "name": "\u670d\u52a1\u5668 \u5b9e\u65f6I/O\u8d1f\u8f7d",
+            "name": "\u5b9e\u65f6I/O\u8d1f\u8f7d",
             "connectNulls": false,
             "symbolSize": 4,
             "showSymbol": true,
@@ -59,8 +59,8 @@
             "step": false,
             "data": [
                 [
-                    "21:31:09",
-                    "24000"
+                    "12:00",
+                    0
                 ]
             ],
             "hoverAnimation": true,
@@ -79,6 +79,46 @@
             "areaStyle": {
                 "opacity": 0.5
             },
+            "itemStyle": {
+                "color": "#ce1212"
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "\u9884\u6d4bI/O\u8d1f\u8f7d",
+            "connectNulls": false,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "data": [
+                [
+                    "12:00",
+                    0
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": false,
+                "position": "top",
+                "margin": 8
+            },
+            "lineStyle": {
+                "show": true,
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "areaStyle": {
+                "opacity": 0.5
+            },
+            "itemStyle": {
+                "color": "#19d3da"
+            },
             "zlevel": 0,
             "z": 0
         }
@@ -86,10 +126,12 @@
     "legend": [
         {
             "data": [
-                "\u670d\u52a1\u5668 \u5b9e\u65f6I/O\u8d1f\u8f7d"
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d",
+                "\u9884\u6d4bI/O\u8d1f\u8f7d"
             ],
             "selected": {
-                "\u670d\u52a1\u5668 \u5b9e\u65f6I/O\u8d1f\u8f7d": true
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d": true,
+                "\u9884\u6d4bI/O\u8d1f\u8f7d": true
             },
             "show": true,
             "padding": 5,
@@ -145,7 +187,7 @@
                 }
             },
             "data": [
-                "21:31:09"
+                "12:00"
             ]
         }
     ],
@@ -186,7 +228,7 @@
         }
     ]
 };
-        chart_7e152cd8c2304e1c9cdcf447532f1271.setOption(option_7e152cd8c2304e1c9cdcf447532f1271);
+        chart_8e2f4c3f04e54a0d968872015b68fad9.setOption(option_8e2f4c3f04e54a0d968872015b68fad9);
     </script>
 </body>
 </html>

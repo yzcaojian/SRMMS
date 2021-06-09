@@ -1,4 +1,5 @@
 import sys
+import threading
 import time
 
 from PyQt5.QtCore import Qt, QSize
@@ -97,11 +98,27 @@ class MainWindow(QMainWindow):
         self.main_ui = MainWidget()
 
 
+class RequestResourceThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        print("请求资源开始:")
+        for ip in configuration_info.server_IPs:
+            analyse_data(ip)
+        print("请求资源结束:")
+        time.sleep(1)
+
+
+def start_request_resource():
+    mythread = RequestResourceThread()
+    mythread.start()
+
+
 if __name__ == '__main__':
 
     # 根据配置文件所有的IP地址进行读取数据
-    for ip in configuration_info.server_IPs:
-        analyse_data(ip)
+    start_request_resource()
 
     app = QApplication(sys.argv)
     main = MainWindow()
