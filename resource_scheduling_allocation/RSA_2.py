@@ -125,10 +125,10 @@ class IoLoadPredictionThread(threading.Thread):
         self.warning_message_queue = warning_message_queue
 
     def run(self):
-        print("开始线程:")
+        print("负载预测开始:")
         io_load_prediction(self.io_load_input_queue, self.io_load_output_queue, self.mean_and_std,
                            self. save_model_path, self.average_io_load, self.warning_message_queue)
-        print("退出线程:")
+        print("负载预测结束:")
 
 
 def start_io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,

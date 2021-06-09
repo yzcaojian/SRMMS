@@ -29,6 +29,8 @@ from data_communication_analysis.DAC_1 import analyse_data
 
 
 class MainWidget(QWidget):
+    running = True  # 判断程序运行的标志
+
     def __init__(self):
         super().__init__()
         self.title_widget = QWidget() # 标题
@@ -91,6 +93,11 @@ class MainWidget(QWidget):
     def show_disk_error_warning(self, server_ip, disk_id):
         QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
 
+    def closeEvent(self, event):
+        MainWidget.running = False
+
+        # sys.exit()
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -103,7 +110,7 @@ class RequestResourceThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        while True:
+        while MainWidget.running:
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
                 analyse_data(ip)
@@ -116,11 +123,46 @@ def start_request_resource():
     mythread.start()
 
 
+class TransactionProcessingThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while MainWidget.running:
+            print("事务处理开始:")
+            # 线上训练 开辟线程
+            start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
+
+            # IO负载预测 开辟线程
+            start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
+                                     average_io_load, warning_message_queue)
+
+            # 检查是否有硬盘故障预警
+            hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
+            failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
+            for failure in failure_list:
+                main.main_ui.show_disk_error_warning(failure[0], failure[1])
+            # 判断服务器失联告警
+            sever_disconnection_warning(io_load_input_queue, warning_message_queue)
+            # 判断硬盘持续高I/O需求
+            hard_disk_high_io_warning(high_io_load_queue, warning_message_queue)
+
+            # 处理异常消息
+            resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
+            print("事务处理结束:")
+            time.sleep(1)
+
+
+def start_transaction_processing():
+    mythread = TransactionProcessingThread()
+    mythread.start()
+
+
 if __name__ == '__main__':
 
-    # 根据配置文件所有的IP地址进行读取数据
+    # 后台线程请求资源
     start_request_resource()
-
+    time.sleep(0.1)
     app = QApplication(sys.argv)
     main = MainWindow()
 
@@ -143,25 +185,7 @@ if __name__ == '__main__':
 
     save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 
-    while True:
-        # 线上训练 开辟线程
-        start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
+    # 开辟线程进行事务处理
+    start_transaction_processing()
 
-        # IO负载预测 开辟线程
-        start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
-                           average_io_load, warning_message_queue)
-
-        # 检查是否有硬盘故障预警
-        hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
-        failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
-        for failure in failure_list:
-            main.main_ui.show_disk_error_warning(failure[0], failure[1])
-        # 判断服务器失联告警
-        sever_disconnection_warning(io_load_input_queue, warning_message_queue)
-        # 判断硬盘持续高I/O需求
-        hard_disk_high_io_warning(high_io_load_queue, warning_message_queue)
-
-        # 处理异常消息
-        resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
-
-        sys.exit(app.exec_())  # 表示界面退出
+    sys.exit(app.exec_())  # 循环等待界面退出

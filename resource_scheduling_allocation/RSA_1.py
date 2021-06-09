@@ -136,9 +136,9 @@ class OnlineModelTrainingThread(threading.Thread):
         self.save_model = save_model
 
     def run(self):
-        print("开始线程:")
+        print("动态训练开始:")
         online_model_training(self.io_load_input_queue, self.mean_and_std, self.save_model)
-        print("退出线程:")
+        print("动态训练结束:")
 
 
 def start_online_model_training(io_load_input_queue, mean_and_std, save_model):

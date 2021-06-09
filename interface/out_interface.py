@@ -48,7 +48,7 @@ class out_interface_impl(out_interface):
         # # 将接收到的数据返回
 
         # 读取文件模拟数据
-        filename = 'D:/test_SRMMS/' + ip + '_' + str(random.randint(0, 7)) + '.txt'
+        filename = 'D:/test_SRMMS/' + ip + '_' + str(random.randint(0, 6)) + '.txt'
         with open(filename, "r", encoding='utf-8') as f:
             dataps = f.readlines()
 
