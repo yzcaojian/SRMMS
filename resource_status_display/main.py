@@ -96,8 +96,6 @@ class MainWidget(QWidget):
     def closeEvent(self, event):
         MainWidget.running = False
 
-        # sys.exit()
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -163,6 +161,7 @@ if __name__ == '__main__':
     # 后台线程请求资源
     start_request_resource()
     time.sleep(0.1)
+
     app = QApplication(sys.argv)
     main = MainWindow()
 

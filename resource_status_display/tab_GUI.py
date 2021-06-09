@@ -1,3 +1,5 @@
+import time
+
 from PyQt5.QtCore import Qt, QSize, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QApplication, QHBoxLayout, QTabBar, QLabel, QPushButton, \
@@ -559,10 +561,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
         # 添加详细信息tab页后默认选中第一块硬盘
         if len(self.server_detailed_info) != 0:
-            for selected_disk in self.selected_disk_id:
-                if self.selected_server_ip == selected_disk[0]:  # 当前选择的服务器已经打开一个tab页
-                    return
-            self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[0].diskID])
+            # for selected_disk in self.selected_disk_id:
+            #     if self.selected_server_ip == selected_disk[0]:  # 当前选择的服务器已经打开一个tab页
+            #         return
+            if self.count() <= len(self.selected_disk_id):  # 对选中硬盘进行更新
+                self.selected_disk_id[self.count() - 1] = [self.selected_server_ip, self.server_detailed_info[0].diskID]
+            else:
+                self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[0].diskID])
 
         # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
         if self.exception_list:
@@ -653,16 +658,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         days_title_layout.addWidget(remaining_days_title)
 
         def set_health_state():
-            # degree = 0
-            # if IsUpdate:
-            #     degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
-            #     # 刷新的情况下直接用当前selected_disk_id[self.currentIndex() - 1]找到对应的健康度
-            # else:
-            #     if disk_selected is None:
-            #         print('默认选中第一个disk')
-            #         degree = in_interface_impl.get_health_degree(self.selected_ip, self.selected_disk_id[self.currentIndex() - 1])
-            #     else:
-            #         print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，生成健康度
+            if self.currentIndex() > len(self.selected_disk_id):
+                return
             degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.currentIndex() - 1][0], self.selected_disk_id[self.currentIndex() - 1][1])
             # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
             clearLayout(remaining_days_item_layout)
@@ -808,6 +805,8 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
 
         def set_disk_io_line(disk_selected, IsUpdate):
+            if self.currentIndex() > len(self.selected_disk_id):
+                return
             # disk_selected是获取的选择表格某行的范围信息
             if IsUpdate:
                 print("update disk_info per second...")
@@ -901,10 +900,10 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_health_state())
         self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
 
-    def tabClose(self):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
-        # self.selected_disk_id.remove(self.currentIndex() - 1)
-        del self.selected_disk_id[self.currentIndex() - 1]
-        self.removeTab(self.currentIndex())
+    def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
+        self.removeTab(index)
+        # self.selected_disk_id.remove(index - 1)
+        # del self.selected_disk_id[index - 1]
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
