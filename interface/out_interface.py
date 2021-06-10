@@ -50,12 +50,12 @@ class out_interface_impl(out_interface):
         # 读取文件模拟数据
         filename = 'D:/test_SRMMS/' + ip + '_' + str(random.randint(0, 6)) + '.txt'
         with open(filename, "r", encoding='utf-8') as f:
-            dataps = f.readlines()
+            dataps = f.read()
 
-            data = json.loads(dataps[0])
+            data = json.loads(dataps)
             # print(type(data))
             # print(data["overall_info"])
-        
+
         return data
 
     @classmethod
@@ -71,10 +71,11 @@ class out_interface_impl(out_interface):
         client.close()
 
 
-# with open('D:/test_SRMMS/192.168.225.1_test_data.txt', "r", encoding='utf-8') as f:
-#     dataps = f.readlines()
+# with open('D:/test_SRMMS/192.168.225.1_4.txt', "r", encoding='utf-8') as f:
+#     dataps = f.read()
 #
-#     print(dataps[0])
-#     data = json.loads(dataps[0])
-#     print(type(data))
-#     print(data["overall_info"])
+#     print(dataps)
+#     data = json.loads(dataps)
+#
+#     for item in data["detailed_info"]:
+#         print(len(item), item[0], item[-1])
