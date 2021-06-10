@@ -38,12 +38,12 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
+        self.selected_disk_id = {}  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
         self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
-        self.server_detailed_info = []  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
+        self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.tabCounts = 0
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -52,6 +52,7 @@ class MultDisksInfoTabWidget(QTabWidget):
     def initUI(self):
         self.addTab(self.overall_info_tab, "总体信息")  # 初始情况下没有详细页
         self.setTabsClosable(True)  # 设置tab页可以关闭，添加关闭按钮
+        # self.setMovable(True)  # 设置可以拖动
         self.tabCloseRequested.connect(self.tabClose)  # 绑定tab页关闭事件
         self.tabBar().setTabButton(0, QTabBar.RightSide, None)  # 设置总体信息页不能被关闭
 
@@ -561,19 +562,21 @@ class MultDisksInfoTabWidget(QTabWidget):
     def add_detailed_tab(self, server_selected, tabCounts):
         # server_selected是获取的选择表格某行的范围信息
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP，生成详细信息界面
-        if self.count() <= len(self.server_detailed_info):  # 对选中硬盘详细信息进行更新
-            self.server_detailed_info[self.count() - 1] = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
-        else:
-            self.server_detailed_info.append(in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0))
+        # if self.count() <= len(self.server_detailed_info):  # 对选中硬盘详细信息进行更新
+        #     self.server_detailed_info[self.count() - 1] = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
+        # else:
+        #     self.server_detailed_info.append(in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0))
+        self.server_detailed_info[tabCounts] = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
         # 添加详细信息tab页后默认选中第一块硬盘
         if len(self.server_detailed_info) != 0:
             # for selected_disk in self.selected_disk_id:
             #     if self.selected_server_ip == selected_disk[0]:  # 当前选择的服务器已经打开一个tab页
             #         return
-            if self.count() <= len(self.selected_disk_id):  # 对选中硬盘进行更新
-                self.selected_disk_id[self.count() - 1] = [self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID]
-            else:
-                self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID])
+            # if self.count() <= len(self.selected_disk_id):  # 对选中硬盘进行更新
+            #     self.selected_disk_id[self.count() - 1] = [self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID]
+            # else:
+            #     self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID])
+            self.selected_disk_id[tabCounts] = [self.selected_server_ip, self.server_detailed_info[tabCounts][0].diskID]
 
         # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
         if self.exception_list:
@@ -761,8 +764,8 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_width = str(disk_detailed_info_widget.size().width()) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() - 70) + "px"
 
-            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.count() - 1][1])
-            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.count() - 1][1])
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
             # 起始一分钟内并没有I/O负载数据
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
@@ -796,13 +799,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))  # 各硬盘有单独的IO图
+                    .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))  # 各硬盘有单独的IO图
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height())
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
             disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
 
         def set_disk_io_line(disk_selected, IsUpdate):
@@ -848,7 +851,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                         type_="category",
                         axistick_opts=opts.AxisTickOpts(is_inside=True),
                         boundary_gap=False))
-                        .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+                        .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
             else:
                 if len(y_predict_data) != len(y_data):
                     y_predict_data_ = [0] * (len(y_data) - len(y_predict_data)) + y_predict_data
@@ -885,13 +888,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                         type_="category",
                         axistick_opts=opts.AxisTickOpts(is_inside=True),
                         boundary_gap=False))
-                        .render("./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+                        .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
 
             line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(detailed_tab.size().width() / 2 - 20, disk_detailed_info_widget.size().height() / 2 + 40)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[self.currentIndex() - 1][1] + "_io.html"))
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
 
         draw_disk_io_line()
 
@@ -925,6 +928,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # printSize()
 
         self.addTab(detailed_tab, "详细信息")
+        # self.tabCloseRequested.connect(lambda: self.deleteDict(tabCounts))  # 绑定tab页关闭事件
         self.tabCounts += 1
         self.setCurrentIndex(self.count() - 1)
 
@@ -935,9 +939,16 @@ class MultDisksInfoTabWidget(QTabWidget):
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
         self.removeTab(index)
-        self.tabCounts -= 1
+
+        if self.count() == 1:  # 只剩下总体信息页时将count归零
+            self.tabCounts = 0
         # self.selected_disk_id.remove(index - 1)
         # del self.selected_disk_id[index - 1]
+
+    def deleteDict(self, tabCounts):  # 删除字典的对应数据
+        time.sleep(1)
+        self.selected_disk_id.pop(tabCounts)
+        self.server_detailed_info.pop(tabCounts)
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
