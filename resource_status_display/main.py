@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
     QMessageBox
 
+from hard_disk_failure_prediction.predict import start_disk_health_prediction
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
 from resource_status_display.configuration_checking import configuration_info
@@ -134,9 +135,15 @@ class TransactionProcessingThread(threading.Thread):
             # IO负载预测 开辟线程
             start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
                                      average_io_load, warning_message_queue)
+            # 硬盘故障预测
+            for ip in smart_dict:
+                for disk in smart_dict[ip]:
+                    if len(disk[3]) > 19:  # SMART数据足够预测
+                        start_disk_health_prediction(ip, disk[3], health_degree_dict, hard_disk_failure_prediction_list)
+                        disk[3] = disk[1:]  # 只需要保留20天的历史smart数据即可，多余进行删除
 
             # 检查是否有硬盘故障预警
-            hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
+            # hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
             failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
             for failure in failure_list:
                 main.main_ui.show_disk_error_warning(failure[0], failure[1])
@@ -181,6 +188,12 @@ if __name__ == '__main__':
     disk_detailed_info = in_interface_impl.get_disk_detailed_info()
     # 存放IO的平均值和标准差
     mean_and_std = in_interface_impl.get_mean_and_std()
+    # 存放所有硬盘smart数据
+    smart_dict = in_interface_impl.get_smart_data_dict()
+    # 存放各硬盘预测得到的健康度结果
+    health_degree_dict = in_interface_impl.get_health_degree_dict()
+    # 存放各硬盘需要预警的硬盘位置信息
+    hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction_list()
 
     save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 

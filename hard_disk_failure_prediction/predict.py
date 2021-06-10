@@ -5,6 +5,9 @@
 @Time : 2021/6/4 14:55
 @Author : cao jian
 """
+import threading
+import time
+
 
 def predict_disk_health_state(disk):
     # disk格式为[diskID, model, smartID, smartData]
@@ -33,5 +36,30 @@ def predict_disk_health_state(disk):
         degree = predict_1st(disk[3], disk[2])  # smartData, smartID
         if degree == 1:
             degree = predict_2nd(disk[3], disk[2])
-    print("硬盘故障预测")
     return degree
+
+
+class DiskHealthPredictionThread(threading.Thread):
+    def __init__(self, ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list):
+        threading.Thread.__init__(self)
+        self.ip = ip
+        self.disk_list = disk_list
+        self.health_degree_dict = health_degree_dict
+        self.hard_disk_failure_prediction_list = hard_disk_failure_prediction_list
+
+    def run(self):
+        health_degree = predict_disk_health_state(self.disk_list)
+        if self.ip not in self.health_degree_dict:
+            self.health_degree_dict[self.ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
+        if self.disk_list[0] in self.health_degree_dict[self.ip]:
+            if self.health_degree_dict[self.ip][self.disk_list[0]] > health_degree:  # 健康度下降
+                timestamp = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(time.time())).format(y='年', m='月',
+                                                                                                       d='日')
+                self.hard_disk_failure_prediction_list.append([self.ip, self.disk_list[0], [health_degree, timestamp]])
+        self.health_degree_dict[self.ip][self.disk_list[0]] = health_degree  # disk_id和健康度
+        print("硬盘故障预测结束:")
+
+
+def start_disk_health_prediction(ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list):
+    mythread = DiskHealthPredictionThread(ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list)
+    mythread.start()
