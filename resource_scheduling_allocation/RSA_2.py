@@ -37,80 +37,80 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
     keep_prob = tf.placeholder('float')
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
     saver = tf.train.Saver(max_to_keep=1)
-    # 读模型操作比较耗时
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        # saver.save(sess, './save/MyModel')
-        ckpt = tf.train.get_checkpoint_state(save_model_path)  # checkpoint存在的目录
-        if ckpt and ckpt.model_checkpoint_path:
-            saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-            print("Model restored...")
-        else:
-            print('No Model')
-            return
 
-        for ip in io_load_input_queue:
-            for disk_id in io_load_input_queue[ip]:
-                if len(io_load_input_queue[ip][disk_id]) < time_step:
-                    continue
-                else:
+    for ip in io_load_input_queue:
+        save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+        # 读模型操作比较耗时
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
+            if ckpt and ckpt.model_checkpoint_path:
+                saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+                print("对应的服务器预测模型存在,恢复该模型")
+            else:
+                ckpt = tf.train.get_checkpoint_state(save_model_path)
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                print('对应的服务器预测模型不存在,恢复默认模型')
 
-                    # 截取前面time_step个数据
-                    data_list = io_load_input_queue[ip][disk_id][:time_step]
+        for disk_id in io_load_input_queue[ip]:
+            if len(io_load_input_queue[ip][disk_id]) < time_step:
+                continue
+            else:
 
-                    # 去除前面一个数据
-                    io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][1:]
+                # 截取前面time_step个数据
+                data_list = io_load_input_queue[ip][disk_id][:time_step]
 
-                    data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
-                    data_list = data_list.reshape(len(data_list), 1)
+                # 去除前面一个数据
+                del io_load_input_queue[ip][disk_id][0]
 
-                    # 预测
-                    if mean_and_std:  # 不为空
-                        mean, std = mean_and_std
+                data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
+                data_list = data_list.reshape(len(data_list), 1)
+
+                # 不为空
+                mean, std = mean_and_std if mean_and_std else [[13304.76842105], [4681.6388205]]
+
+                # 转化为矩阵
+                mean = np.array(mean)
+                std = np.array(std)
+
+                # 预测
+                normalized_data_list = (data_list - mean) / std  # 标准化
+                # maxvalue = np.max(data_list, axis=0)
+                prob = sess.run(pred, feed_dict={X: [normalized_data_list], keep_prob: 1})
+                predict = prob.reshape((-1))
+                # 将预测值还原
+                predict = predict * std[0] + mean[0]
+                if predict < 0:
+                    predict = 0
+
+                # 将浮点数类型的时间戳转化为时间元组，并按照X时X分的格式转化为字符串
+                now_time = time.time()
+                local_time = time.strftime("%H:%M", time.localtime(now_time))
+                now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月',
+                                                                                                   d='日')
+                # 将预测值添加到输出队列中
+                if ip not in io_load_output_queue:
+                    io_load_output_queue[ip] = {}
+                if disk_id not in io_load_output_queue[ip]:
+                    io_load_output_queue[ip][disk_id] = []
+                io_load_output_queue[ip][disk_id].append([predict, local_time])
+
+                _, averageIO = average_io_load[ip][disk_id]
+                # 高于平均负载的1.2倍或者高于60 * 10w视作高负载
+                if predict > averageIO * 1.2 * 60 or predict >= 100000 * 60:
+                    errorID = 2
+                    warning = Warning(errorID, now_time, disk_id, configuration_info.IPtoName(ip), [local_time, predict])
+                    # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
+                    warning_message_queue.append(warning)
+                    # 服务器失联告警信息 to资源状态显示模块
+                    in_interface_impl.IN_RSA_RSD(warning)
+                    # 预警前端图标闪烁
+                    if not in_interface_impl.exception_list:
+                        in_interface_impl.exception_list.append([[ip, 1]])
+                        in_interface_impl.exception_list.append([[disk_id, 1]])
                     else:
-                        mean, std = [[13304.76842105], [4681.6388205]]
-
-                    # 转化为矩阵
-                    mean = np.array(mean)
-                    std = np.array(std)
-
-                    normalized_data_list = (data_list - mean) / std  # 标准化
-                    # maxvalue = np.max(data_list, axis=0)
-                    prob = sess.run(pred, feed_dict={X: [normalized_data_list], keep_prob: 1})
-                    predict = prob.reshape((-1))
-                    # 将预测值还原
-                    predict = predict * std[0] + mean[0]
-                    if predict < 0:
-                        predict = 0
-
-                    # 将浮点数类型的时间戳转化为时间元组，并按照X时X分的格式转化为字符串
-                    now_time = time.time()
-                    local_time = time.strftime("%H:%M", time.localtime(now_time))
-                    now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月',
-                                                                                                       d='日')
-                    # 将预测值添加到输出队列中
-                    if ip not in io_load_output_queue:
-                        io_load_output_queue[ip] = {}
-                    if disk_id not in io_load_output_queue[ip]:
-                        io_load_output_queue[ip][disk_id] = []
-                    io_load_output_queue[ip][disk_id].append([predict, local_time])
-
-                    _, averageIO = average_io_load[ip][disk_id]
-                    # 高于平均负载的1.2倍或者高于10w视作高负载
-                    if predict > averageIO * 1.2 or predict >= 100000:
-                        errorID = 2
-                        warning = Warning(errorID, now_time, disk_id, configuration_info.IPtoName(ip), [local_time, predict])
-                        # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
-                        warning_message_queue.append(warning)
-                        # 服务器失联告警信息 to资源状态显示模块
-                        in_interface_impl.IN_RSA_RSD(warning)
-                        # 预警前端图标闪烁
-                        if not in_interface_impl.exception_list:
-                            in_interface_impl.exception_list.append([[ip, 1]])
-                            in_interface_impl.exception_list.append([[disk_id, 1]])
-                        else:
-                            in_interface_impl.exception_list[0].append(ip, 1)
-                            in_interface_impl.exception_list[1].append(disk_id, 1)
+                        in_interface_impl.exception_list[0].append(ip, 1)
+                        in_interface_impl.exception_list[1].append(disk_id, 1)
 
 
 class IoLoadPredictionThread(threading.Thread):

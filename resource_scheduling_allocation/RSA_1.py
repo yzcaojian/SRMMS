@@ -45,68 +45,68 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    # 读模型操作比较耗时
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        # saver.save(sess, './save/MyModel')
-        ckpt = tf.train.get_checkpoint_state(save_model_path)  # checkpoint存在的目录
-        if ckpt and ckpt.model_checkpoint_path:
-            saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-            print("Model restored...")
-        else:
-            print('No Model')
+    for ip in io_load_input_queue:
+        save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+        # 读模型操作比较耗时
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
+            if ckpt and ckpt.model_checkpoint_path:
+                saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+                print("对应的服务器预测模型存在,恢复该模型")
+            else:
+                ckpt = tf.train.get_checkpoint_state(save_model_path)
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                print('对应的服务器预测模型不存在,恢复默认模型')
 
-        for ip in io_load_input_queue:
-            for disk_id in io_load_input_queue[ip]:
-                if len(io_load_input_queue[ip][disk_id]) < 60:  # 小于60不进行训练
-                    continue
-                elif len(io_load_input_queue[ip][disk_id]) >= 720:  # 当大于720时，维持数目在660
-                    io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
-                if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
-                    continue
-                data_list = io_load_input_queue[ip][disk_id]
-                data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
-                data_list = data_list.reshape(len(data_list), 1)
+        for disk_id in io_load_input_queue[ip]:
+            if len(io_load_input_queue[ip][disk_id]) < 60:  # 小于60不进行训练
+                continue
+            elif len(io_load_input_queue[ip][disk_id]) >= 720:  # 当大于720时，维持数目在660
+                del io_load_input_queue[ip][disk_id][:60]
+            if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
+                continue
+            data_list = io_load_input_queue[ip][disk_id]
+            data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
+            data_list = data_list.reshape(len(data_list), 1)
 
-                if len(io_load_input_queue[ip][disk_id]) > 500:  # 数量大于500时，更改mean和std
-                    mean, std = np.mean(data_list, axis=0).tolist(), np.std(data_list, axis=0).tolist()
-                    if mean_and_std:  # 不为空,清空列表
-                        mean_and_std.clear()
-                    mean_and_std.append(mean)
-                    mean_and_std.append(std)
-                elif mean_and_std:
-                    mean, std = mean_and_std
-                else:
-                    mean, std = [[13304.76842105], [4681.6388205]]
+            if len(io_load_input_queue[ip][disk_id]) > 500:  # 数量大于500时，更改mean和std
+                mean, std = np.mean(data_list, axis=0).tolist(), np.std(data_list, axis=0).tolist()
+                if mean_and_std:  # 不为空,清空列表
+                    mean_and_std.clear()
+                mean_and_std.append(mean)
+                mean_and_std.append(std)
+            else:  # mean_and_std不为空直接赋值
+                mean, std = mean_and_std if mean_and_std else [[13304.76842105], [4681.6388205]]
 
-                # 转化为矩阵
-                mean = np.array(mean)
-                std = np.array(std)
+            # 转化为矩阵
+            mean = np.array(mean)
+            std = np.array(std)
 
-                normalized_data_list = (data_list - mean) / std  # 标准化
+            normalized_data_list = (data_list - mean) / std  # 标准化
 
-                batch_index = []
-                train_x, train_y = [], []  # 训练集
-                print('训练集大小:', len(normalized_data_list) - time_step - (predict_step - 1))
-                for i in range(len(normalized_data_list) - time_step - (predict_step - 1)):
-                    if i % batch_size == 0:
-                        batch_index.append(i)
-                    x = normalized_data_list[i:i + time_step]
-                    y = normalized_data_list[i + time_step + (predict_step - 1)]
-                    train_x.append(x.tolist())
-                    train_y.append(y.tolist())
-                batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
+            batch_index = []
+            train_x, train_y = [], []  # 训练集
+            print('训练集大小:', len(normalized_data_list) - time_step - (predict_step - 1))
+            for i in range(len(normalized_data_list) - time_step - (predict_step - 1)):
+                if i % batch_size == 0:
+                    batch_index.append(i)
+                x = normalized_data_list[i:i + time_step]
+                y = normalized_data_list[i + time_step + (predict_step - 1)]
+                train_x.append(x.tolist())
+                train_y.append(y.tolist())
+            batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
 
-                # 重复训练
-                for i in range(3000):
-                    for step in range(len(batch_index) - 1):
-                        _, loss_, M, MM = sess.run([train_op, loss, m, mm],
-                                                   feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
-                                                              Y: train_y[batch_index[step]:batch_index[step + 1]],
-                                                              keep_prob: 1})
-                    print(i, loss_)
-
-                saver.save(sess, save_model_path + save_model_name)  # 保存模型
+            # 重复训练
+            for i in range(3000):
+                for step in range(len(batch_index) - 1):
+                    _, loss_, M, MM = sess.run([train_op, loss, m, mm],
+                                               feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
+                                                          Y: train_y[batch_index[step]:batch_index[step + 1]],
+                                                          keep_prob: 1})
+                print(i, loss_)
+            # 将模型保存在对应的服务器文件夹中
+            saver.save(sess, save_model_path_ip + save_model_name)  # 保存模型
 
 
 def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):
