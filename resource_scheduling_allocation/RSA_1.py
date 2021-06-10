@@ -45,23 +45,25 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    # 读模型操作比较耗时
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        # saver.save(sess, './save/MyModel')
-        ckpt = tf.train.get_checkpoint_state(save_model_path)  # checkpoint存在的目录
-        if ckpt and ckpt.model_checkpoint_path:
-            saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-            print("Model restored...")
-        else:
-            print('No Model')
+    for ip in io_load_input_queue:
+        save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+        # 读模型操作比较耗时
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
+            if ckpt and ckpt.model_checkpoint_path:
+                saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+                print("对应的服务器预测模型存在,恢复该模型")
+            else:
+                ckpt = tf.train.get_checkpoint_state(save_model_path)
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                print('对应的服务器预测模型不存在,恢复默认模型')
 
-        for ip in io_load_input_queue:
             for disk_id in io_load_input_queue[ip]:
                 if len(io_load_input_queue[ip][disk_id]) < 60:  # 小于60不进行训练
                     continue
                 elif len(io_load_input_queue[ip][disk_id]) >= 720:  # 当大于720时，维持数目在660
-                    io_load_input_queue[ip][disk_id] = io_load_input_queue[ip][disk_id][60:]
+                    del io_load_input_queue[ip][disk_id][:60]
                 if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
                     continue
                 data_list = io_load_input_queue[ip][disk_id]
@@ -74,10 +76,8 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                         mean_and_std.clear()
                     mean_and_std.append(mean)
                     mean_and_std.append(std)
-                elif mean_and_std:
-                    mean, std = mean_and_std
-                else:
-                    mean, std = [[13304.76842105], [4681.6388205]]
+                else:  # mean_and_std不为空直接赋值
+                    mean, std = mean_and_std if mean_and_std else [[13304.76842105], [4681.6388205]]
 
                 # 转化为矩阵
                 mean = np.array(mean)
@@ -105,8 +105,8 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                                                               Y: train_y[batch_index[step]:batch_index[step + 1]],
                                                               keep_prob: 1})
                     print(i, loss_)
-
-                saver.save(sess, save_model_path + save_model_name)  # 保存模型
+                # 将模型保存在对应的服务器文件夹中
+                saver.save(sess, save_model_path_ip + save_model_name)  # 保存模型
 
 
 def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):

@@ -249,7 +249,7 @@ class in_interface_impl(in_interface):
                         continue
                     else:
                         # 将前面60个数据删除
-                        cls.io_load_input_queue[ip][disk_id] = cls.io_load_input_queue[ip][disk_id][60:]
+                        del cls.io_load_input_queue[ip][disk_id][:60]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
@@ -266,11 +266,11 @@ class in_interface_impl(in_interface):
                         for i in range(length - 3 * 60):
                             cls.io_load_input_queue_display_past[server_ip][disk_id].append(cls.io_load_input_queue_display[server_ip][disk_id][i])
                         # 删除前面的数据
-                        cls.io_load_input_queue_display[server_ip][disk_id] = cls.io_load_input_queue_display[server_ip][disk_id][length - 3 * 60:]
+                        del cls.io_load_input_queue_display[server_ip][disk_id][:length - 3 * 60]
                         # 历史数据最多保存24小时
                         _length = len(cls.io_load_input_queue_display_past[server_ip][disk_id])
                         if _length > 24 * 60:
-                            cls.io_load_input_queue_display_past[server_ip][disk_id] = cls.io_load_input_queue_display_past[server_ip][disk_id][_length - 24 * 60:]
+                            del cls.io_load_input_queue_display_past[server_ip][disk_id][:_length - 24 * 60]
 
         if ip not in cls.io_load_input_queue_display or id not in cls.io_load_input_queue_display[ip]:  # 如果为空
             return [], []
@@ -329,11 +329,11 @@ class in_interface_impl(in_interface):
                         for i in range(length - 3 * 60):
                             cls.io_load_output_queue_past[server_ip][disk_id].append(cls.io_load_output_queue[server_ip][disk_id][i])
                         # 删除前面的数据
-                        cls.io_load_output_queue[server_ip][disk_id] = cls.io_load_output_queue[server_ip][disk_id][length - 3 * 60:]
+                        del cls.io_load_output_queue[server_ip][disk_id][:length - 3 * 60]
                         # 历史数据最多保存24小时
                         _length = len(cls.io_load_output_queue_past[server_ip][disk_id])
                         if _length > 24 * 60:
-                            cls.io_load_output_queue_past[server_ip][disk_id] = cls.io_load_output_queue_past[server_ip][disk_id][_length - 24 * 60:]
+                            del cls.io_load_output_queue_past[server_ip][disk_id][:_length - 24 * 60]
 
         if ip not in cls.io_load_output_queue or id not in cls.io_load_output_queue[ip]:  # 如果为空
             return [], []
@@ -458,11 +458,11 @@ class in_interface_impl(in_interface):
                 for i in range(length - 600):
                     cls.RAID_io_info_dict_past[sever_ip].append(cls.RAID_io_info_dict[sever_ip][i])
                 # 删除前面的数据
-                cls.RAID_io_info_dict[sever_ip] = cls.RAID_io_info_dict[sever_ip][length - 600:]
+                del cls.RAID_io_info_dict[sever_ip][:length - 600]
                 # 历史数据最多保存3小时
                 _length = len(cls.RAID_io_info_dict_past[sever_ip])
                 if _length > 3 * 60 * 60:
-                    cls.RAID_io_info_dict_past[sever_ip] = cls.RAID_io_info_dict_past[sever_ip][_length - 3 * 60 * 60:]
+                    del cls.RAID_io_info_dict_past[sever_ip][:_length - 3 * 60 * 60]
 
         RAID_io_info_list = cls.RAID_io_info_dict[ip]
         arr = np.array(RAID_io_info_list)
@@ -538,13 +538,13 @@ class in_interface_impl(in_interface):
                     cls.two_disk_io_dict_past[server_ip]["hdd"].append(cls.two_disk_io_dict[server_ip]["hdd"][i])
                     cls.two_disk_io_dict_past[server_ip]["ssd"].append(cls.two_disk_io_dict[server_ip]["ssd"][i])
                 # 删除前面的数据
-                cls.two_disk_io_dict[server_ip]["hdd"] = cls.two_disk_io_dict[server_ip]["hdd"][length - 600:]
-                cls.two_disk_io_dict[server_ip]["ssd"] = cls.two_disk_io_dict[server_ip]["ssd"][length - 600:]
+                del cls.two_disk_io_dict[server_ip]["hdd"][:length - 600]
+                del cls.two_disk_io_dict[server_ip]["ssd"][:length - 600]
                 # 历史数据最多保存3小时
                 _length = len(cls.two_disk_io_dict_past[server_ip]["hdd"])
                 if _length > 3 * 60 * 60:
-                    cls.two_disk_io_dict_past[server_ip]["hdd"] = cls.two_disk_io_dict_past[server_ip]["hdd"][_length - 3 * 60 * 60:]
-                    cls.two_disk_io_dict_past[server_ip]["ssd"] = cls.two_disk_io_dict_past[server_ip]["ssd"][_length - 3 * 60 * 60:]
+                    del cls.two_disk_io_dict_past[server_ip]["hdd"][:_length - 3 * 60 * 60]
+                    del cls.two_disk_io_dict_past[server_ip]["ssd"][:_length - 3 * 60 * 60]
 
         return cls.two_disk_io_dict[ip]["hdd"], cls.two_disk_io_dict[ip]["ssd"]
 
@@ -646,7 +646,7 @@ class in_interface_impl(in_interface):
             # 只需要保留20天的历史smart数据即可，多余进行删除
             if len(cls.smart_data_dict[ip][0][3]) > 19:
                 for old in cls.smart_data_dict[ip]:
-                    old[3] = old[3][1:]
+                    del old[3][0]
             # 这里需要保证硬盘按照disk_id排列顺序一致
             for (old, new) in (cls.smart_data_dict[ip], smart_data):
                 old[3].append(new[3])
@@ -697,10 +697,10 @@ class in_interface_impl(in_interface):
         return cls.exception_list
 
 
-# if __name__ == "__main__":
-#     list1 = {}
-#     if "1" not in list1:
-#         print(123)
-#     else:
-#         print((321))
+if __name__ == "__main__":
+    list1 = [1, 2, 3, 4]
+    list2 = list1
+    print(list2)
+    list2[2] = 4
+    print(list2, list1)
 
