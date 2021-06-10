@@ -17,18 +17,18 @@ n_classes = 3
 # classes = ["R1-1", "R1-2", "R1-3"]
 classes = [7, 8, 9]
 
-# Define weights
-weights = {
-    'in': tf.Variable(tf.random_uniform([n_input, n_hidden])),
-    'out': tf.Variable(tf.random.normal([n_hidden, n_classes])),
-}
-biases = {
-    'in': tf.Variable(tf.random_uniform([n_hidden])),
-    'out': tf.Variable(tf.random.normal([n_classes])),
-}
-
 
 def mulitGRU(x):
+    # Define weights
+    weights = {
+        'in': tf.Variable(tf.random_uniform([n_input, n_hidden])),
+        'out': tf.Variable(tf.random.normal([n_hidden, n_classes])),
+    }
+    biases = {
+        'in': tf.Variable(tf.random_uniform([n_hidden])),
+        'out': tf.Variable(tf.random.normal([n_classes])),
+    }
+
     x = tf.unstack(x, num=n_steps, axis=1)
 
     # 可以看做3个隐藏层
@@ -48,6 +48,7 @@ def mulitGRU(x):
 
 
 def predict_2nd(smart_data, smart_id):
+    tf.reset_default_graph()
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：2、3、4、8、9、192、193、194、197
     # 根据提前准备好的训练集中最大最小值进行数据归一化
     smart_data = smart_data.astype(np.float32)
