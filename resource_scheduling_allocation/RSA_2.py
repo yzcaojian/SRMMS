@@ -38,10 +38,10 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
     saver = tf.train.Saver(max_to_keep=1)
 
-    for ip in io_load_input_queue:
-        save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
-        # 读模型操作比较耗时
-        with tf.Session() as sess:
+    with tf.Session() as sess:
+        for ip in io_load_input_queue:
+            save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+            # 读模型操作比较耗时
             sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
             if ckpt and ckpt.model_checkpoint_path:
@@ -77,9 +77,10 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     normalized_data_list = (data_list - mean) / std  # 标准化
                     # maxvalue = np.max(data_list, axis=0)
                     prob = sess.run(pred, feed_dict={X: [normalized_data_list], keep_prob: 1})
-                    predict = prob.reshape((-1))
-                    # 将预测值还原
-                    predict = predict * std[0] + mean[0]
+                    # prob是一个1X1的矩阵 取第一个元素
+                    predict = prob.reshape((-1))[0]
+                    # 将预测值还原 取整数
+                    predict = int(predict * std[0] + mean[0])
                     if predict < 0:
                         predict = 0
 

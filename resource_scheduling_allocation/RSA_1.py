@@ -45,10 +45,10 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    for ip in io_load_input_queue:
-        save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
-        # 读模型操作比较耗时
-        with tf.Session() as sess:
+    with tf.Session() as sess:
+        for ip in io_load_input_queue:
+            save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+            # 读模型操作比较耗时
             sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
             if ckpt and ckpt.model_checkpoint_path:
@@ -125,6 +125,7 @@ def io_second_to_io_minute(io_load_input_queue, io_load_input_queue_minute):
             if disk_id not in io_load_input_queue_minute[ip]:
                 io_load_input_queue_minute[ip][disk_id] = []
             # //整除  时间需要取平均值
+            # for i in range(10):
             io_load_input_queue_minute[ip][disk_id].append([total_io, total_time // 60])
 
 

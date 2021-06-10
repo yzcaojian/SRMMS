@@ -697,10 +697,9 @@ class in_interface_impl(in_interface):
         return cls.exception_list
 
 
-if __name__ == "__main__":
-    list1 = [1, 2, 3, 4]
-    list2 = list1
-    print(list2)
-    list2[2] = 4
-    print(list2, list1)
+# if __name__ == "__main__":
+#     list1 = [[1, 2]]
+#     arr = np.array(list1)
+#     list2 = arr[:, 0]
+#     print(list2)
 

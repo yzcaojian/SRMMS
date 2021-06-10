@@ -854,8 +854,8 @@ class MultDisksInfoTabWidget(QTabWidget):
                         .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
             else:
                 if len(y_predict_data) != len(y_data):
-                    y_predict_data_ = [0] * (len(y_data) - len(y_predict_data)) + y_predict_data
-                    x_predict_data_ = x_data[0:(len(y_data) - len(y_predict_data))] + x_predict_data
+                    y_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + y_predict_data
+                    x_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + x_predict_data
                 else:
                     x_predict_data_ = x_predict_data
                     y_predict_data_ = y_predict_data
