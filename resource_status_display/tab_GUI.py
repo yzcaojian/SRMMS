@@ -44,6 +44,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = []  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
+        self.tabCounts = 0
         self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局
         self.initUI()
         self.update_thread.start()
@@ -73,7 +74,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.doubleClicked.connect(  # 双击新增详细信息界面
-            lambda: self.add_detailed_tab(server_storage_table.selectedRanges()))
+            lambda: self.add_detailed_tab(server_storage_table.selectedRanges(), self.tabCounts))
         # server_storage_table.clicked.connect(  # 单击改变总体信息界面
         #     lambda: self.update_server_overall_info(server_storage_table.selectedRanges()))
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
@@ -557,7 +558,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: set_hdd_io_line(None, True))
         self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
 
-    def add_detailed_tab(self, server_selected):
+    def add_detailed_tab(self, server_selected, tabCounts):
         # server_selected是获取的选择表格某行的范围信息
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP，生成详细信息界面
         if self.count() <= len(self.server_detailed_info):  # 对选中硬盘详细信息进行更新
@@ -614,13 +615,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 定义内部函数事件，初始化或者是到刷新周期后，从disk_storage_info_list中取数据放入disk_storage_table中去
         def show_disks_storage_list():
             global line
-            if self.currentIndex() == 0:  # 表示添加详细页时初次调用函数，此时currentIndex是0
-                print("1-------------")
-                disks_storage_info_list = self.server_detailed_info[self.count() - 1]
-            else:
-                print("----------", self.currentIndex())
-                self.server_detailed_info[self.currentIndex() - 1] = in_interface_impl.get_server_detailed_info(self.selected_disk_id[self.currentIndex() - 1][0], 0)
-                disks_storage_info_list = self.server_detailed_info[self.currentIndex() - 1]
+            # if self.currentIndex() == 0 and tabCounts == 0:  # 表示添加详细页时初次调用函数，此时currentIndex是0
+            #     print("1-------------")
+            #     disks_storage_info_list = self.server_detailed_info[self.count() - 1]
+            # else:
+            self.server_detailed_info[tabCounts] = in_interface_impl.get_server_detailed_info(self.selected_disk_id[tabCounts][0], 0)
+            disks_storage_info_list = self.server_detailed_info[tabCounts]
+
             disk_storage_table.setRowCount(len(disks_storage_info_list))
             # disk_storage_table.clear()  # 清空刷新前的所有项
             for i, single_disk_info in enumerate(disks_storage_info_list):
@@ -672,10 +673,10 @@ class MultDisksInfoTabWidget(QTabWidget):
         def set_health_state():
             # if self.currentIndex() > len(self.selected_disk_id):
             #     return
-            if self.currentIndex() == 0:  # 表示添加详细页时初次调用函数，此时currenIndex是0
-                degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.count() - 1][0], self.selected_disk_id[self.count() - 1][1])
-            else:
-                degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.currentIndex() - 1][0], self.selected_disk_id[self.currentIndex() - 1][1])
+            # if self.currentIndex() == 0:  # 表示添加详细页时初次调用函数，此时currenIndex是0
+            #     degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.count() - 1][0], self.selected_disk_id[self.count() - 1][1])
+            # else:
+            degree = in_interface_impl.get_health_degree(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
             # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
@@ -820,8 +821,8 @@ class MultDisksInfoTabWidget(QTabWidget):
             disk_io_width = str(detailed_tab.size().width() / 2 - 40) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
 
-            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
-            y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(self.selected_server_ip, self.selected_disk_id[self.currentIndex() - 1][1])
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
 
@@ -924,6 +925,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # printSize()
 
         self.addTab(detailed_tab, "详细信息")
+        self.tabCounts += 1
         self.setCurrentIndex(self.count() - 1)
 
         # 定时刷新
@@ -933,6 +935,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
         self.removeTab(index)
+        self.tabCounts -= 1
         # self.selected_disk_id.remove(index - 1)
         # del self.selected_disk_id[index - 1]
 
