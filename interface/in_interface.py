@@ -238,18 +238,18 @@ class in_interface_impl(in_interface):
                 cls.io_load_input_queue[ip][disk_id] = []
             cls.io_load_input_queue[ip][disk_id].append([disk_io, now_time])
 
-            # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
-            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_display)
-            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_predict)
-            io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
+        # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
+        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_display)
+        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_predict)
+        io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
 
-            for ip in cls.io_load_input_queue:
-                for disk_id in cls.io_load_input_queue[ip]:
-                    if len(cls.io_load_input_queue[ip][disk_id]) < 60:
-                        continue
-                    else:
-                        # 将前面60个数据删除
-                        del cls.io_load_input_queue[ip][disk_id][:60]
+        for ip in cls.io_load_input_queue:
+            for disk_id in cls.io_load_input_queue[ip]:
+                if len(cls.io_load_input_queue[ip][disk_id]) < 60:
+                    continue
+                else:
+                    # 将前面60个数据删除
+                    del cls.io_load_input_queue[ip][disk_id][:60]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
@@ -637,21 +637,29 @@ class in_interface_impl(in_interface):
     
     @classmethod
     def IN_DCA_HDFP(cls, ip, smart_data):
+        # print(smart_data)
         # 将smart数据添加到列表中
         # 优化，判断型号，如果不在可以预测的型号范围内，不接收数据
         if ip not in cls.smart_data_dict:
             cls.smart_data_dict[ip] = smart_data
+            # 将原来的一维列表改变为嵌套列表
+            for daily_data in cls.smart_data_dict[ip]:
+                daily_data[3] = [daily_data[3]]
         # 将新的smart数据添加到字典中，至少保证采集20天的历史数据才能预测
         else:
             # 只需要保留20天的历史smart数据即可，多余进行删除
-            if len(cls.smart_data_dict[ip][0][3]) > 19:
-                for old in cls.smart_data_dict[ip]:
-                    del old[3][0]
+            for old in cls.smart_data_dict[ip]:
+                if len(old[3]) > 19:
+                    old[3] = old[3][1:]
             # 这里需要保证硬盘按照disk_id排列顺序一致
-            for (old, new) in (cls.smart_data_dict[ip], smart_data):
-                old[3].append(new[3])
-                # 每当有新的SMART数据添加进列表时，做一次健康度预测
-                cls.IN_HDFP_RSD(ip, old)
+            for old in cls.smart_data_dict[ip]:
+                for new in smart_data:
+                    if old[0] == new[0]:
+                        old[3].append(new[3])
+                        # 每当有新的SMART数据添加进列表时，做一次健康度预测
+                        if len(old[3]) > 19:
+                            cls.IN_HDFP_RSD(ip, old)
+                        break
 
     @classmethod
     def IN_HDFP_RSD(cls, ip, disk):
