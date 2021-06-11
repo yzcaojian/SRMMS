@@ -120,6 +120,7 @@ class RequestResourceThread(threading.Thread):
             # 释放锁
             threadLock.release()
             print("请求资源释放锁")
+            QApplication.processEvents()
             time.sleep(1)
 
 
@@ -163,6 +164,7 @@ class TransactionProcessingThread(threading.Thread):
             # 释放锁
             threadLock.release()
             print("事务处理释放锁")
+            QApplication.processEvents()
             time.sleep(1)
 
 

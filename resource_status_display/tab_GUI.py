@@ -345,7 +345,6 @@ class MultDisksInfoTabWidget(QTabWidget):
         def set_ssd_io_line(server_selected, IsUpdate):
             # server_selected是获取的选择表格某行的范围信息
             if IsUpdate:
-                print("update server_info per second...")
                 pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
             else:
                 if server_selected is None:

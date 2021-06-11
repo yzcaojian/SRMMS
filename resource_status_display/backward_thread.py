@@ -1,6 +1,8 @@
 import time
 
 from PyQt5.QtCore import QThread, pyqtSignal
+import threading
+
 """
 -*- coding: utf-8 -*- 
 @Project: GUI_beginning
@@ -18,9 +20,13 @@ class UpdateMDDataThread(QThread):
         super(UpdateMDDataThread, self).__init__()
 
     def run(self):
+        # threadLock = threading.Lock()
         while True:
+            # threadLock.acquire()
+            # print("更新多硬盘架构前端数据")
             self.update_data.emit()  # 发射信号
-            time.sleep(1)  # 推迟执行一秒钟
+            # threadLock.release()
+            self.sleep(1)  # 推迟执行一秒钟
 
 
 class UpdateRAIDDataThread(QThread):
@@ -31,6 +37,10 @@ class UpdateRAIDDataThread(QThread):
         super(UpdateRAIDDataThread, self).__init__()
 
     def run(self):
+        # threadLock = threading.Lock()
         while True:
+            # threadLock.acquire()
+            # print("更新RAID架构前端数据")
             self.update_data.emit()  # 发射信号
-            time.sleep(1)  # 推迟执行一秒钟
+            # threadLock.release()
+            self.sleep(1)  # 推迟执行一秒钟
