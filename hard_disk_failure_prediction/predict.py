@@ -44,7 +44,9 @@ class DiskHealthPredictionThread(threading.Thread):
     def __init__(self, ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list):
         threading.Thread.__init__(self)
         self.ip = ip
-        self.disk_list = disk_list
+        self.disk_list = disk_list[:]
+        self.disk_list[3] = disk_list[3][:]
+        del disk_list[3][0]  # 只需要保留20天的历史smart数据即可，多余进行删除
         self.health_degree_dict = health_degree_dict
         self.hard_disk_failure_prediction_list = hard_disk_failure_prediction_list
 
@@ -63,6 +65,11 @@ class DiskHealthPredictionThread(threading.Thread):
         print("硬盘故障预测结束:")
 
 
-def start_disk_health_prediction(ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list):
-    mythread = DiskHealthPredictionThread(ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list)
-    mythread.start()
+def start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list):
+    for ip in smart_dict:
+        for disk in smart_dict[ip]:
+            if len(disk[3]) > 19:  # SMART数据足够预测
+                mythread = DiskHealthPredictionThread(ip, disk, health_degree_dict,
+                                                      hard_disk_failure_prediction_list)
+
+                mythread.start()

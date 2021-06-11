@@ -144,12 +144,8 @@ class TransactionProcessingThread(threading.Thread):
             # IO负载预测 开辟线程
             start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
                                      average_io_load, warning_message_queue)
-            # 硬盘故障预测
-            for ip in smart_dict:
-                for disk in smart_dict[ip]:
-                    if len(disk[3]) > 19:  # SMART数据足够预测
-                        start_disk_health_prediction(ip, disk, health_degree_dict, hard_disk_failure_prediction_list)
-                        disk[3] = disk[3][1:]  # 只需要保留20天的历史smart数据即可，多余进行删除
+            # 硬盘故障预测 开辟线程
+            start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
 
             # 检查是否有硬盘故障预警
             # hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
