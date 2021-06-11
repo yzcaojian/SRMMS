@@ -243,13 +243,13 @@ class in_interface_impl(in_interface):
         io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_predict)
         io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
 
-        for ip in cls.io_load_input_queue:
-            for disk_id in cls.io_load_input_queue[ip]:
-                if len(cls.io_load_input_queue[ip][disk_id]) < 60:
+        for ip_ in cls.io_load_input_queue:
+            for disk_id_ in cls.io_load_input_queue[ip]:
+                if len(cls.io_load_input_queue[ip_][disk_id_]) < 60:
                     continue
                 else:
                     # 将前面60个数据删除
-                    del cls.io_load_input_queue[ip][disk_id][:60]
+                    del cls.io_load_input_queue[ip_][disk_id_][:60]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
