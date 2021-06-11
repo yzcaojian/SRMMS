@@ -74,7 +74,7 @@ def predict_2nd(smart_data, smart_id):
         sess.run(tf.global_variables_initializer())
         # 先加载图和参数变量
         # saver = tf.train.import_meta_graph('./model/hdd_GRU_model.ckpt.meta')  # 不能加这一步
-        saver.restore(sess, tf.train.latest_checkpoint('./model_2/'))
+        saver.restore(sess, tf.train.latest_checkpoint('../hard_disk_failure_prediction/WD30EFRX/model_learning/model_2/'))
 
         prediction = sess.run(pred, feed_dict={x: smart_data})
         print(prediction)

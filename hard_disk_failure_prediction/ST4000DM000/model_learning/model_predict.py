@@ -73,7 +73,7 @@ def predict_1st(smart_data, smart_id):
         sess.run(tf.global_variables_initializer())
         # 先加载图和参数变量
         # saver = tf.train.import_meta_graph('./model/hdd_GRU_model.ckpt.meta')  # 不能加这一步
-        saver.restore(sess, tf.train.latest_checkpoint('./model/'))
+        saver.restore(sess, tf.train.latest_checkpoint('../hard_disk_failure_prediction/ST4000DM000/model_learning/model/'))
 
         prediction = sess.run(pred, feed_dict={x: smart_data})
         print(prediction)

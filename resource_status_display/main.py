@@ -139,7 +139,6 @@ class TransactionProcessingThread(threading.Thread):
             for ip in smart_dict:
                 for disk in smart_dict[ip]:
                     if len(disk[3]) > 19:  # SMART数据足够预测
-                        print(disk)
                         start_disk_health_prediction(ip, disk, health_degree_dict, hard_disk_failure_prediction_list)
                         disk[3] = disk[3][1:]  # 只需要保留20天的历史smart数据即可，多余进行删除
 
