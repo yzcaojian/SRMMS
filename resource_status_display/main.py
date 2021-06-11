@@ -109,10 +109,16 @@ class RequestResourceThread(threading.Thread):
 
     def run(self):
         while MainWidget.running:
+            # 获得锁
+            threadLock.acquire()
+            print("请求资源获得锁")
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
                 analyse_data(ip)
             print("请求资源结束:")
+            # 释放锁
+            threadLock.release()
+            print("请求资源释放锁")
             time.sleep(1)
 
 
@@ -127,6 +133,9 @@ class TransactionProcessingThread(threading.Thread):
 
     def run(self):
         while MainWidget.running:
+            # 获得锁
+            threadLock.acquire()
+            print("事务处理获得锁")
             print("事务处理开始:")
             # 线上训练 开辟线程
             start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
@@ -148,6 +157,9 @@ class TransactionProcessingThread(threading.Thread):
             # 处理异常消息
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
+            # 释放锁
+            threadLock.release()
+            print("事务处理释放锁")
             time.sleep(1)
 
 
@@ -157,7 +169,8 @@ def start_transaction_processing():
 
 
 if __name__ == '__main__':
-
+    # 线程锁
+    threadLock = threading.Lock()
     # 后台线程请求资源
     start_request_resource()
     time.sleep(0.1)
