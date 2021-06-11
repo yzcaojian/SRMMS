@@ -51,6 +51,7 @@ def predict_2nd(smart_data, smart_id):
     tf.reset_default_graph()
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：1、3、4、9、12、192、193、194、197
     # 根据提前准备好的训练集中最大最小值进行数据归一化
+    smart_data = smart_data[np.newaxis, :, :]
     smart_data = smart_data.astype(np.float32)
     smart_max = [68186, 7025, 86, 40223, 86, 63, 743480, 39, 960]
     smart_min = [0, 0, 1, 7, 1, 0, 0, 15, 0]
@@ -62,7 +63,7 @@ def predict_2nd(smart_data, smart_id):
                 smart_data[0][j][i] = 0
             else:
                 smart_data[0][j][i] = float((smart_data[0][j][i] - smart_min[i]) / (smart_max[i] - smart_min[i]))
-    print(smart_data)
+    # print(smart_data)
 
     # 数据通过GRU网络计算
     x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 20, 9])
@@ -81,7 +82,7 @@ def predict_2nd(smart_data, smart_id):
         print(np.max(prediction, axis=1))  # 概率最大的健康度预测结果
         for i in range(len(prediction[0])):
             if prediction[0][i] == np.max(prediction, axis=1):
-                print(classes[i])
+                return classes[i]
 
 
 # 预测数据
@@ -113,9 +114,9 @@ pre3 = [[0, 4608, 14, 16097, 14, 4, 62, 21, 0], [0, 4608, 14, 16121, 14, 4, 62, 
 # pre2 = np.array(pre2)
 # pre2 = pre2[np.newaxis, :, :]
 # predict_2nd(pre2, "")
-pre3 = np.array(pre3)
-pre3 = pre3[np.newaxis, :, :]
-predict_2nd(pre3, "")
+# pre3 = np.array(pre3)
+# pre3 = pre3[np.newaxis, :, :]
+# predict_2nd(pre3, "")
 
 # 2nd
 # max 68186 min 0

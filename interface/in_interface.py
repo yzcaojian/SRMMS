@@ -418,6 +418,18 @@ class in_interface_impl(in_interface):
         return cls.warning_message_queue
 
     @classmethod
+    def get_smart_data_dict(cls):
+        return cls.smart_data_dict
+
+    @classmethod
+    def get_hard_disk_failure_prediction_list(cls):
+        return cls.hard_disk_failure_prediction_list
+
+    @classmethod
+    def get_health_degree_dict(cls):
+        return cls.health_degree_dict
+
+    @classmethod
     def IN_RSA_DCA(cls, ip, instructions):
         from data_communication_analysis.DAC_1 import send_instructions
         # 调用数据通信解析模块的函数发送指令
@@ -643,23 +655,31 @@ class in_interface_impl(in_interface):
     
     @classmethod
     def IN_DCA_HDFP(cls, ip, smart_data):
+        # print(smart_data)
         # 将smart数据添加到列表中
         # 优化，判断型号，如果不在可以预测的型号范围内，不接收数据
         if ip not in cls.smart_data_dict:
             cls.smart_data_dict[ip] = smart_data
+            # 将原来的一维列表改变为嵌套列表
+            for daily_data in cls.smart_data_dict[ip]:
+                daily_data[3] = [daily_data[3]]
         # 将新的smart数据添加到字典中，至少保证采集20天的历史数据才能预测
         else:
-            # 只需要保留20天的历史smart数据即可，多余进行删除
-            if len(cls.smart_data_dict[ip][0][3]) > 19:
-                for old in cls.smart_data_dict[ip]:
-                    del old[3][0]
+            # # 只需要保留20天的历史smart数据即可，多余进行删除，已在main进行删除
+            # for old in cls.smart_data_dict[ip]:
+            #     if len(old[3]) > 19:
+            #         old[3] = old[3][1:]
             # 这里需要保证硬盘按照disk_id排列顺序一致
-            for (old, new) in (cls.smart_data_dict[ip], smart_data):
-                old[3].append(new[3])
-                # 每当有新的SMART数据添加进列表时，做一次健康度预测
-                cls.IN_HDFP_RSD(ip, old)
+            for old in cls.smart_data_dict[ip]:
+                for new in smart_data:
+                    if old[0] == new[0]:
+                        old[3].append(new[3])
+                        # 每当有新的SMART数据添加进列表时，做一次健康度预测
+                        # if len(old[3]) > 19:
+                        #     cls.IN_HDFP_RSD(ip, old)
+                        break
 
-    @classmethod
+    @classmethod  # 废弃
     def IN_HDFP_RSD(cls, ip, disk):
         # 将健康度信息添加到列表中
         # disk = cls.get_smart_info(ip, disk_id)

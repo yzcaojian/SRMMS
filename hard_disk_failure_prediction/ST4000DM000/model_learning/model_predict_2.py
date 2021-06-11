@@ -51,6 +51,7 @@ def predict_2nd(smart_data, smart_id):
     tf.reset_default_graph()
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：1、9、187、193、194、197、198、241、242
     # 根据提前准备好的训练集中最大最小值进行数据归一化
+    smart_data = smart_data[np.newaxis, :, :]
     smart_data = smart_data.astype(np.float32)
     smart_max = [2690, 51311, 76, 65535, 786529, 60440, 60440, 68843842616, 921249276720]
     smart_min = [0, 0, 0, 4, 14, 0, 0, 0, 3912]
@@ -81,7 +82,7 @@ def predict_2nd(smart_data, smart_id):
         print(np.max(prediction, axis=1))  # 概率最大的健康度预测结果
         for i in range(len(prediction[0])):
             if prediction[0][i] == np.max(prediction, axis=1):
-                print(classes[i])
+                return classes[i]
 
 
 # 预测数据
