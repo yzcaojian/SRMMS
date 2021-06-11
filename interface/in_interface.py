@@ -244,7 +244,7 @@ class in_interface_impl(in_interface):
         io_second_to_io_minute(cls.io_load_input_queue, cls.io_load_input_queue_train)
 
         for ip_ in cls.io_load_input_queue:
-            for disk_id_ in cls.io_load_input_queue[ip]:
+            for disk_id_ in cls.io_load_input_queue[ip_]:
                 if len(cls.io_load_input_queue[ip_][disk_id_]) < 60:
                     continue
                 else:
