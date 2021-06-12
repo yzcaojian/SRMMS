@@ -37,7 +37,8 @@ class MainWidget(QWidget):
 
         self.title_widget = QWidget()  # 标题
         self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)  # 多硬盘架构下监控界面
-        self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)  # RAID架构下监控界面
+        self.raid_info_widget = None
+        # self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
 
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
@@ -94,9 +95,15 @@ class MainWidget(QWidget):
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
+            self.mult_disks_info_widget.tab_widget.update_thread.close_thread()
+            self.mult_disks_info_widget = None
+            self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
+            self.raid_info_widget.update_thread.close_thread()
+            self.raid_info_widget = None
+            self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
 
     # 当出现对硬盘故障预警的情况时弹窗告警

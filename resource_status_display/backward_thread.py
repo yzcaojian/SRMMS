@@ -19,11 +19,15 @@ class UpdateMDDataThread(QThread):
     def __init__(self, lock):
         super(UpdateMDDataThread, self).__init__()
         self.lock = lock
+        self.flag = True
+
+    def close_thread(self):
+        self.flag = False
 
     def run(self):
-        while True:
+        while self.flag:
             self.lock.lock()
-            # print("更新多硬盘架构前端数据")
+            print("更新多硬盘架构前端数据")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
@@ -36,11 +40,15 @@ class UpdateRAIDDataThread(QThread):
     def __init__(self, lock):
         super(UpdateRAIDDataThread, self).__init__()
         self.lock = lock
+        self.flag = True
+
+    def close_thread(self):
+        self.flag = False
 
     def run(self):
-        while True:
+        while self.flag:
             self.lock.lock()
-            # print("更新RAID架构前端数据")
+            print("更新RAID架构前端数据")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
