@@ -66,7 +66,7 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                     del io_load_input_queue[ip][disk_id][:60]
                 if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
                     continue
-                data_list = io_load_input_queue[ip][disk_id]
+                data_list = io_load_input_queue[ip][disk_id][:]  # 切片复制
                 data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                 data_list = data_list.reshape(len(data_list), 1)
 
