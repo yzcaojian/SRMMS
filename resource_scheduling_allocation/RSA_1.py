@@ -60,24 +60,19 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                 print('对应的服务器预测模型不存在,恢复默认模型')
 
             for disk_id in io_load_input_queue[ip]:
-                if len(io_load_input_queue[ip][disk_id]) < 60:  # 小于60不进行训练
-                    continue
-                elif len(io_load_input_queue[ip][disk_id]) >= 720:  # 当大于720时，维持数目在660
-                    del io_load_input_queue[ip][disk_id][:60]
-                if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每一小时训练一次
+                if len(io_load_input_queue[ip][disk_id]) < 300:  # 小于300不进行训练
                     continue
                 data_list = io_load_input_queue[ip][disk_id][:]  # 切片复制
+                io_load_input_queue[ip][disk_id].clear()  # 将列表清空
                 data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                 data_list = data_list.reshape(len(data_list), 1)
 
-                if len(io_load_input_queue[ip][disk_id]) > 500:  # 数量大于500时，更改mean和std
-                    mean, std = np.mean(data_list, axis=0).tolist(), np.std(data_list, axis=0).tolist()
-                    if mean_and_std:  # 不为空,清空列表
-                        mean_and_std.clear()
-                    mean_and_std.append(mean)
-                    mean_and_std.append(std)
-                else:  # mean_and_std不为空直接赋值
-                    mean, std = mean_and_std if mean_and_std else [[13304.76842105], [4681.6388205]]
+                # 更改mean和std
+                mean, std = np.mean(data_list, axis=0), np.std(data_list, axis=0)
+                if mean_and_std:  # 不为空,清空列表
+                    mean_and_std.clear()
+                mean_and_std.append(mean)
+                mean_and_std.append(std)
 
                 # 转化为矩阵
                 mean = np.array(mean)

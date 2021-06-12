@@ -16,11 +16,11 @@ from resource_status_display.tab_GUI import MultDisksInfoTabWidget
 
 
 class MultDisksInfoWidget(QWidget):
-    def __init__(self):
+    def __init__(self, lock):
         super().__init__()
         self.configuration = None  # 配置界面
         self.whole_layout = QHBoxLayout()  # 总体布局
-        self.tab_widget = MultDisksInfoTabWidget()  # 定义一个Tab类窗口
+        self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list  # 告警信息列表
         self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表

@@ -35,7 +35,7 @@ def clearLayout(layout):
 
 
 class MultDisksInfoTabWidget(QTabWidget):
-    def __init__(self):
+    def __init__(self, lock):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
         self.selected_disk_id = {}  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
@@ -45,7 +45,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.tabCounts = 0
-        self.update_thread = UpdateMDDataThread()  # 后台线程，每秒钟更新数据局
+        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
         self.update_thread.start()
 

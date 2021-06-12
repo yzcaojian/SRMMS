@@ -45,8 +45,8 @@ class DiskHealthPredictionThread(threading.Thread):
         threading.Thread.__init__(self)
         self.ip = ip
         self.disk_list = disk_list[:]
-        self.disk_list[3] = disk_list[3][:]
-        del disk_list[3][0]  # 只需要保留20天的历史smart数据即可，多余进行删除
+        self.disk_list[3] = disk_list[3][:20]
+        del disk_list[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
         self.health_degree_dict = health_degree_dict
         self.hard_disk_failure_prediction_list = hard_disk_failure_prediction_list
 

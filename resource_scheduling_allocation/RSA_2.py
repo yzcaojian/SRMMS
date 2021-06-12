@@ -61,7 +61,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     data_list = io_load_input_queue[ip][disk_id][:time_step]
 
                     # 去除前面一个数据
-                    del io_load_input_queue[ip][disk_id][0]
+                    del io_load_input_queue[ip][disk_id][0:-19]
 
                     data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                     data_list = data_list.reshape(len(data_list), 1)

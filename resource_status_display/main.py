@@ -36,8 +36,8 @@ class MainWidget(QWidget):
         super().__init__()
 
         self.title_widget = QWidget()  # 标题
-        self.mult_disks_info_widget = MultDisksInfoWidget()  # 多硬盘架构下监控界面
-        self.raid_info_widget = RAIDInfoWidget()  # RAID架构下监控界面
+        self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)  # 多硬盘架构下监控界面
+        self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
 
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
@@ -141,6 +141,7 @@ class TransactionProcessingThread(QThread):
         while MainWidget.running:
             # 获得锁
             threadLock.lock()
+            threadLock_drawing.lock()
             print("事务处理获得锁")
             print("事务处理开始:")
             # 线上训练 开辟线程
@@ -166,6 +167,7 @@ class TransactionProcessingThread(QThread):
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
             # 释放锁
+            threadLock_drawing.unlock()
             threadLock.unlock()
             print("事务处理释放锁")
             # QApplication.processEvents()
@@ -175,6 +177,7 @@ class TransactionProcessingThread(QThread):
 if __name__ == '__main__':
     # 线程锁
     threadLock = QMutex()
+    threadLock_drawing = QMutex()
 
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
