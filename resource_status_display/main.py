@@ -2,7 +2,7 @@ import sys
 import threading
 import time
 
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QMutex, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
     QMessageBox
@@ -34,7 +34,8 @@ class MainWidget(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.title_widget = QWidget() # 标题
+
+        self.title_widget = QWidget()  # 标题
         self.mult_disks_info_widget = MultDisksInfoWidget()  # 多硬盘架构下监控界面
         self.raid_info_widget = RAIDInfoWidget()  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
@@ -53,6 +54,14 @@ class MainWidget(QWidget):
         self.whole_layout.addWidget(self.mult_disks_info_widget)
         self.setLayout(self.whole_layout)
         self.show()
+
+        # 后台线程请求资源
+        self.data_request_thread = RequestResourceThread()
+        self.data_request_thread.start()
+
+        # 开辟线程进行事务处理
+        self.transaction_thread = TransactionProcessingThread()
+        self.transaction_thread.start()
 
     def initUI(self):
         # 标题
@@ -104,39 +113,34 @@ class MainWindow(QMainWindow):
         self.main_ui = MainWidget()
 
 
-class RequestResourceThread(threading.Thread):
+class RequestResourceThread(QThread):
     def __init__(self):
-        threading.Thread.__init__(self)
+        super(RequestResourceThread, self).__init__()
 
     def run(self):
         while MainWidget.running:
             # 获得锁
-            threadLock.acquire()
+            threadLock.lock()
             print("请求资源获得锁")
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
                 analyse_data(ip)
             print("请求资源结束:")
             # 释放锁
-            threadLock.release()
+            threadLock.unlock()
             print("请求资源释放锁")
-            QApplication.processEvents()
-            time.sleep(1)
+            # QApplication.processEvents()
+            self.sleep(1)
 
 
-def start_request_resource():
-    mythread = RequestResourceThread()
-    mythread.start()
-
-
-class TransactionProcessingThread(threading.Thread):
+class TransactionProcessingThread(QThread):
     def __init__(self):
-        threading.Thread.__init__(self)
+        super(TransactionProcessingThread, self).__init__()
 
     def run(self):
         while MainWidget.running:
             # 获得锁
-            threadLock.acquire()
+            threadLock.lock()
             print("事务处理获得锁")
             print("事务处理开始:")
             # 线上训练 开辟线程
@@ -162,26 +166,19 @@ class TransactionProcessingThread(threading.Thread):
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
             # 释放锁
-            threadLock.release()
+            threadLock.unlock()
             print("事务处理释放锁")
-            QApplication.processEvents()
-            time.sleep(1)
-
-
-def start_transaction_processing():
-    mythread = TransactionProcessingThread()
-    mythread.start()
+            # QApplication.processEvents()
+            self.sleep(2)
 
 
 if __name__ == '__main__':
     # 线程锁
-    threadLock = threading.Lock()
-    # 后台线程请求资源
-    start_request_resource()
-    time.sleep(0.1)
+    threadLock = QMutex()
 
-    app = QApplication(sys.argv)
-    main = MainWindow()
+    # 预先请求一次数据
+    for ip in configuration_info.server_IPs:
+        analyse_data(ip)
 
     # I/O负载输入队列
     io_load_input_queue = in_interface_impl.get_io_load_input_queue()
@@ -208,7 +205,6 @@ if __name__ == '__main__':
 
     save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 
-    # 开辟线程进行事务处理
-    start_transaction_processing()
-
+    app = QApplication(sys.argv)
+    main = MainWindow()
     sys.exit(app.exec_())  # 循环等待界面退出

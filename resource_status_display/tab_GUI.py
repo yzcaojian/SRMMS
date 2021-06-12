@@ -738,7 +738,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                text2 = QLabel('''<font color=black face='黑体' size=6>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
+                text2 = QLabel('''<font color=black face='黑体' size=5>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
                 # remaining_days_item_layout.addWidget(item2)  # 没有item
                 remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
