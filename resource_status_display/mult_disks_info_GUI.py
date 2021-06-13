@@ -20,6 +20,7 @@ class MultDisksInfoWidget(QWidget):
         super().__init__()
         self.configuration = None  # 配置界面
         self.whole_layout = QHBoxLayout()  # 总体布局
+        self.lock = lock
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list  # 告警信息列表
@@ -45,7 +46,7 @@ class MultDisksInfoWidget(QWidget):
         update_button.setIconSize(QSize(25, 25))
         update_button.setStyleSheet("background-color:#cccccc")
         # 绑定事件
-        update_button.clicked.connect(lambda: self.update_())
+        update_button.clicked.connect(lambda: self.update_(self.lock))
         # 配置按钮
         configuration_button = QPushButton()
         configuration_button.setToolTip('配置')
@@ -138,10 +139,10 @@ class MultDisksInfoWidget(QWidget):
         #     print(line.row())
         QMessageBox.information(self, "全部", self.scheduling_list[index[0].row()])
 
-    def update_(self):
+    def update_(self, lock):
         self.tab_widget.setParent(None)
         self.text_info_widget.setParent(None)
-        self.tab_widget = MultDisksInfoTabWidget()
+        self.tab_widget = MultDisksInfoTabWidget(lock)
         self.text_info_widget = QWidget()
         self.initUI()
 
