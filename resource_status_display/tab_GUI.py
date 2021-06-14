@@ -9,7 +9,7 @@ from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
 from interface.in_interface import in_interface_impl
-from resource_status_display.backward_thread import UpdateMDDataThread
+from resource_status_display.backward_thread import UpdateMDDataThread, UpdateTabDataThread
 from resource_status_display.get_info_item import get_server_storage_info_item, get_disk_storage_info_item
 from resource_status_display.history_io_display import HistoryIO
 # from resource_status_display.servers_and_disks_info import server_storage_info_list, two_disk_info_list, \
@@ -45,7 +45,9 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.tabCounts = 0
-        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据局
+        self.lock = lock
+        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新总体信息页数据
+        self.tab_update_thread = {}
         self.initUI()
         self.update_thread.start()
 
@@ -927,27 +929,46 @@ class MultDisksInfoTabWidget(QTabWidget):
         # printSize()
 
         self.addTab(detailed_tab, "详细信息")
-        # self.tabCloseRequested.connect(lambda: self.deleteDict(tabCounts))  # 绑定tab页关闭事件
+        # self.tabCloseRequested.connect(lambda: close_tab())  # 绑定tab页关闭事件
         self.tabCounts += 1
         self.setCurrentIndex(self.count() - 1)
 
         # 定时刷新
-        self.update_thread.update_data.connect(lambda: show_disks_storage_list())
-        self.update_thread.update_data.connect(lambda: set_health_state())
-        self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
+        self.tab_update_thread[tabCounts] = UpdateTabDataThread(self.lock)
+        self.tab_update_thread[tabCounts].start()
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: show_disks_storage_list())
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: set_health_state())
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: set_disk_io_line(None, True))
+        # self.update_thread.update_data.connect(lambda: show_disks_storage_list())
+        # self.update_thread.update_data.connect(lambda: set_health_state())
+        # self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
+
+        def close_tab():
+            self.removeTab(tabCounts + 1)
+            if self.count() == 1:  # 只剩下总体信息页时将count归零
+                self.tabCounts = 0
+
+            print(tabCounts)
+            self.tab_update_thread[tabCounts].close_thread()
+            line_widget.destroy()
+            self.deleteDict(tabCounts)
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
         self.removeTab(index)
 
         if self.count() == 1:  # 只剩下总体信息页时将count归零
             self.tabCounts = 0
-        # self.selected_disk_id.remove(index - 1)
-        # del self.selected_disk_id[index - 1]
+
+        for (i, key) in enumerate(self.tab_update_thread):
+            if i == index - 1:
+                self.tab_update_thread[key].close_thread()
+                self.deleteDict(key)
+                break
 
     def deleteDict(self, tabCounts):  # 删除字典的对应数据
-        time.sleep(1)
         self.selected_disk_id.pop(tabCounts)
         self.server_detailed_info.pop(tabCounts)
+        self.tab_update_thread.pop(tabCounts)
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
