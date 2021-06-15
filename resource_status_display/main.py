@@ -108,7 +108,7 @@ class MainWidget(QWidget):
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
-            self.raid_info_widget.update_thread.close_thread()  # 关闭总体信息线程
+            self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
