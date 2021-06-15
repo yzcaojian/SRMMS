@@ -170,7 +170,6 @@ class TransactionProcessingThread(QThread):
             # start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
 
             # 检查是否有硬盘故障预警
-            # hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
             failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
             for failure in failure_list:
                 main.main_ui.show_disk_error_warning(failure[0], failure[1])

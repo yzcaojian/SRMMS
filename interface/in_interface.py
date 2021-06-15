@@ -469,34 +469,34 @@ class in_interface_impl(in_interface):
     @classmethod
     def check_for_data_overload_2(cls):  # 检查RAID架构总体负载和两类硬盘负载是否超载
         for sever_ip in cls.RAID_io_info_dict:  # 检查RAID架构总体负载数据是否超载
-            # 最多保存600个数据
+            # 最多保存420个数据
             length = len(cls.RAID_io_info_dict[sever_ip])
-            if length > 600:
+            if length > 420:
                 if sever_ip not in cls.RAID_io_info_dict_past:
                     cls.RAID_io_info_dict_past[sever_ip] = []
                 # 将多的数据添加到历史数据中
-                for i in range(length - 600):
+                for i in range(length - 420):
                     cls.RAID_io_info_dict_past[sever_ip].append(cls.RAID_io_info_dict[sever_ip][i])
                 # 删除前面的数据
-                del cls.RAID_io_info_dict[sever_ip][:length - 600]
+                del cls.RAID_io_info_dict[sever_ip][:length - 420]
                 # 历史数据最多保存3小时
                 _length = len(cls.RAID_io_info_dict_past[sever_ip])
                 if _length > 3 * 60 * 60:
                     del cls.RAID_io_info_dict_past[sever_ip][:_length - 3 * 60 * 60]
 
         for server_ip in cls.two_disk_io_dict:  # 检查两类硬盘负载数据是否超载
-            # 最多保存600个数据
+            # 最多保存420个数据
             length = len(cls.two_disk_io_dict[server_ip]["hdd"])
-            if length > 600:
+            if length > 420:
                 if server_ip not in cls.two_disk_io_dict_past:
                     cls.two_disk_io_dict_past[server_ip] = {"hdd": [], "ssd": []}
                 # 将多的数据添加到历史数据中
-                for i in range(length - 600):
+                for i in range(length - 420):
                     cls.two_disk_io_dict_past[server_ip]["hdd"].append(cls.two_disk_io_dict[server_ip]["hdd"][i])
                     cls.two_disk_io_dict_past[server_ip]["ssd"].append(cls.two_disk_io_dict[server_ip]["ssd"][i])
                 # 删除前面的数据
-                del cls.two_disk_io_dict[server_ip]["hdd"][:length - 600]
-                del cls.two_disk_io_dict[server_ip]["ssd"][:length - 600]
+                del cls.two_disk_io_dict[server_ip]["hdd"][:length - 420]
+                del cls.two_disk_io_dict[server_ip]["ssd"][:length - 420]
                 # 历史数据最多保存3小时
                 _length = len(cls.two_disk_io_dict_past[server_ip]["hdd"])
                 if _length > 3 * 60 * 60:
