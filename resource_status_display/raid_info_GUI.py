@@ -26,13 +26,13 @@ class RAIDInfoWidget(QWidget):
     def __init__(self, lock):
         super().__init__()
         self.configuration = None  # 配置界面
+        self.lock = lock
         self.server_overall_info = in_interface_impl.get_server_overall_info(1)  # 服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread(lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
-        self.update_thread.start()
 
     def initUI(self):
         # 刷新按钮和配置按钮布局
@@ -313,6 +313,7 @@ class RAIDInfoWidget(QWidget):
         self.setLayout(whole_layout)
 
         # 定时刷新
+        self.update_thread.start()
         self.update_thread.update_data.connect(lambda: show_server_storage_list(self.server_overall_info))
         self.update_thread.update_data.connect(lambda: show_volume_storage_list(None, True))
         self.update_thread.update_data.connect(lambda: set_server_io_line(None, True))
@@ -321,8 +322,11 @@ class RAIDInfoWidget(QWidget):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
 
     def update_(self):
-        self.graph_widget = QWidget()
-        self.initUI()
+        # self.update_thread.close_thread()
+        # self.graph_widget.destroy()
+        # self.graph_widget = QWidget()
+        self.update_thread = UpdateRAIDDataThread(self.lock)  # 后台线程，每秒钟更新数据局
+        # self.initUI()
 
     def show_configuration_GUI(self):
         self.configuration = ConfigurationWidget()

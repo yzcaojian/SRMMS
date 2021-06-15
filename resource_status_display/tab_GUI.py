@@ -49,7 +49,6 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新总体信息页数据
         self.tab_update_thread = {}
         self.initUI()
-        self.update_thread.start()
 
     def initUI(self):
         self.addTab(self.overall_info_tab, "总体信息")  # 初始情况下没有详细页
@@ -559,6 +558,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: draw_two_disk_error_rate_bar(None, True))
         self.update_thread.update_data.connect(lambda: set_hdd_io_line(None, True))
         self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
+        self.update_thread.start()
 
     def add_detailed_tab(self, server_selected, tabCounts):
         # server_selected是获取的选择表格某行的范围信息
