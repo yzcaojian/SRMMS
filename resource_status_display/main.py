@@ -100,9 +100,9 @@ class MainWidget(QWidget):
                         self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
                         break
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
-            for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
-                item.update_thread.close_thread()
-            self.mult_disks_info_widget.tab_widget.close_thread()  # 关闭总体信息线程
+            # for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
+            #     item.update_thread.close_thread()
+            # self.mult_disks_info_widget.tab_widget.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
