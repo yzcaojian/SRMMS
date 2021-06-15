@@ -142,6 +142,10 @@ class MultDisksInfoWidget(QWidget):
     def update_(self, lock):
         self.tab_widget.setParent(None)
         self.text_info_widget.setParent(None)
+        for item in self.tab_widget.Tab_list:  # 关闭Tab页线程
+            item.update_thread.close_thread()
+        self.tab_widget.update_thread.close_thread()  # 关闭总体信息的线程
+
         self.tab_widget = MultDisksInfoTabWidget(lock)
         self.text_info_widget = QWidget()
         self.initUI()
