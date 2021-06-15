@@ -3,18 +3,16 @@
 # @Function: 
 # @Author: Chen Zhongwei
 # @Time: 2021/6/15 10:14
-import time
-
-from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QApplication, QHBoxLayout, QTabBar, QLabel, QPushButton, \
-    QSplitter, QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QMainWindow, QMessageBox
-from pyecharts.charts import Bar, Line
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QPushButton,\
+    QTableWidget, QAbstractItemView, QHeaderView
+from pyecharts.charts import Line
 from pyecharts import options as opts
 from resource_status_display.history_io_display import HistoryIO
 from interface.in_interface import in_interface_impl
 from resource_status_display.backward_thread import UpdateMDDataThread
-from resource_status_display.get_info_item import get_server_storage_info_item, get_disk_storage_info_item
+from resource_status_display.get_info_item import get_disk_storage_info_item
 
 
 def clearLayout(layout):

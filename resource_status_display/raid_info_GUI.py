@@ -1,18 +1,9 @@
-from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QTableWidget, QAbstractItemView, \
-    QHeaderView, QSplitter
-from pyecharts import options as opts
-from pyecharts.charts import Line
-
-from interface.in_interface import in_interface_impl
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
 from resource_status_display.configuration_GUI import ConfigurationWidget
-from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
-from resource_status_display.backward_thread import UpdateRAIDDataThread
-from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.tab_GUI import RaidInfoTabWidget
-# from resource_status_display.servers_and_disks_info import get_server_detailed_info, server_storage_info_list
+
 
 """
 -*- coding: utf-8 -*- 
@@ -27,7 +18,7 @@ class RAIDInfoWidget(QWidget):
     def __init__(self, lock):
         super().__init__()
         self.configuration = None  # 配置界面
-        self.whole_layout = QHBoxLayout()  # 总体布局
+        self.whole_layout = QVBoxLayout()  # 总体布局
         self.button_widget = QWidget()
         self.lock = lock
         self.tab_widget = RaidInfoTabWidget(lock)  # 定义一个Tab类窗口
@@ -79,7 +70,5 @@ class RAIDInfoWidget(QWidget):
     def show_configuration_GUI(self):
         self.configuration = ConfigurationWidget()
 
-    def show_history_io_line(self):
-        self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
-        self.server_history_io.show()
+
 

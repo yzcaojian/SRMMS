@@ -1,20 +1,17 @@
-import time
-
-from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QApplication, QHBoxLayout, QTabBar, QLabel, QPushButton, \
-    QSplitter, QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
+    QSplitter, QTableWidget, QAbstractItemView, QHeaderView
 from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
 from interface.in_interface import in_interface_impl
 from resource_status_display.backward_thread import UpdateMDDataThread, UpdateTabDataThread, UpdateRAIDDataThread
-from resource_status_display.get_info_item import get_server_storage_info_item, get_disk_storage_info_item
+from resource_status_display.get_info_item import get_disk_storage_info_item
 from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
-# from resource_status_display.servers_and_disks_info import server_storage_info_list, two_disk_info_list, \
-#     get_server_detailed_info, get_two_disk_info
+
 
 """
 -*- coding: utf-8 -*- 
@@ -1262,3 +1259,7 @@ class RaidInfoTabWidget(QTabWidget):
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
+
+    def show_history_io_line(self):
+        self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
+        self.server_history_io.show()
