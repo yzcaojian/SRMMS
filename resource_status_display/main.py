@@ -94,6 +94,12 @@ class MainWidget(QWidget):
 
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
+            for i in range(1, self.mult_disks_info_widget.tab_widget.count()):
+                self.mult_disks_info_widget.tab_widget.removeTab(i)  # 清除所有tab页
+                for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
+                    if j == i - 1:
+                        self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
+                        break
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             self.mult_disks_info_widget.tab_widget.update_thread.close_thread()
             self.mult_disks_info_widget = None
@@ -158,7 +164,7 @@ class TransactionProcessingThread(QThread):
             start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
                                      average_io_load, warning_message_queue)
             # 硬盘故障预测 开辟线程
-            start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
+            # start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
 
             # 检查是否有硬盘故障预警
             # hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction()
