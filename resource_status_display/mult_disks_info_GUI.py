@@ -1,6 +1,8 @@
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
+
+from resource_status_display.backward_thread import UpdateLogThread
 from resource_status_display.configuration_GUI import ConfigurationWidget
 from resource_status_display.get_info_item import get_warning_info_item, get_scheduling_info_item
 from resource_status_display.log_exception_with_suggestions import warning_list, scheduling_list
@@ -23,9 +25,10 @@ class MultDisksInfoWidget(QWidget):
         self.lock = lock
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
-        self.warning_list = warning_list.warning_list  # 告警信息列表
+        self.warning_list = warning_list.warning_list[:]  # 告警信息列表
         self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
+        self.update_log_thread = UpdateLogThread(self.lock)
         self.initUI()
 
     def initUI(self):
@@ -46,7 +49,7 @@ class MultDisksInfoWidget(QWidget):
         update_button.setIconSize(QSize(25, 25))
         update_button.setStyleSheet("background-color:#cccccc")
         # 绑定事件
-        update_button.clicked.connect(lambda: self.update_(self.lock))
+        update_button.clicked.connect(lambda: self.update_())
         # 配置按钮
         configuration_button = QPushButton()
         configuration_button.setToolTip('配置')
@@ -134,12 +137,20 @@ class MultDisksInfoWidget(QWidget):
         self.whole_layout.addWidget(self.text_info_widget)
         self.setLayout(self.whole_layout)
 
+        self.update_log_thread.update_data.connect(lambda: update_log())
+        self.update_log_thread.start()
+
+        def update_log():
+            print("update log data...")
+            if len(self.warning_list) != len(warning_list.warning_list):
+                self.warning_list = warning_list.warning_list[:]
+                show_scheduling_list(self.warning_list)
+                show_warning_list(self.warning_list)
+
     def display_detailed_log_info(self, index):
-        # for line in index:
-        #     print(line.row())
         QMessageBox.information(self, "全部", self.scheduling_list[index[0].row()])
 
-    def update_(self, lock):
+    def update_(self):
         self.tab_widget.setParent(None)
         self.text_info_widget.setParent(None)
         for key in self.tab_widget.tab_update_thread:
@@ -148,8 +159,10 @@ class MultDisksInfoWidget(QWidget):
         # for item in self.tab_widget.Tab_list:  # 关闭Tab页线程
         #     item.update_thread.close_thread()
         self.tab_widget.update_thread.close_thread()  # 关闭总体信息的线程
+        self.update_log_thread.close_thread()
 
-        self.tab_widget = MultDisksInfoTabWidget(lock)
+        self.tab_widget = MultDisksInfoTabWidget(self.lock)
+        self.update_log_thread = UpdateLogThread(self.lock)
         self.text_info_widget = QWidget()
         self.initUI()
 

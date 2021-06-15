@@ -73,3 +73,24 @@ class UpdateTabDataThread(QThread):
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
+
+
+class UpdateLogThread(QThread):
+    """更新多硬盘架构下日志信息与告警信息数据类"""
+    update_data = pyqtSignal()  # pyqt5 支持python3的str，没有Qstring
+
+    def __init__(self, lock):
+        super(UpdateLogThread, self).__init__()
+        self.lock = lock
+        self.flag = True
+
+    def close_thread(self):
+        self.flag = False
+
+    def run(self):
+        while self.flag:
+            self.lock.lock()
+            print("更新多硬盘架构tab页前端数据")
+            self.update_data.emit()  # 发射信号
+            self.lock.unlock()
+            self.sleep(1)  # 推迟执行一秒钟

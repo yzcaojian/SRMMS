@@ -9,6 +9,7 @@ from pyecharts import options as opts
 
 from interface.in_interface import in_interface_impl
 from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRAIDDataThread
+from resource_status_display.detailed_info_tab import DetailedInfoTab
 from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
 

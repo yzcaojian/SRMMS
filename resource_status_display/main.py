@@ -98,17 +98,18 @@ class MainWidget(QWidget):
                 for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
                     if j == i - 1:
                         self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
-                        break
+                        break  # 关闭所有tab页刷新线程
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             # for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
             #     item.update_thread.close_thread()
-            self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
+            self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息刷新线程
+            self.mult_disks_info_widget.update_log_thread.close_thread()  # 关闭日志信息刷新线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
-            self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
+            self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭RAID主页面信息刷新线程
             self.raid_info_widget = None
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
