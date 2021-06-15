@@ -37,8 +37,7 @@ class MainWidget(QWidget):
 
         self.title_widget = QWidget()  # 标题
         self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)  # 多硬盘架构下监控界面
-        self.raid_info_widget = None
-        # self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)  # RAID架构下监控界面
+        self.raid_info_widget = None  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
 
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
@@ -101,13 +100,15 @@ class MainWidget(QWidget):
                         self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
                         break
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
-            self.mult_disks_info_widget.tab_widget.update_thread.close_thread()
+            for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
+                item.update_thread.close_thread()
+            self.mult_disks_info_widget.tab_widget.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
-            self.raid_info_widget.update_thread.close_thread()
+            self.raid_info_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
@@ -133,6 +134,7 @@ class RequestResourceThread(QThread):
     def run(self):
         while MainWidget.running:
             # 获得锁
+            threadLock_drawing.lock()
             threadLock.lock()
             print("请求资源获得锁")
             print("请求资源开始:")
@@ -141,6 +143,7 @@ class RequestResourceThread(QThread):
             print("请求资源结束:")
             # 释放锁
             threadLock.unlock()
+            threadLock_drawing.unlock()
             print("请求资源释放锁")
             # QApplication.processEvents()
             self.sleep(1)
@@ -154,7 +157,6 @@ class TransactionProcessingThread(QThread):
         while MainWidget.running:
             # 获得锁
             threadLock.lock()
-            threadLock_drawing.lock()
             print("事务处理获得锁")
             print("事务处理开始:")
             # 线上训练 开辟线程
@@ -180,7 +182,6 @@ class TransactionProcessingThread(QThread):
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
             # 释放锁
-            threadLock_drawing.unlock()
             threadLock.unlock()
             print("事务处理释放锁")
             # QApplication.processEvents()
@@ -191,7 +192,6 @@ if __name__ == '__main__':
     # 线程锁
     threadLock = QMutex()
     threadLock_drawing = QMutex()
-
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
         analyse_data(ip)
