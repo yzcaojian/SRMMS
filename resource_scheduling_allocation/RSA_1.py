@@ -132,15 +132,9 @@ class OnlineModelTrainingThread(threading.Thread):
 
     def run(self):
         print("动态训练开始:")
+        tf.reset_default_graph()
         online_model_training(self.io_load_input_queue, self.mean_and_std, self.save_model)
         print("动态训练结束:")
-
-
-def start_online_model_training(io_load_input_queue, mean_and_std, save_model):
-    tf.reset_default_graph()
-    mythread = OnlineModelTrainingThread(io_load_input_queue, mean_and_std, save_model)
-    mythread.start()
-
 
 # if __name__ == "__main__":
 #     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')

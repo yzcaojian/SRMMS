@@ -41,35 +41,33 @@ def predict_disk_health_state(disk):
 
 
 class DiskHealthPredictionThread(threading.Thread):
-    def __init__(self, ip, disk_list, health_degree_dict, hard_disk_failure_prediction_list):
+    def __init__(self, smart_dict, health_degree_dict, hard_disk_failure_prediction_list):
         threading.Thread.__init__(self)
-        self.ip = ip
-        self.disk_list = disk_list[:]
-        self.disk_list[3] = disk_list[3][:20]
-        del disk_list[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
+        self.smart_dict = smart_dict
         self.health_degree_dict = health_degree_dict
         self.hard_disk_failure_prediction_list = hard_disk_failure_prediction_list
 
     def run(self):
-        health_degree = predict_disk_health_state(self.disk_list)
-        if self.ip not in self.health_degree_dict:
-            self.health_degree_dict[self.ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
-        if self.disk_list[0] in self.health_degree_dict[self.ip]:
-            if self.health_degree_dict[self.ip][self.disk_list[0]] > health_degree:  # 健康度下降
-                timestamp = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(time.time())).format(y='年', m='月',
-                                                                                                       d='日')
-                self.hard_disk_failure_prediction_list.append([self.ip, self.disk_list[0], [health_degree, timestamp]])
-        else:
-            self.health_degree_dict[self.ip][self.disk_list[0]] = {}
-        self.health_degree_dict[self.ip][self.disk_list[0]] = health_degree  # disk_id和健康度
+        print("硬盘故障预测开始:")
+        for ip in self.smart_dict:
+            for disk in self.smart_dict[ip]:
+                if len(disk[3]) <= 19:  # SMART数据不够预测
+                    continue
+                else:  # SMART数据足够预测
+                    disk_list = disk[:]  # 切片复制
+                    disk_list[3] = disk[3][:20]
+                    del disk[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
+
+                    health_degree = predict_disk_health_state(disk_list)
+                    if ip not in self.health_degree_dict:
+                        self.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
+                    if disk_list[0] in self.health_degree_dict[ip]:
+                        if self.health_degree_dict[ip][disk_list[0]] > health_degree:  # 健康度下降
+                            timestamp = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(time.time())).\
+                                format(y='年', m='月', d='日')
+                            self.hard_disk_failure_prediction_list.append([ip, disk_list[0], [health_degree, timestamp]])
+                    else:
+                        self.health_degree_dict[ip][disk_list[0]] = {}
+                    self.health_degree_dict[ip][disk_list[0]] = health_degree  # disk_id和健康度
         print("硬盘故障预测结束:")
 
-
-def start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list):
-    for ip in smart_dict:
-        for disk in smart_dict[ip]:
-            if len(disk[3]) > 19:  # SMART数据足够预测
-                mythread = DiskHealthPredictionThread(ip, disk, health_degree_dict,
-                                                      hard_disk_failure_prediction_list)
-
-                mythread.start()

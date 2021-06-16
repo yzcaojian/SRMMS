@@ -1,4 +1,3 @@
-
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
@@ -8,9 +7,11 @@ from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
 from interface.in_interface import in_interface_impl
-from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRAIDDataThread
+from resource_status_display.backward_thread import UpdateMDDataThread, UpdateTabDataThread, UpdateRAIDDataThread
+from resource_status_display.get_info_item import get_disk_storage_info_item
 from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
+
 
 """
 -*- coding: utf-8 -*- 
@@ -35,17 +36,17 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self, lock):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
-        self.Tab_list = []
-        self.lock = lock
+        self.selected_disk_id = {}  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
         self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
-        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据局
+        self.tabCounts = 0
+        self.lock = lock
+        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新总体信息页数据
+        self.tab_update_thread = {}
         self.initUI()
-        self.update_thread.start()
 
     def initUI(self):
         self.addTab(self.overall_info_tab, "总体信息")  # 初始情况下没有详细页
@@ -73,7 +74,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.doubleClicked.connect(  # 双击新增详细信息界面
-            lambda: self.add_detailed_tab(self.server_overall_info[server_storage_table.selectedRanges()[0].topRow()].serverIP, self.lock))
+            lambda: self.add_detailed_tab(server_storage_table.selectedRanges(), self.tabCounts))
         # server_storage_table.clicked.connect(  # 单击改变总体信息界面
         #     lambda: self.update_server_overall_info(server_storage_table.selectedRanges()))
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
@@ -555,21 +556,438 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.update_thread.update_data.connect(lambda: draw_two_disk_error_rate_bar(None, True))
         self.update_thread.update_data.connect(lambda: set_hdd_io_line(None, True))
         self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
+        self.update_thread.start()
 
-    def add_detailed_tab(self, server_selected_ip, lock):
-        detailed_tab = DetailedInfoTab(server_selected_ip, lock)
-        self.Tab_list.append(detailed_tab)
+    def add_detailed_tab(self, server_selected, tabCounts):
+        # server_selected是获取的选择表格某行的范围信息
+        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP，生成详细信息界面
+        # if self.count() <= len(self.server_detailed_info):  # 对选中硬盘详细信息进行更新
+        #     self.server_detailed_info[self.count() - 1] = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
+        # else:
+        #     self.server_detailed_info.append(in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0))
+        self.server_detailed_info[tabCounts] = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 0)
+        # 添加详细信息tab页后默认选中第一块硬盘
+        if len(self.server_detailed_info) != 0:
+            # for selected_disk in self.selected_disk_id:
+            #     if self.selected_server_ip == selected_disk[0]:  # 当前选择的服务器已经打开一个tab页
+            #         return
+            # if self.count() <= len(self.selected_disk_id):  # 对选中硬盘进行更新
+            #     self.selected_disk_id[self.count() - 1] = [self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID]
+            # else:
+            #     self.selected_disk_id.append([self.selected_server_ip, self.server_detailed_info[self.count() - 1][0].diskID])
+            self.selected_disk_id[tabCounts] = [self.selected_server_ip, self.server_detailed_info[tabCounts][0].diskID]
+
+        # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
+        if self.exception_list:
+            for e in self.exception_list[0]:
+                if e[0] == self.selected_server_ip:
+                    self.exception_list[0].remove(e)
+                    break
+
+        # 详细信息的tab页
+        # 服务器详细信息表和硬盘健康度、I/O负载图的布局
+        # 服务器详细信息表
+        disk_title = QLabel('''<font color=black face='黑体' size=5>服务器详细信息<font>''')
+        disk_title.setAlignment(Qt.AlignCenter)
+        disk_title.setStyleSheet("background-color:#dddddd;width:100px")
+        disk_storage_table = QTableWidget(len(self.server_detailed_info[self.count() - 1]), 6)
+        disk_storage_table.setHorizontalHeaderLabels(['硬盘标识', '硬盘类型', '状态', '存储总容量', '已使用容量', '存储占用率'])  # 设置表头
+        disk_storage_table.horizontalHeader().setStyleSheet(
+            "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
+        disk_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
+        disk_storage_table.horizontalHeader().setHighlightSections(False)  # 设置表头不会因为点击表格而变色
+        disk_storage_table.verticalHeader().setVisible(False)  # 设置隐藏列表号
+        disk_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
+        disk_storage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 设置禁止编辑
+        disk_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
+        # disk_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
+
+        # 绑定事件
+        # disk_storage_table.clicked.connect(lambda: printSize())
+        disk_storage_table.clicked.connect(lambda: self.set_selected_disk_id(disk_storage_table.selectedRanges()))
+        disk_storage_table.clicked.connect(lambda: set_health_state())
+        disk_storage_table.clicked.connect(lambda: set_disk_io_line(disk_storage_table.selectedRanges(), False))
+
+        disk_storage_table_widget = QWidget()
+        disk_storage_table_layout = QVBoxLayout()
+        disk_storage_table_layout.addWidget(disk_title)
+        disk_storage_table_layout.addWidget(disk_storage_table)
+        disk_storage_table_widget.setLayout(disk_storage_table_layout)
+
+        # 定义内部函数事件，初始化或者是到刷新周期后，从disk_storage_info_list中取数据放入disk_storage_table中去
+        def show_disks_storage_list():
+            global line
+            # if self.currentIndex() == 0 and tabCounts == 0:  # 表示添加详细页时初次调用函数，此时currentIndex是0
+            #     print("1-------------")
+            #     disks_storage_info_list = self.server_detailed_info[self.count() - 1]
+            # else:
+            self.server_detailed_info[tabCounts] = in_interface_impl.get_server_detailed_info(self.selected_disk_id[tabCounts][0], 0)
+            disks_storage_info_list = self.server_detailed_info[tabCounts]
+
+            disk_storage_table.setRowCount(len(disks_storage_info_list))
+            # disk_storage_table.clear()  # 清空刷新前的所有项
+            for i, single_disk_info in enumerate(disks_storage_info_list):
+                disk_storage_table.setRowHeight(i, 60)
+                # 添加单元格信息
+                if not self.exception_list:  # 还有硬盘图标闪烁
+                    line = get_disk_storage_info_item(single_disk_info)
+                else:
+                    for e in self.exception_list[1]:
+                        if single_disk_info.diskID == e[0]:
+                            e[1] = 0 - e[1]  # 将标志反转
+                            line = get_disk_storage_info_item(single_disk_info, e[1])
+                        else:
+                            line = get_disk_storage_info_item(single_disk_info)
+                for j, cell in enumerate(line):
+                    if j == 0:
+                        disk_storage_table.setCellWidget(i, j, cell)
+                        continue
+                    cell_widget = QWidget()
+                    cell_layout = QHBoxLayout()
+                    cell_layout.setContentsMargins(0, 0, 0, 0)
+                    cell_layout.addWidget(cell, alignment=Qt.AlignCenter)
+                    cell_widget.setLayout(cell_layout)
+                    disk_storage_table.setCellWidget(i, j, cell_widget)
+
+        show_disks_storage_list()
+
+        # 健康度条形图和I/O负载信息
+        disk_detailed_info_layout = QVBoxLayout()
+        disk_detailed_info_widget = QWidget()
+
+        # 健康度条形图
+        health_degree_layout = QVBoxLayout()
+        heath_title_layout = QHBoxLayout()
+        health_degree_item_layout = QHBoxLayout()
+        health_degree_text_layout = QHBoxLayout()
+        health_degree_title = QLabel("硬盘健康度")
+        health_degree_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        heath_title_layout.addWidget(health_degree_title)
+        # 剩余寿命条形图
+        remaining_days_layout = QVBoxLayout()
+        days_title_layout = QHBoxLayout()
+        remaining_days_item_layout = QHBoxLayout()
+        remaining_days_text_layout = QHBoxLayout()
+        remaining_days_title = QLabel("硬盘剩余寿命")
+        remaining_days_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        days_title_layout.addWidget(remaining_days_title)
+
+        def set_health_state():
+            # if self.currentIndex() > len(self.selected_disk_id):
+            #     return
+            # if self.currentIndex() == 0:  # 表示添加详细页时初次调用函数，此时currenIndex是0
+            #     degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.count() - 1][0], self.selected_disk_id[self.count() - 1][1])
+            # else:
+            degree = in_interface_impl.get_health_degree(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
+            clearLayout(remaining_days_item_layout)
+            clearLayout(remaining_days_text_layout)
+            clearLayout(health_degree_item_layout)
+            clearLayout(health_degree_text_layout)
+            if 0 < degree < 7:  # 一级健康度
+                color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
+                days = ['<10', '<30', '<70', '<150', '<310', '>=310']
+                for i in range(6):
+                    item1 = QLabel()
+                    item2 = QLabel()
+                    if i == degree - 1:
+                        item1.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                        item2.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                    else:
+                        item1.setStyleSheet("background-color:%s" % color[i])
+                        item2.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                    text2 = QLabel(days[i])
+                    text2.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    remaining_days_item_layout.addWidget(item2)
+                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+            elif degree >= 7:  # 二级健康度
+                color = ['#cf0000', '#f55c47', '#ff7b54']
+                days = ['<2', '<5', '<10']
+                for i in range(3):
+                    item1 = QLabel()
+                    item2 = QLabel()
+                    if i == degree - 7:
+                        item1.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                        item2.setStyleSheet(
+                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
+                    else:
+                        item1.setStyleSheet("background-color:%s" % color[i])
+                        item2.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R1-' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                    text2 = QLabel(days[i])
+                    text2.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    remaining_days_item_layout.addWidget(item2)
+                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+            else:  # 无法预测健康度
+                color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
+                days = ['<10', '<30', '<70', '<150', '<310', '>=310']
+                for i in range(6):
+                    item1 = QLabel()
+                    item1.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R' + str(i + 1))
+                    text1.setStyleSheet("font-size:20px; font-family:'黑体'")
+                    health_degree_item_layout.addWidget(item1)
+                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
+                text2 = QLabel('''<font color=black face='黑体' size=5>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
+                # remaining_days_item_layout.addWidget(item2)  # 没有item
+                remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+
+        set_health_state()
+        # 健康度标题、条状图、文字布局
+        health_degree_layout.addLayout(heath_title_layout)
+        health_degree_layout.addLayout(health_degree_item_layout)
+        health_degree_layout.addLayout(health_degree_text_layout)
+        remaining_days_layout.addLayout(days_title_layout)
+        remaining_days_layout.addLayout(remaining_days_item_layout)
+        remaining_days_layout.addLayout(remaining_days_text_layout)
+        # 硬盘健康度信息，两个条形图布局
+        disk_health_state_layout = QVBoxLayout()
+        disk_health_state_layout.addLayout(health_degree_layout)
+        disk_health_state_layout.addLayout(remaining_days_layout)
+
+        # 硬盘I/O负载信息，折线
+        disk_io_layout = QVBoxLayout()
+        line_widget = QWebEngineView()
+
+        def draw_disk_io_line():
+            disk_io_width = str(disk_detailed_info_widget.size().width()) + "px"
+            disk_io_height = str(disk_detailed_info_widget.size().height() - 70) + "px"
+
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            # 起始一分钟内并没有I/O负载数据
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
+            if not y_predict_data:
+                y_predict_data = [0] * len(y_data)
+
+            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
+                                                 animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
+                    .add_xaxis(xaxis_data=x_data)
+                    .add_yaxis(
+                series_name="实时I/O负载",
+                y_axis=y_data,
+                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                label_opts=opts.LabelOpts(is_show=False),
+                itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                    .add_yaxis(
+                series_name="预测I/O负载",
+                y_axis=y_predict_data,
+                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                label_opts=opts.LabelOpts(is_show=False),
+                itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))
+                    .set_global_opts(
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="IOPS/KB",
+                    type_="value",
+                    axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                    splitline_opts=opts.SplitLineOpts(is_show=True)),
+                xaxis_opts=opts.AxisOpts(
+                    name="时间",
+                    type_="category",
+                    axistick_opts=opts.AxisTickOpts(is_inside=True),
+                    boundary_gap=False))
+                    .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))  # 各硬盘有单独的IO图
+
+            line_widget.setContentsMargins(0, 50, 0, 0)
+            line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
+            line_widget.setFixedSize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height())
+            # 打开本地html文件
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
+            disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
+
+        def set_disk_io_line(disk_selected, IsUpdate):
+            # if self.currentIndex() > len(self.selected_disk_id):
+            #     return
+            # disk_selected是获取的选择表格某行的范围信息
+            if IsUpdate:
+                print("update disk_info per second...")
+                pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
+            else:
+                if disk_selected is None:
+                    print('默认选中第一个disk')
+                else:
+                    print(self.server_detailed_info[self.currentIndex() - 1][disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，得到负载数据
+
+            disk_io_width = str(detailed_tab.size().width() / 2 - 40) + "px"
+            disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
+
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(self.selected_disk_id[tabCounts][0], self.selected_disk_id[tabCounts][1])
+            if not y_data:
+                y_data, x_data = [0], ["12:00"]
+
+            if not x_predict_data:
+                line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
+                                                     animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
+                        .add_xaxis(xaxis_data=x_data)
+                        .add_yaxis(
+                    series_name="实时I/O负载",
+                    y_axis=y_data,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                        .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                    yaxis_opts=opts.AxisOpts(
+                        name="IOPS/KB",
+                        type_="value",
+                        axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                        splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    xaxis_opts=opts.AxisOpts(
+                        name="时间",
+                        type_="category",
+                        axistick_opts=opts.AxisTickOpts(is_inside=True),
+                        boundary_gap=False))
+                        .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
+            else:
+                if len(y_predict_data) != len(y_data):
+                    y_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + y_predict_data
+                    x_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + x_predict_data
+                else:
+                    x_predict_data_ = x_predict_data
+                    y_predict_data_ = y_predict_data
+                line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
+                                                     animation_opts=opts.AnimationOpts(
+                                                         animation=False)))  # 设置宽高度，去掉加载动画
+                        .add_xaxis(xaxis_data=x_data)
+                        .extend_axis(xaxis_data=x_predict_data_)
+                        .add_yaxis(
+                    series_name="实时I/O负载",
+                    y_axis=y_data,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                        .add_yaxis(
+                    series_name="预测I/O负载",
+                    y_axis=y_predict_data_,
+                    areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+                    label_opts=opts.LabelOpts(is_show=False),
+                    itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))
+                        .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                    yaxis_opts=opts.AxisOpts(
+                        name="IOPS/KB",
+                        type_="value",
+                        axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
+                        splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    xaxis_opts=opts.AxisOpts(
+                        name="时间",
+                        type_="category",
+                        axistick_opts=opts.AxisTickOpts(is_inside=True),
+                        boundary_gap=False))
+                        .render("./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
+
+            line_widget.setContentsMargins(0, 50, 0, 0)
+            line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
+            line_widget.setFixedSize(detailed_tab.size().width() / 2 - 20, disk_detailed_info_widget.size().height() / 2 + 40)
+            # 打开本地html文件
+            line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[tabCounts][1] + "_io.html"))
+
+        draw_disk_io_line()
+
+        # 历史信息的按钮
+        io_button = QPushButton("历史信息")
+        io_button.setFixedSize(100, 30)
+        io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
+                                        border-width:2px; border-style:solid; border-color:black; border-radius:12px}
+                                        QPushButton:pressed{background-color:#bbbbbb}''')
+        io_button.clicked.connect(lambda: self.show_history_io_line(0))  # 绑定事件
+        disk_io_layout.addWidget(io_button, alignment=Qt.AlignTop | Qt.AlignCenter)
+
+        disk_detailed_info_layout.addLayout(disk_health_state_layout)
+        disk_detailed_info_layout.addLayout(disk_io_layout)
+        disk_detailed_info_widget.setLayout(disk_detailed_info_layout)
+
         # 全局布局
-        self.addTab(detailed_tab.detailed_tab, "详细信息")
+        detailed_tab = QWidget()
+        whole2_layout = QHBoxLayout()
+        whole2_layout.setContentsMargins(0, 0, 0, 0)
+        whole2_layout.addWidget(disk_storage_table_widget)
+        whole2_layout.addWidget(disk_detailed_info_widget)
+        detailed_tab.setLayout(whole2_layout)
+
+        # def printSize():
+        #     print("detailed...............")
+        #     print("disk_storage_table_widget", disk_storage_table_widget.size())
+        #     print("disk_detailed_info_widget", disk_detailed_info_widget.size())
+        #     print("detailed_tab", detailed_tab.size())
+        #
+        # printSize()
+
+        self.addTab(detailed_tab, "详细信息")
+        # self.tabCloseRequested.connect(lambda: close_tab())  # 绑定tab页关闭事件
+        self.tabCounts += 1
+        self.setCurrentIndex(self.count() - 1)
+
+        # 定时刷新
+        self.tab_update_thread[tabCounts] = UpdateTabDataThread(self.lock)
+        self.tab_update_thread[tabCounts].start()
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: show_disks_storage_list())
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: set_health_state())
+        self.tab_update_thread[tabCounts].update_data.connect(lambda: set_disk_io_line(None, True))
+        # self.update_thread.update_data.connect(lambda: show_disks_storage_list())
+        # self.update_thread.update_data.connect(lambda: set_health_state())
+        # self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
+
+        def close_tab():
+            self.removeTab(tabCounts + 1)
+            if self.count() == 1:  # 只剩下总体信息页时将count归零
+                self.tabCounts = 0
+
+            print(tabCounts)
+            self.tab_update_thread[tabCounts].close_thread()
+            line_widget.destroy()
+            self.deleteDict(tabCounts)
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
         self.removeTab(index)
-        self.Tab_list[index-1].update_thread.close_thread()  # 关闭线程
-        self.Tab_list.pop(index-1)
+
+        if self.count() == 1:  # 只剩下总体信息页时将count归零
+            self.tabCounts = 0
+
+        for (i, key) in enumerate(self.tab_update_thread):
+            if i == index - 1:
+                self.tab_update_thread[key].close_thread()
+                self.deleteDict(key)
+                break
+
+    def deleteDict(self, tabCounts):  # 删除字典的对应数据
+        self.selected_disk_id.pop(tabCounts)
+        self.server_detailed_info.pop(tabCounts)
+        self.tab_update_thread.pop(tabCounts)
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
         # print("selected:", self.selected_server_ip)
+
+    def set_selected_disk_id(self, disk_selected):
+        # index 表示当前tab页在selected_disk_id列表中对应的索引
+        # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_list删除
+        if self.exception_list:
+            for e in self.exception_list[1]:
+                if e[0] == self.selected_disk_id[self.currentIndex() - 1][1]:
+                    self.exception_list[1].remove(e)
+                    break
+        self.selected_disk_id[self.currentIndex() - 1][1] = self.server_detailed_info[self.currentIndex() - 1][disk_selected[0].topRow()].diskID  # 获取到选中的diskID
+
+    # 查看历史I/O负载信息
+    def show_history_io_line(self, level):
+        self.server_history_io = HistoryIO(self.selected_disk_id[self.currentIndex() - 1][0],
+                                           self.selected_disk_id[self.currentIndex() - 1][1], level) if level == 0 \
+            else HistoryIO(self.selected_server_ip, "", level)
+        self.server_history_io.show()
 
 
 class RaidInfoTabWidget(QTabWidget):

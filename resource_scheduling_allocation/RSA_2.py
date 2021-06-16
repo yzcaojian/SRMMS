@@ -127,17 +127,10 @@ class IoLoadPredictionThread(threading.Thread):
 
     def run(self):
         print("负载预测开始:")
+        tf.reset_default_graph()
         io_load_prediction(self.io_load_input_queue, self.io_load_output_queue, self.mean_and_std,
                            self. save_model_path, self.average_io_load, self.warning_message_queue)
         print("负载预测结束:")
-
-
-def start_io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
-                             warning_message_queue):
-    tf.reset_default_graph()
-    mythread = IoLoadPredictionThread(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path,
-                                        average_io_load, warning_message_queue)
-    mythread.start()
 
 
 # if __name__ == "__main__":

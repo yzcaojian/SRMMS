@@ -6,18 +6,15 @@ from PyQt5.QtCore import Qt, QSize, QMutex, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
     QMessageBox
-
-from hard_disk_failure_prediction.predict import start_disk_health_prediction
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
 from resource_status_display.configuration_checking import configuration_info
-
 from interface.in_interface import in_interface_impl
-from resource_scheduling_allocation.RSA_1 import start_online_model_training
-from resource_scheduling_allocation.RSA_2 import start_io_load_prediction
+from resource_scheduling_allocation.RSA_1 import OnlineModelTrainingThread
+from resource_scheduling_allocation.RSA_2 import IoLoadPredictionThread
 from resource_scheduling_allocation.RSA_3 import sever_disconnection_warning, hard_disk_high_io_warning, hard_disk_failutre_warning
 from resource_scheduling_allocation.RSA_4 import resource_scheduling_allocation
-
+from hard_disk_failure_prediction.predict import DiskHealthPredictionThread
 from data_communication_analysis.DAC_1 import analyse_data
 
 """
@@ -27,6 +24,31 @@ from data_communication_analysis.DAC_1 import analyse_data
 @Time : 2021/4/28 10:48
 @Author : cao jian
 """
+
+# I/O负载输入队列
+io_load_input_queue = in_interface_impl.get_io_load_input_queue()
+io_load_input_queue_predict = in_interface_impl.get_io_load_input_queue_predict()  # 预测用
+io_load_input_queue_train = in_interface_impl.get_io_load_input_queue_train()  # 训练用
+# I/O负载输出队列
+io_load_output_queue = in_interface_impl.get_io_load_output_queue()
+# 高负载队列
+high_io_load_queue = in_interface_impl.get_high_io_load_queue()
+# 记录平均I/O负载  average_io_load[ip][diskID]:[count, averageIO]
+average_io_load = in_interface_impl.get_average_io_load()
+# 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
+warning_message_queue = in_interface_impl.get_warning_message_queue()
+# disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
+disk_detailed_info = in_interface_impl.get_disk_detailed_info()
+# 存放IO的平均值和标准差
+mean_and_std = in_interface_impl.get_mean_and_std()
+# 存放所有硬盘smart数据
+smart_dict = in_interface_impl.get_smart_data_dict()
+# 存放各硬盘预测得到的健康度结果
+health_degree_dict = in_interface_impl.get_health_degree_dict()
+# 存放各硬盘需要预警的硬盘位置信息
+hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction_list()
+
+save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
 
 
 class MainWidget(QWidget):
@@ -93,15 +115,15 @@ class MainWidget(QWidget):
 
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
-            for i in range(1, self.mult_disks_info_widget.tab_widget.count()):
-                self.mult_disks_info_widget.tab_widget.removeTab(i)  # 清除所有tab页
-                for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
-                    if j == i - 1:
-                        self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
-                        break
+            # for i in range(1, self.mult_disks_info_widget.tab_widget.count()):
+            #     self.mult_disks_info_widget.tab_widget.removeTab(i)  # 清除所有tab页
+            #     for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
+            #         if j == i - 1:
+            #             self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
+            #             break
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
-            # for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
-            #     item.update_thread.close_thread()
+            for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
+                item.update_thread.close_thread()
             self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
@@ -159,15 +181,9 @@ class TransactionProcessingThread(QThread):
             threadLock.lock()
             print("事务处理获得锁")
             print("事务处理开始:")
-            # 线上训练 开辟线程
-            start_online_model_training(io_load_input_queue_train, mean_and_std, save_model)
 
-            # IO负载预测 开辟线程
-            start_io_load_prediction(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
-                                     average_io_load, warning_message_queue)
-            # 硬盘故障预测 开辟线程
-            # start_disk_health_prediction(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
-
+            # 动态训练、负载预测、硬盘故障预测
+            start_prediction_training_thread()
             # 检查是否有硬盘故障预警
             failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
             for failure in failure_list:
@@ -187,6 +203,31 @@ class TransactionProcessingThread(QThread):
             self.sleep(2)
 
 
+class PredictionTrainingThread:
+
+    online_training_thread = OnlineModelTrainingThread(io_load_input_queue_train, mean_and_std, save_model)
+    io_load_prediction_thread = IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, mean_and_std,
+                                                       save_model[0], average_io_load, warning_message_queue)
+    hard_disk_failure_prediction_thread = DiskHealthPredictionThread(smart_dict, health_degree_dict,
+                                                                     hard_disk_failure_prediction_list)
+
+
+def start_prediction_training_thread():
+    if not PredictionTrainingThread.online_training_thread.is_alive():  # 动态训练线程结束
+        PredictionTrainingThread.online_training_thread = OnlineModelTrainingThread(io_load_input_queue_train,
+                                                                                    mean_and_std, save_model)
+        PredictionTrainingThread.online_training_thread.start()
+    if not PredictionTrainingThread.io_load_prediction_thread.is_alive():  # 负载预测线程结束
+        PredictionTrainingThread.io_load_prediction_thread = \
+            IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
+                                   average_io_load, warning_message_queue)
+        PredictionTrainingThread.io_load_prediction_thread.start()
+    if not PredictionTrainingThread.hard_disk_failure_prediction_thread.is_alive():  # 硬盘故障预测线程结束
+        PredictionTrainingThread.hard_disk_failure_prediction_thread = \
+            DiskHealthPredictionThread(smart_dict, health_degree_dict, hard_disk_failure_prediction_list)
+        PredictionTrainingThread.hard_disk_failure_prediction_thread.start()
+
+
 if __name__ == '__main__':
     # 线程锁
     threadLock = QMutex()
@@ -194,31 +235,10 @@ if __name__ == '__main__':
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
         analyse_data(ip)
-
-    # I/O负载输入队列
-    io_load_input_queue = in_interface_impl.get_io_load_input_queue()
-    io_load_input_queue_predict = in_interface_impl.get_io_load_input_queue_predict()  # 预测用
-    io_load_input_queue_train = in_interface_impl.get_io_load_input_queue_train()  # 训练用
-    # I/O负载输出队列
-    io_load_output_queue = in_interface_impl.get_io_load_output_queue()
-    # 高负载队列
-    high_io_load_queue = in_interface_impl.get_high_io_load_queue()
-    # 记录平均I/O负载  average_io_load[ip][diskID]:[count, averageIO]
-    average_io_load = in_interface_impl.get_average_io_load()
-    # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
-    warning_message_queue = in_interface_impl.get_warning_message_queue()
-    # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
-    disk_detailed_info = in_interface_impl.get_disk_detailed_info()
-    # 存放IO的平均值和标准差
-    mean_and_std = in_interface_impl.get_mean_and_std()
-    # 存放所有硬盘smart数据
-    smart_dict = in_interface_impl.get_smart_data_dict()
-    # 存放各硬盘预测得到的健康度结果
-    health_degree_dict = in_interface_impl.get_health_degree_dict()
-    # 存放各硬盘需要预警的硬盘位置信息
-    hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction_list()
-
-    save_model = ['../IO_load_prediction_model_training/model/Financial2/', 'Model']
+    # 先运行三个线程
+    PredictionTrainingThread.online_training_thread.start()
+    PredictionTrainingThread.io_load_prediction_thread.start()
+    PredictionTrainingThread.hard_disk_failure_prediction_thread.start()
 
     app = QApplication(sys.argv)
     main = MainWindow()
