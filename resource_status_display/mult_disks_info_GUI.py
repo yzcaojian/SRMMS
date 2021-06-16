@@ -75,7 +75,7 @@ class MultDisksInfoWidget(QWidget):
                                     "border-style:solid; border-color:black; border-radius:20px")
         # 告警信息， 以list呈现
         warning_widget = QListWidget()
-        warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
+        # warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
         # 定义内部函数事件，初始化或者是有告警信号后，从warning_list中取数据放入warning_widget中去，刷新告警信息
         def show_warning_list(warning_list):
@@ -98,7 +98,7 @@ class MultDisksInfoWidget(QWidget):
                                 "border-style:solid; border-color:black; border-radius:20px")
         # 日志信息，以list呈现
         log_widget = QListWidget()
-        log_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
+        # log_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         # 定位当前选中的item行，双击显示详细信息
         log_widget.itemDoubleClicked.connect(lambda: self.display_detailed_log_info(log_widget.selectedIndexes()))
 
@@ -129,10 +129,10 @@ class MultDisksInfoWidget(QWidget):
 
         # tab页与按钮和告警日志信息的布局
         self.whole_layout.setContentsMargins(10, 0, 10, 10)
-        self.tab_widget.setStyleSheet("QTabWidget:pane{border: 2px solid black; top: -1px; background:#ffffff}\
-                        QTabBar::tab{height:34px; width:120px; margin-right:2px; border-radius:10px; font-size:20px}\
-                        QTabBar::tab:selected{border:2px solid black; border-bottom-color: none}\
-                        QTabBar::tab:!selected{border-bottom: 2px solid white; background:white; margin-right:4px}")  # dddddd
+        self.tab_widget.setStyleSheet("QTabWidget:pane{border: 2px solid black; top: -2px; background:#ffffff}\
+                        QTabBar::tab{height:34px; width:250px; margin-right:1px; font-size:20px; border-radius: 4px;}\
+                        QTabBar::tab:selected{border:2px solid black; border-bottom-color:white; bottom:-2px; border-bottom-width: 4px; background:#ffffff}\
+                        QTabBar::tab:!selected{background:#cccccc; border:2px solid black; bottom: -2px}")
         self.whole_layout.addWidget(self.tab_widget)
         self.whole_layout.addWidget(self.text_info_widget)
         self.setLayout(self.whole_layout)
@@ -141,7 +141,6 @@ class MultDisksInfoWidget(QWidget):
         self.update_log_thread.start()
 
         def update_log():
-            print("update log data...")
             if len(self.warning_list) != len(warning_list.warning_list):
                 self.warning_list = warning_list.warning_list[:]
                 show_scheduling_list(self.warning_list)

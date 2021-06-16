@@ -27,7 +27,7 @@ class UpdateMDDataThread(QThread):
     def run(self):
         while self.flag:
             self.lock.lock()
-            print("更新多硬盘架构前端数据")
+            print("update MD-server data...")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
@@ -48,7 +48,7 @@ class UpdateRAIDDataThread(QThread):
     def run(self):
         while self.flag:
             self.lock.lock()
-            print("更新RAID架构前端数据")
+            print("update RAID-server data...")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
@@ -69,7 +69,7 @@ class UpdateTabDataThread(QThread):
     def run(self):
         while self.flag:
             self.lock.lock()
-            print("更新多硬盘架构tab页前端数据")
+            print("update MD-disk data...")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟
@@ -90,7 +90,7 @@ class UpdateLogThread(QThread):
     def run(self):
         while self.flag:
             self.lock.lock()
-            print("更新多硬盘架构tab页前端数据")
+            print("update MD-log data...")
             self.update_data.emit()  # 发射信号
             self.lock.unlock()
             self.sleep(1)  # 推迟执行一秒钟

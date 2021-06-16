@@ -88,26 +88,41 @@ class MainWidget(QWidget):
     def initUI(self):
         # 标题
         title_widget = QWidget()
-        title_layout = QHBoxLayout()
+        title_layout = QVBoxLayout()
+
         title_label = QLabel('''<font color=black face='黑体' size=8>存储资源监控管理系统<font>''')
         # title_label.setContentsMargins(0, 16, 0, 0)
         title_label.setAlignment(Qt.AlignCenter)  # 文本居中
         switch_button = QPushButton()
-        switch_button.setFixedSize(40, 40)
+        switch_button.setFixedSize(34, 34)
         switch_button_icon = QIcon('./png/switch.png')
         switch_button.setIcon(switch_button_icon)
-        switch_button.setIconSize(QSize(35, 35))
+        switch_button.setIconSize(QSize(30, 30))
         # switch_button.setContentsMargins(0, 30, 0, 0)
         switch_button.setStyleSheet("QPushButton{background-color:#cccccc; border: none} "
                                     "QPushButton:pressed{background-color:#aaaaaa}")
         # 将文本和切换按钮共同居中
-        title = QHBoxLayout()
-        title_w = QWidget()
-        title.addWidget(title_label, alignment=Qt.AlignRight)
-        title.addWidget(switch_button, alignment=Qt.AlignLeft)
-        title_w.setLayout(title)
-        title_layout.addWidget(title_w, alignment=Qt.AlignCenter)
+        # title = QHBoxLayout()
+        # title_w = QWidget()
+        # title.addWidget(title_label, alignment=Qt.AlignRight)
+        # title.addWidget(switch_button, alignment=Qt.AlignLeft)
+        # title_w.setLayout(title)
+        # title_layout.addWidget(title_w, alignment=Qt.AlignCenter)
+        # title_widget.setLayout(title_layout)
+
+        self.title_branch = QLabel('''<font color=black face='黑体' size=6>（多硬盘架构）<font>''')
+
+        # 切换按钮与架构文字信息布局
+        branch = QHBoxLayout()
+        branch_widget = QWidget()
+        branch.addWidget(self.title_branch, alignment=Qt.AlignRight | Qt.AlignTop)
+        branch.addWidget(switch_button, alignment=Qt.AlignLeft | Qt.AlignTop)
+        branch_widget.setLayout(branch)
+
+        title_layout.addWidget(title_label, alignment=Qt.AlignCenter | Qt.AlignTop)
+        title_layout.addWidget(branch_widget, alignment=Qt.AlignCenter | Qt.AlignTop)
         title_widget.setLayout(title_layout)
+        title_widget.setFixedHeight(120)
 
         switch_button.clicked.connect(lambda: self.switch_UI())
 
@@ -115,6 +130,7 @@ class MainWidget(QWidget):
 
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
+            self.title_branch.setText('''<font color=black face='黑体' size=6>（RAID架构）<font>''')
             # for i in range(1, self.mult_disks_info_widget.tab_widget.count()):
             #     self.mult_disks_info_widget.tab_widget.removeTab(i)  # 清除所有tab页
             #     for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
@@ -124,11 +140,13 @@ class MainWidget(QWidget):
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
                 item.update_thread.close_thread()
+            self.mult_disks_info_widget.update_log_thread.close_thread()
             self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
+            self.title_branch.setText('''<font color=black face='黑体' size=6>（多硬盘架构）<font>''')
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None

@@ -73,7 +73,7 @@ class DetailedInfoTab(QTabWidget):
         # disk_storage_table.clicked.connect(lambda: printSize())
         disk_storage_table.clicked.connect(lambda: self.set_selected_disk_id(disk_storage_table.selectedRanges()))
         disk_storage_table.clicked.connect(lambda: set_health_state())
-        disk_storage_table.clicked.connect(lambda: set_disk_io_line(disk_storage_table.selectedRanges(), False))
+        disk_storage_table.clicked.connect(lambda: set_disk_io_line())
 
         disk_storage_table_widget = QWidget()
         disk_storage_table_layout = QVBoxLayout()
@@ -84,10 +84,6 @@ class DetailedInfoTab(QTabWidget):
         # 定义内部函数事件，初始化或者是到刷新周期后，从disk_storage_info_list中取数据放入disk_storage_table中去
         def show_disks_storage_list():
             global line
-            # if self.currentIndex() == 0 and tabCounts == 0:  # 表示添加详细页时初次调用函数，此时currentIndex是0
-            #     print("1-------------")
-            #     disks_storage_info_list = self.server_detailed_info[self.count() - 1]
-            # else:
             self.server_detailed_info = in_interface_impl.get_server_detailed_info(
                 self.selected_disk_id[0], 0)
             disks_storage_info_list = self.server_detailed_info
@@ -118,6 +114,7 @@ class DetailedInfoTab(QTabWidget):
                     disk_storage_table.setCellWidget(i, j, cell_widget)
 
         show_disks_storage_list()
+        disk_storage_table.selectRow(0)  # 设置默认选中第一行
 
         # 健康度条形图和I/O负载信息
         disk_detailed_info_layout = QVBoxLayout()
@@ -128,7 +125,7 @@ class DetailedInfoTab(QTabWidget):
         heath_title_layout = QHBoxLayout()
         health_degree_item_layout = QHBoxLayout()
         health_degree_text_layout = QHBoxLayout()
-        health_degree_title = QLabel("硬盘健康度")
+        health_degree_title = QLabel("硬盘健康度（图例）")
         health_degree_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
         heath_title_layout.addWidget(health_degree_title)
         # 剩余寿命条形图
@@ -278,24 +275,11 @@ class DetailedInfoTab(QTabWidget):
             line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[1] + "_io.html"))
             disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
 
-        def set_disk_io_line(disk_selected, IsUpdate):
-            # if self.currentIndex() > len(self.selected_disk_id):
-            #     return
-            # disk_selected是获取的选择表格某行的范围信息
-            if IsUpdate:
-                print("update disk_info per second...")
-                pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
-            else:
-                if disk_selected is None:
-                    print('默认选中第一个disk')
-                else:
-                    print(self.server_detailed_info[disk_selected[0].topRow()].diskID)  # 获取到选中的diskID，得到负载数据
-
+        def set_disk_io_line():
             disk_io_width = str(self.detailed_tab.size().width() / 2 - 40) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
 
-            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[0],
-                                                                               self.selected_disk_id[1])
+            y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[0], self.selected_disk_id[1])
             y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(
                 self.selected_disk_id[0], self.selected_disk_id[1])
             if not y_data:
@@ -395,7 +379,7 @@ class DetailedInfoTab(QTabWidget):
         # 定时刷新
         self.update_thread.update_data.connect(lambda: show_disks_storage_list())
         self.update_thread.update_data.connect(lambda: set_health_state())
-        self.update_thread.update_data.connect(lambda: set_disk_io_line(None, True))
+        self.update_thread.update_data.connect(lambda: set_disk_io_line())
 
     def set_selected_disk_id(self, disk_selected):
         # index 表示当前tab页在selected_disk_id列表中对应的索引

@@ -1,4 +1,3 @@
-
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
@@ -41,8 +40,10 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.lock = lock
         self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
+        # 选中的服务器IP地址，默认是总体信息表中第一个serverIP
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
+        # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
+        self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)
         self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
         self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -74,18 +75,14 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.doubleClicked.connect(  # 双击新增详细信息界面
-            lambda: self.add_detailed_tab(self.server_overall_info[server_storage_table.selectedRanges()[0].topRow()].serverIP, self.lock))
-        # server_storage_table.clicked.connect(  # 单击改变总体信息界面
-        #     lambda: self.update_server_overall_info(server_storage_table.selectedRanges()))
+            lambda: self.add_detailed_tab(
+                self.server_overall_info[server_storage_table.selectedRanges()[0].topRow()].serverIP, self.lock))
+        # 单击对当前页面进行刷新，图表绘制函数重新执行
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
-        server_storage_table.clicked.connect(
-            lambda: draw_two_disk_storage_bar(server_storage_table.selectedRanges(), False))
-        server_storage_table.clicked.connect(
-            lambda: draw_two_disk_error_rate_bar(server_storage_table.selectedRanges(), False))
-        server_storage_table.clicked.connect(lambda: set_ssd_io_line(server_storage_table.selectedRanges(), False))
-        server_storage_table.clicked.connect(lambda: set_hdd_io_line(server_storage_table.selectedRanges(), False))
-        # server_storage_table.clicked.connect(self.show_disk_error_warning)
-        # server_storage_table.clicked.connect(lambda: printSize())
+        server_storage_table.clicked.connect(lambda: draw_two_disk_storage_bar())
+        server_storage_table.clicked.connect(lambda: draw_two_disk_error_rate_bar())
+        server_storage_table.clicked.connect(lambda: set_ssd_io_line())
+        server_storage_table.clicked.connect(lambda: set_hdd_io_line())
 
         server_storage_table_layout = QVBoxLayout()
         server_storage_table_layout.addWidget(server_title)
@@ -125,6 +122,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     server_storage_table.setCellWidget(i, j, cell_widget)
 
         show_server_storage_list()
+        server_storage_table.selectRow(0)  # 设置默认选中第一行
 
         # 两类硬盘容量与故障率柱状图
         bar_layout = QHBoxLayout()
@@ -134,43 +132,41 @@ class MultDisksInfoTabWidget(QTabWidget):
         first_bar_widget = QWebEngineView()
         second_bar_widget = QWebEngineView()
 
-        def draw_two_disk_storage_bar(server_selected, IsUpdate):
-            if IsUpdate:
-                two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                    two_disk_list = self.two_disk_info
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
-            # two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 待优化
+        def draw_two_disk_storage_bar():
+            two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = float(two_disk_list.hddTotalCapacity[:-2])
             hdd_used = float(two_disk_list.hddOccupiedCapacity[:-2])
+            hdd_occ = float(two_disk_list.hddOccupiedRate[:-1])
             ssd_all = float(two_disk_list.ssdTotalCapacity[:-2])
             ssd_used = float(two_disk_list.ssdOccupiedCapacity[:-2])
+            ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
             used = [hdd_used, ssd_used]
             all = [hdd_all - hdd_used, ssd_all - ssd_used]
+            occ = [hdd_occ, ssd_occ]
 
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
-            # bar_width = str(self.size().width() / 3) + "px"
-            # bar_height = str(self.size().height() / 2 - 60) + "px"
 
             bar = (Bar(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
                                                animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-                   .add_xaxis(["HDD", "SSD"], )
-                   .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
-                   .add_yaxis("剩余容量", all, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
-                   .set_global_opts(
+                .add_xaxis(["HDD", "SSD"])
+                .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
+                .add_yaxis("剩余容量", all, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
+                .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
-                   .set_series_opts(
+                .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x){return Number(x.data).toFixed() + 'TB';}"))
+                    formatter=JsCode("function(x) {return Number(x.data).toFixed() + 'TB';}"))
             ).render("./html/first.html"))
+
+            # line = Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
+            #                                     animation_opts=opts.AnimationOpts(animation=False))) \
+            #     .add_xaxis(["HDD", "SSD"]).add_yaxis(series_name="容量占用率", yaxis_index=1, y_axis=occ) \
+            #     .set_series_opts(label_opts=opts.LabelOpts(position="left", formatter=JsCode("function(x){return Number(x.data).toFixed() + '%';}")))
+            # bar.overlap(line).render("./html/first.html")
 
             first_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                      False)  # 将滑动条隐藏，避免遮挡内容
@@ -181,19 +177,11 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         bar_layout.addWidget(first_bar_widget, alignment=Qt.AlignCenter)
 
-        def draw_two_disk_error_rate_bar(server_selected, IsUpdate):
-            if IsUpdate:
-                two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)  # 刷新的情况下直接用当前selected_server_ip获取两类硬盘容量信息
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                    two_disk_list = self.two_disk_info
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
+        def draw_two_disk_error_rate_bar():
+            two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
 
-            hdd_rate = two_disk_list.hddErrorRate
-            ssd_rate = two_disk_list.ssdErrorRate
+            hdd_rate = two_disk_list.hddErrorRate * 100
+            ssd_rate = two_disk_list.ssdErrorRate * 100
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
             # bar_width = str(self.size().width() / 3) + "px"
@@ -205,12 +193,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                    .add_xaxis(["HDD", "SSD"])
                    .add_yaxis("", [hdd_rate, ssd_rate], category_gap="20%", bar_width="40%", color='#4d5c6e')
                    .set_global_opts(
-                yaxis_opts=opts.AxisOpts(name="故障率", axistick_opts=opts.AxisTickOpts(is_inside=True)),
-                xaxis_opts=opts.AxisOpts(name="", axistick_opts=opts.AxisTickOpts(is_inside=True)))
+                yaxis_opts=opts.AxisOpts(name="故障率/%", axistick_opts=opts.AxisTickOpts(is_inside=True)),
+                xaxis_opts=opts.AxisOpts(name="", axistick_opts=opts.AxisTickOpts(is_inside=True)),
+                tooltip_opts=opts.TooltipOpts(
+                    formatter=JsCode("function(x){return '故障率：' + Number(x.data).toFixed() + '%';}")))
                    .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x){return Number(x.data * 100).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
+                    formatter=JsCode("function(x){return Number(x.data).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
             ).render("./html/second.html"))
 
             second_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
@@ -224,36 +214,8 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         bar_layout.addWidget(second_bar_widget, alignment=Qt.AlignCenter)
 
-        # def set_two_disk_error_rate_bar(two_disk_list):
-        #     hdd_rate = two_disk_list.hddErrorRate
-        #     ssd_rate = two_disk_list.ssdErrorRate
-        #     bar_width = str(bar_widget.size().width() / 2) + "px"
-        #     bar_height = str(bar_widget.size().height()) + "px"
-        #
-        #     bar = (Bar(
-        #         init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,  # rgb(200,200,200,1)
-        #                                 animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-        #            .add_xaxis(["HDD", "SSD"])
-        #            .add_yaxis("", [hdd_rate, ssd_rate], category_gap="20%", bar_width="40%", color='#4d5c6e')
-        #            .set_global_opts(
-        #         yaxis_opts=opts.AxisOpts(name="故障率", axistick_opts=opts.AxisTickOpts(is_inside=True)),
-        #         xaxis_opts=opts.AxisOpts(name="", axistick_opts=opts.AxisTickOpts(is_inside=True)))
-        #            .set_series_opts(
-        #         label_opts=opts.LabelOpts(
-        #             position="right",
-        #             formatter=JsCode("function(x){return Number(x.data * 100).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
-        #     ).render("second.html"))
-        #
-        #     # second_bar_widget = QWebEngineView()
-        #     second_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
-        #                                               False)  # 将滑动条隐藏，避免遮挡内容
-        #     second_bar_widget.resize(bar_widget.size().width() / 2, bar_widget.size().height())
-        #     # 打开本地html文件
-        #     second_bar_widget.load(QUrl("file:///second.html"))
-        #     # bar_layout.addWidget(second_bar_widget, alignment=Qt.AlignCenter)
-
-        draw_two_disk_storage_bar(None, False)
-        draw_two_disk_error_rate_bar(None, False)
+        draw_two_disk_storage_bar()
+        draw_two_disk_error_rate_bar()
 
         bar_widget.setLayout(bar_layout)
 
@@ -294,18 +256,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             # 用于设置窗口宽高度，目前是设置固定高度
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
-            # disks_io_width = str(self.size().width() / 2) + "px"
-            # disks_io_height = str(self.size().height() / 2 - 60) + "px"
 
-            # x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09",
-            # "12:10", "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20",
-            # "12:21", "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31",
-            # "12:32", "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42",
-            # "12:43", "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53",
-            # "12:54"] y_data = [820, 932, 901, 934, 1290, 1330, 1320, 1203, 1422, 1430, 1425, 1320, 1331, 990, 984,
-            # 663, 651, 520, 630, 650, 854, 997, 931, 1121, 1302, 1420, 1530, 1520, 1261, 1239, 1196, 1487, 780, 120,
-            # 11, 13, 65, 98, 150, 348, 489, 576, 661, 662, 666, 894, 994, 923, 1487, 1499, 1365, 1311, 1211, 1004,
-            # 856] 获取得到指定IP地址的SSD的IOPS信息
             y_data, x_data = in_interface_impl.get_ssd_disk_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disks_io_width, height=disks_io_height,
@@ -341,16 +292,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             disks_io_left_layout.addWidget(first_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_left_layout.addWidget(left_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
-        def set_ssd_io_line(server_selected, IsUpdate):
-            # server_selected是获取的选择表格某行的范围信息
-            if IsUpdate:
-                pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，得到负载数据
-
+        def set_ssd_io_line():
             # 用于设置窗口宽高度，目前是设置固定高度
             # 后期有高度设置不平衡的问题直接改这里，改为overall_tab宽高度一半少一点
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
@@ -402,19 +344,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             # clearLayout(disks_io_right_layout)
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
-            # disks_io_width = str(self.size().width() / 2) + "px"
-            # disks_io_height = str(self.size().height() / 2 - 60) + "px"
-
-            # x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09",
-            # "12:10", "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20",
-            # "12:21", "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31",
-            # "12:32", "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42",
-            # "12:43", "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53",
-            # "12:54"] y_data = [820, 652, 701, 934, 1190, 1330, 1340, 1433, 1672, 1630, 1725, 1720, 1691, 1530, 984,
-            # 663, 651, 520, 630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587, 1780,
-            # 1820, 1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465, 1411,
-            # 1511, 1004, 856] 获取得到指定IP地址的HDD的IOPS信息 y_data, x_data = in_interface_impl.get_hdd_disk_io_info(
-            # self.selected_server_ip)
 
             # 获取得到指定IP地址的HDD的IOPS信息
             y_data, x_data = in_interface_impl.get_hdd_disk_io_info(self.selected_server_ip)
@@ -452,16 +381,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             disks_io_right_layout.addWidget(second_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_right_layout.addWidget(right_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
-        def set_hdd_io_line(server_selected, IsUpdate):
-            # server_selected是获取的选择表格某行的范围信息
-            if IsUpdate:
-                print("update server_info per second...")
-                pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，得到负载数据
+        def set_hdd_io_line():
 
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
@@ -536,41 +456,38 @@ class MultDisksInfoTabWidget(QTabWidget):
         splitter.addWidget(server_storage_info_widget)
         splitter.addWidget(server_io_info_widget)
 
-        # def printSize():
-        #     print("overall.......")
-        #     print("server_storage_info_widget", server_storage_info_widget.size())
-        #     print("server_storage_table_widget", server_storage_table_widget.size())
-        #     print("bar_widget", bar_widget.size())
-        #     print("disk_io_info_widget", server_io_info_widget.size())
-        #     print("overall_info_tab", self.overall_info_tab.size())
-        #
-        # printSize()
-
         whole1_layout.addWidget(splitter)
         # clearLayout(self.overall_info_tab.layout())
         self.overall_info_tab.setLayout(whole1_layout)
 
         # 定时刷新
         self.update_thread.update_data.connect(lambda: show_server_storage_list())
-        self.update_thread.update_data.connect(lambda: draw_two_disk_storage_bar(None, True))
-        self.update_thread.update_data.connect(lambda: draw_two_disk_error_rate_bar(None, True))
-        self.update_thread.update_data.connect(lambda: set_hdd_io_line(None, True))
-        self.update_thread.update_data.connect(lambda: set_ssd_io_line(None, True))
+        self.update_thread.update_data.connect(lambda: draw_two_disk_storage_bar())
+        self.update_thread.update_data.connect(lambda: draw_two_disk_error_rate_bar())
+        self.update_thread.update_data.connect(lambda: set_hdd_io_line())
+        self.update_thread.update_data.connect(lambda: set_ssd_io_line())
 
     def add_detailed_tab(self, server_selected_ip, lock):
         detailed_tab = DetailedInfoTab(server_selected_ip, lock)
         self.Tab_list.append(detailed_tab)
         # 全局布局
-        self.addTab(detailed_tab.detailed_tab, "详细信息")
+        self.addTab(detailed_tab.detailed_tab, "详细信息(" + server_selected_ip + ")")
+        self.setCurrentIndex(self.count() - 1)
+        # self.tabBar().setToolTip(self.tabBar().tabText(self.count() - 1))
 
     def tabClose(self, index):  # 定义关闭tab页事件, index表示第几个tab页，总体信息页是0
         self.removeTab(index)
-        self.Tab_list[index-1].update_thread.close_thread()  # 关闭线程
-        self.Tab_list.pop(index-1)
+        self.Tab_list[index - 1].update_thread.close_thread()  # 关闭线程
+        self.Tab_list.pop(index - 1)
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
         # print("selected:", self.selected_server_ip)
+
+    # 查看历史I/O负载信息
+    def show_history_io_line(self, level):
+        self.server_history_io = HistoryIO(self.selected_server_ip, "", level)
+        self.server_history_io.show()
 
 
 class RaidInfoTabWidget(QTabWidget):
@@ -578,8 +495,10 @@ class RaidInfoTabWidget(QTabWidget):
         super().__init__()
         self.overall_info_tab = QWidget()
         self.server_overall_info = in_interface_impl.get_server_overall_info(1)  # 服务器总体信息列表
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[
+            0].serverIP  # 选中的服务器IP地址，默认是第一个
+        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip,
+                                                                               1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread(lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -660,20 +579,8 @@ class RaidInfoTabWidget(QTabWidget):
         volume_storage_table_widget.setLayout(volume_storage_table_layout)
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从volume_storage_info_list中取数据放入volume_storage_table中去
-        def show_volume_storage_list(server_selected, IsUpdate):
-            # server_storage_table.clear()  # 清空刷新前的所有项
-            # server_selected是获取的选择表格某行的范围信息
-            # volume_storage_info_list = []
-            if IsUpdate:
-                volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip,
-                                                                                      1)  # 刷新的情况下直接用当前serverIP
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                    volume_storage_info_list = self.server_detailed_info
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成详细信息界面
-                    volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)
+        def show_volume_storage_list():
+            volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)  # 刷新的情况下直接用当前serverIP
             for i, single_volume_info in enumerate(volume_storage_info_list):
                 volume_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
@@ -689,7 +596,7 @@ class RaidInfoTabWidget(QTabWidget):
                     cell_widget.setLayout(cell_layout)
                     volume_storage_table.setCellWidget(i, j, cell_widget)
 
-        show_volume_storage_list(None, False)
+        show_volume_storage_list()
 
         # 总体信息表和详细信息表布局
         table_widget = QWidget()
@@ -719,15 +626,6 @@ class RaidInfoTabWidget(QTabWidget):
             io_width = str(self.size().width() - 50) + "px"
             io_height = str(self.size().height() / 2 - 100) + "px"
 
-            # x_data = ["12:00", "12:01", "12:02", "12:03", "12:04", "12:05", "12:06", "12:07", "12:08", "12:09",
-            # "12:10", "12:11", "12:12", "12:13", "12:14", "12:15", "12:16", "12:17", "12:18", "12:19", "12:20",
-            # "12:21", "12:22", "12:23", "12:24", "12:25", "12:26", "12:27", "12:28", "12:29", "12:30", "12:31",
-            # "12:32", "12:33", "12:34", "12:35", "12:36", "12:37", "12:38", "12:39", "12:40", "12:41", "12:42",
-            # "12:43", "12:44", "12:45", "12:46", "12:47", "12:48", "12:49", "12:50", "12:51", "12:52", "12:53",
-            # "12:54"] y_data = [820, 652, 701, 934, 1190, 1330, 1340, 1433, 1672, 1630, 1725, 1720, 1691, 1530,
-            # 1284, 1063, 851, 720, 630, 980, 954, 947, 1231, 1241, 1382, 1320, 1230, 1128, 1261, 1439, 1496, 1587,
-            # 1780, 1820, 1100, 1021, 665, 598, 430, 348, 489, 576, 761, 862, 966, 874, 964, 1123, 1287, 1399, 1465,
-            # 1411, 1511, 1004, 856]
             y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
@@ -762,17 +660,7 @@ class RaidInfoTabWidget(QTabWidget):
             server_io_layout.addWidget(io_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
             # io_button.setContentsMargins(400, 0, 0, 0)
 
-        def set_server_io_line(server_selected, IsUpdate):
-            # server_selected是获取的选择表格某行的范围信息
-            if IsUpdate:
-                print("update raid server per second...")
-                pass  # 刷新的情况下直接用当前serverIP得到I/O负载数据
-            else:
-                if server_selected is None:
-                    print('默认选中第一个server')
-                else:
-                    print(self.server_overall_info[server_selected[0].topRow()].serverIP)  # 获取到选中的serverIP，生成总体I/O负载图
-
+        def set_server_io_line():
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 50) + "px"
             io_height = str(self.size().height() / 2 - 100) + "px"
@@ -820,13 +708,6 @@ class RaidInfoTabWidget(QTabWidget):
         graph_layout.addWidget(splitter)
         self.graph_widget.setLayout(graph_layout)
 
-        # def printSize():
-        #     print("graph_widget", self.graph_widget.size())
-        #     print("server_io_widget", server_io_widget.size())
-        #     print("server_storage_table", server_storage_table.size())
-        #     print("line_widget", line_widget.size())
-        # printSize()
-
         # 全局布局
         whole_layout = QVBoxLayout()
         whole_layout.setContentsMargins(0, 0, 0, 10)
@@ -836,8 +717,8 @@ class RaidInfoTabWidget(QTabWidget):
 
         # 定时刷新
         self.update_thread.update_data.connect(lambda: show_server_storage_list(self.server_overall_info))
-        self.update_thread.update_data.connect(lambda: show_volume_storage_list(None, True))
-        self.update_thread.update_data.connect(lambda: set_server_io_line(None, True))
+        self.update_thread.update_data.connect(lambda: show_volume_storage_list())
+        self.update_thread.update_data.connect(lambda: set_server_io_line())
         self.update_thread.start()
 
     def set_selected_server_ip(self, server_selected):
