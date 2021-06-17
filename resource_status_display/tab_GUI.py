@@ -141,8 +141,9 @@ class MultDisksInfoTabWidget(QTabWidget):
             ssd_all = float(two_disk_list.ssdTotalCapacity[:-2])
             ssd_used = float(two_disk_list.ssdOccupiedCapacity[:-2])
             ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
-            used = [hdd_used, ssd_used]
-            all = [hdd_all - hdd_used, ssd_all - ssd_used]
+            used = [{"value": hdd_used, "percent": hdd_used/hdd_all}, {"value": ssd_used, "percent": ssd_used/ssd_all}]
+            left = [{"value": hdd_all - hdd_used, "percent": (hdd_all - hdd_used)/hdd_all},
+                    {"value": ssd_all - ssd_used, "percent": (ssd_all - ssd_used)/ssd_all}]
             occ = [hdd_occ, ssd_occ]
 
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
@@ -152,14 +153,16 @@ class MultDisksInfoTabWidget(QTabWidget):
                                                animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                 .add_xaxis(["HDD", "SSD"])
                 .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
-                .add_yaxis("剩余容量", all, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
+                .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
                 .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
                 .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x) {return Number(x.data).toFixed() + 'TB';}"))
+                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'TB'"
+                                     "+ ' ' + Number(x.data.percent * 100).toFixed() + '%';}"))
+
             ).render("./html/first.html"))
 
             # line = Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
