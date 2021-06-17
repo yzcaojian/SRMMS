@@ -11,7 +11,7 @@ from pyecharts.charts import Line
 from pyecharts import options as opts
 from resource_status_display.history_io_display import HistoryIO
 from interface.in_interface import in_interface_impl
-from resource_status_display.backward_thread import UpdateMDDataThread
+from resource_status_display.backward_thread import UpdateTabDataThread
 from resource_status_display.get_info_item import get_disk_storage_info_item
 
 
@@ -29,7 +29,7 @@ class DetailedInfoTab(QTabWidget):
         super().__init__()
         self.selected_server_ip = server_selected_ip
         self.selected_disk_id = None
-        self.update_thread = UpdateMDDataThread(lock)
+        self.update_thread = UpdateTabDataThread(lock)
         self.exception_list = in_interface_impl.get_exception_list()
         self.detailed_tab = None
         self.server_detailed_info = None
