@@ -58,7 +58,7 @@ class MainWidget(QWidget):
         super().__init__()
 
         self.title_widget = QWidget()  # 标题
-        self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)  # 多硬盘架构下监控界面
+        self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)  # 多硬盘架构下监控界面
         self.raid_info_widget = None  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
 
@@ -150,7 +150,7 @@ class MainWidget(QWidget):
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None
-            self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing)
+            self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
 
     # 当出现对硬盘故障预警的情况时弹窗告警
@@ -175,14 +175,14 @@ class RequestResourceThread(QThread):
         while MainWidget.running:
             # 获得锁
             threadLock_drawing.lock()
-            threadLock.lock()
+            threadLock_transaction.lock()
             print("请求资源获得锁")
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
                 analyse_data(ip)
             print("请求资源结束:")
             # 释放锁
-            threadLock.unlock()
+            threadLock_transaction.unlock()
             threadLock_drawing.unlock()
             print("请求资源释放锁")
             # QApplication.processEvents()
@@ -196,7 +196,8 @@ class TransactionProcessingThread(QThread):
     def run(self):
         while MainWidget.running:
             # 获得锁
-            threadLock.lock()
+            threadLock_transaction.lock()
+            threadLock_log.lock()
             print("事务处理获得锁")
             print("事务处理开始:")
 
@@ -215,7 +216,8 @@ class TransactionProcessingThread(QThread):
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
             # 释放锁
-            threadLock.unlock()
+            threadLock_log.unlock()
+            threadLock_transaction.unlock()
             print("事务处理释放锁")
             # QApplication.processEvents()
             self.sleep(2)
@@ -248,8 +250,9 @@ def start_prediction_training_thread():
 
 if __name__ == '__main__':
     # 线程锁
-    threadLock = QMutex()
+    threadLock_transaction = QMutex()
     threadLock_drawing = QMutex()
+    threadLock_log = QMutex()
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
         analyse_data(ip)

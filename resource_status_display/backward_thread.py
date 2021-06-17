@@ -1,5 +1,4 @@
 import time
-
 from PyQt5.QtCore import QThread, pyqtSignal
 import threading
 
@@ -29,8 +28,9 @@ class UpdateMDDataThread(QThread):
             self.lock.lock()
             print("update MD-server data...")
             self.update_data.emit()  # 发射信号
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             self.lock.unlock()
-            self.sleep(1)  # 推迟执行一秒钟
+            time.sleep(0.9)   # 推迟执行0.9秒
 
 
 class UpdateRAIDDataThread(QThread):
@@ -50,8 +50,9 @@ class UpdateRAIDDataThread(QThread):
             self.lock.lock()
             print("update RAID-server data...")
             self.update_data.emit()  # 发射信号
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             self.lock.unlock()
-            self.sleep(1)  # 推迟执行一秒钟
+            time.sleep(0.9)  # 推迟执行0.9秒
 
 
 class UpdateTabDataThread(QThread):
@@ -71,8 +72,9 @@ class UpdateTabDataThread(QThread):
             self.lock.lock()
             print("update MD-disk data...")
             self.update_data.emit()  # 发射信号
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             self.lock.unlock()
-            self.sleep(1)  # 推迟执行一秒钟
+            time.sleep(0.9)  # 推迟执行0.9秒
 
 
 class UpdateLogThread(QThread):
@@ -92,5 +94,6 @@ class UpdateLogThread(QThread):
             self.lock.lock()
             print("update MD-log data...")
             self.update_data.emit()  # 发射信号
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             self.lock.unlock()
-            self.sleep(1)  # 推迟执行一秒钟
+            time.sleep(0.9)  # 推迟执行0.9秒

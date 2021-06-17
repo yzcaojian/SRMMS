@@ -18,17 +18,18 @@ from resource_status_display.tab_GUI import MultDisksInfoTabWidget
 
 
 class MultDisksInfoWidget(QWidget):
-    def __init__(self, lock):
+    def __init__(self, lock, lock_log):
         super().__init__()
         self.configuration = None  # 配置界面
         self.whole_layout = QHBoxLayout()  # 总体布局
         self.lock = lock
+        self.lock_log = lock_log
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list[:]  # 告警信息列表
         self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
-        self.update_log_thread = UpdateLogThread(self.lock)
+        self.update_log_thread = UpdateLogThread(self.lock_log)
         self.initUI()
 
     def initUI(self):
@@ -161,7 +162,7 @@ class MultDisksInfoWidget(QWidget):
         self.update_log_thread.close_thread()
 
         self.tab_widget = MultDisksInfoTabWidget(self.lock)
-        self.update_log_thread = UpdateLogThread(self.lock)
+        self.update_log_thread = UpdateLogThread(self.lock_log)
         self.text_info_widget = QWidget()
         self.initUI()
 
