@@ -120,36 +120,40 @@ class DetailedInfoTab(QTabWidget):
         disk_detailed_info_layout = QVBoxLayout()
         disk_detailed_info_widget = QWidget()
 
-        # 健康度条形图
+        # 健康度条形图，图例
+        disk_health_state_layout = QVBoxLayout()
+
         health_degree_layout = QVBoxLayout()
         heath_title_layout = QHBoxLayout()
+        former_item_layout = QHBoxLayout()
+        former_text_layout = QHBoxLayout()
         health_degree_item_layout = QHBoxLayout()
         health_degree_text_layout = QHBoxLayout()
         health_degree_title = QLabel("硬盘健康度（图例）")
         health_degree_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
         heath_title_layout.addWidget(health_degree_title)
-        # 剩余寿命条形图
+        # 剩余寿命条形图，对应预测结果
         remaining_days_layout = QVBoxLayout()
         days_title_layout = QHBoxLayout()
         remaining_days_item_layout = QHBoxLayout()
         remaining_days_text_layout = QHBoxLayout()
-        remaining_days_title = QLabel("硬盘剩余寿命")
+        remaining_days_title = QLabel("硬盘剩余寿命预测")
         remaining_days_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
         days_title_layout.addWidget(remaining_days_title)
 
+        health_degree_layout.addLayout(heath_title_layout)
+        remaining_days_layout.addLayout(days_title_layout)
+
         def set_health_state():
-            # if self.currentIndex() > len(self.selected_disk_id):
-            #     return
-            # if self.currentIndex() == 0:  # 表示添加详细页时初次调用函数，此时currenIndex是0
-            #     degree = in_interface_impl.get_health_degree(self.selected_disk_id[self.count() - 1][0], self.selected_disk_id[self.count() - 1][1])
-            # else:
-            degree = in_interface_impl.get_health_degree(self.selected_disk_id[0],
-                                                         self.selected_disk_id[1])
+            degree = in_interface_impl.get_health_degree(self.selected_disk_id[0], self.selected_disk_id[1])
             # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
+            clearLayout(former_item_layout)
+            clearLayout(former_text_layout)
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
             clearLayout(health_degree_item_layout)
             clearLayout(health_degree_text_layout)
+            # clearLayout(health_degree_layout)
             if 0 < degree < 7:  # 一级健康度
                 color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
                 days = ['<10', '<30', '<70', '<150', '<310', '>=310']
@@ -157,50 +161,65 @@ class DetailedInfoTab(QTabWidget):
                     item1 = QLabel()
                     item2 = QLabel()
                     if i == degree - 1:
-                        item1.setStyleSheet(
-                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                        item2.setStyleSheet(
-                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                    else:
-                        item1.setStyleSheet("background-color:%s" % color[i])
                         item2.setStyleSheet("background-color:%s" % color[i])
-                    text1 = QLabel('R' + str(i + 1))
+                    else:
+                        item2.setStyleSheet("background-color:white")
+                    item1.setStyleSheet("background-color:%s" % color[i])
+                    text1 = QLabel('R' + str(i + 1) + '(' + days[i] + '天)')
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                    text2 = QLabel(days[i])
-                    text2.setStyleSheet("font-size:20px; font-family:'黑体'")
                     remaining_days_item_layout.addWidget(item2)
-                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+
+                    # 设置布局之间比例划分
+                    disk_health_state_layout.setStretch(0, 3)
+                    disk_health_state_layout.setStretch(1, 2)
             elif degree >= 7:  # 二级健康度
-                color = ['#cf0000', '#f55c47', '#ff7b54']
-                days = ['<2', '<5', '<10']
-                for i in range(3):
+                color_1 = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
+                days_1 = ['<10', '<30', '<70', '<150', '<310', '>=310']
+                color_2 = ['#cf0000', '#f55c47', '#ff7b54']
+                days_2 = ['<2', '<5', '<10']
+                for i in range(6):
                     item1 = QLabel()
-                    item2 = QLabel()
-                    if i == degree - 7:
-                        item1.setStyleSheet(
-                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                        item2.setStyleSheet(
-                            "border-width:2px; border-style:solid; border-color:black; background-color:%s" % color[i])
-                    else:
-                        item1.setStyleSheet("background-color:%s" % color[i])
-                        item2.setStyleSheet("background-color:%s" % color[i])
-                    text1 = QLabel('R1-' + str(i + 1))
+                    item1.setStyleSheet("background-color:%s" % color_1[i])
+                    text1 = QLabel('R' + str(i + 1) + '(' + days_1[i] + '天)')
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
-                    health_degree_item_layout.addWidget(item1)
-                    health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                    text2 = QLabel(days[i])
+                    former_item_layout.addWidget(item1)
+                    former_text_layout.addWidget(text1)
+                for i in range(6):
+                    item2 = QLabel()
+                    if i < 3:
+                        item2.setStyleSheet("background-color:white")
+                        text2 = QLabel()
+                    else:
+                        item2.setStyleSheet("background-color:%s" % color_2[i - 3])
+                        text2 = QLabel('R1-' + str(i + 7) + '(' + days_2[i - 3] + '天)')
                     text2.setStyleSheet("font-size:20px; font-family:'黑体'")
-                    remaining_days_item_layout.addWidget(item2)
-                    remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+                    health_degree_item_layout.addWidget(item2)
+                    health_degree_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
+                for i in range(6):
+                    item3 = QLabel()
+                    if i < degree - 4:
+                        if i == 0:
+                            item3.setStyleSheet("background-color:%s" % color_1[i])
+                        else:
+                            item3.setStyleSheet("background-color:white")
+                    elif i == degree - 4:
+                        item3.setStyleSheet("background-color:%s" % color_2[i - 3])
+                    else:
+                        item3.setStyleSheet("background-color:white")
+                    remaining_days_item_layout.addWidget(item3)
+
+                    # 设置布局之间比例划分
+                    disk_health_state_layout.setStretch(0, 5)
+                    disk_health_state_layout.setStretch(1, 2)
             else:  # 无法预测健康度
                 color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
                 days = ['<10', '<30', '<70', '<150', '<310', '>=310']
                 for i in range(6):
                     item1 = QLabel()
                     item1.setStyleSheet("background-color:%s" % color[i])
-                    text1 = QLabel('R' + str(i + 1))
+                    text1 = QLabel('R' + str(i + 1) + '(' + days[i] + '天)')
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
@@ -208,16 +227,19 @@ class DetailedInfoTab(QTabWidget):
                 # remaining_days_item_layout.addWidget(item2)  # 没有item
                 remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
+                # 设置布局之间比例划分
+                disk_health_state_layout.setStretch(0, 2)
+                disk_health_state_layout.setStretch(1, 1)
+
         set_health_state()
         # 健康度标题、条状图、文字布局
-        health_degree_layout.addLayout(heath_title_layout)
+        health_degree_layout.addLayout(former_item_layout)
+        health_degree_layout.addLayout(former_text_layout)
         health_degree_layout.addLayout(health_degree_item_layout)
         health_degree_layout.addLayout(health_degree_text_layout)
-        remaining_days_layout.addLayout(days_title_layout)
         remaining_days_layout.addLayout(remaining_days_item_layout)
         remaining_days_layout.addLayout(remaining_days_text_layout)
         # 硬盘健康度信息，两个条形图布局
-        disk_health_state_layout = QVBoxLayout()
         disk_health_state_layout.addLayout(health_degree_layout)
         disk_health_state_layout.addLayout(remaining_days_layout)
 
