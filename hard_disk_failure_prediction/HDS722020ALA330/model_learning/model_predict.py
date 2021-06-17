@@ -63,7 +63,7 @@ def predict_1st(smart_data, smart_id):
                 smart_data[0][j][i] = 0
             else:
                 smart_data[0][j][i] = float((smart_data[0][j][i] - smart_min[i]) / (smart_max[i] - smart_min[i]))
-    print(smart_data)
+    # print(smart_data)
 
     # 数据通过GRU网络计算
     x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 20, 9])
