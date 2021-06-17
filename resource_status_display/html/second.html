@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="225b88c218b04f079dc1f8d2f025799b" class="chart-container" style="width:290.5px; height:328px;"></div>
+    <div id="14dfb866e09f48e0a27d2718f62a6276" class="chart-container" style="width:290.5px; height:310px;"></div>
     <script>
-        var chart_225b88c218b04f079dc1f8d2f025799b = echarts.init(
-            document.getElementById('225b88c218b04f079dc1f8d2f025799b'), 'white', {renderer: 'canvas'});
-        var option_225b88c218b04f079dc1f8d2f025799b = {
+        var chart_14dfb866e09f48e0a27d2718f62a6276 = echarts.init(
+            document.getElementById('14dfb866e09f48e0a27d2718f62a6276'), 'white', {renderer: 'canvas'});
+        var option_14dfb866e09f48e0a27d2718f62a6276 = {
     "backgroundColor": "#ffffff",
     "animation": false,
     "animationThreshold": 2000,
@@ -53,8 +53,8 @@
             "type": "bar",
             "legendHoverLink": true,
             "data": [
-                0.001,
-                0
+                0.1,
+                0.1
             ],
             "showBackground": false,
             "barWidth": "40%",
@@ -72,7 +72,7 @@
                 "show": true,
                 "position": "right",
                 "margin": 8,
-                "formatter": function(x){return Number(x.data * 100).toFixed() + '%';}
+                "formatter": function(x){return Number(x.data).toFixed() + '%';}
             },
             "rippleEffect": {
                 "show": true,
@@ -108,6 +108,7 @@
         "alwaysShowContent": false,
         "showDelay": 0,
         "hideDelay": 100,
+        "formatter": function(x){return '\u6545\u969c\u7387\uff1a' + Number(x.data).toFixed() + '%';},
         "textStyle": {
             "fontSize": 14
         },
@@ -148,7 +149,7 @@
     ],
     "yAxis": [
         {
-            "name": "\u6545\u969c\u7387",
+            "name": "\u6545\u969c\u7387/%",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -182,7 +183,7 @@
         }
     ]
 };
-        chart_225b88c218b04f079dc1f8d2f025799b.setOption(option_225b88c218b04f079dc1f8d2f025799b);
+        chart_14dfb866e09f48e0a27d2718f62a6276.setOption(option_14dfb866e09f48e0a27d2718f62a6276);
     </script>
 </body>
 </html>

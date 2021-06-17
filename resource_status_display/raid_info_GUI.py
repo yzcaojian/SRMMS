@@ -65,6 +65,7 @@ class RAIDInfoWidget(QWidget):
         self.button_widget.setParent(None)
         self.tab_widget.update_thread.close_thread()  # 关闭线程
         self.tab_widget = RaidInfoTabWidget(lock)
+        self.button_widget = QWidget()
         self.initUI()
 
     def show_configuration_GUI(self):
