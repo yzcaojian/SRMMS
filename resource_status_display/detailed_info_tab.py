@@ -172,6 +172,7 @@ class DetailedInfoTab(QTabWidget):
                     remaining_days_item_layout.addWidget(item2)
 
                     # 设置布局之间比例划分
+                    # 设置第一行和第二行的长度比为3:2
                     disk_health_state_layout.setStretch(0, 3)
                     disk_health_state_layout.setStretch(1, 2)
             elif degree >= 7:  # 二级健康度
