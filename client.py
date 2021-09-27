@@ -7,23 +7,20 @@
 import socket
 import json
 s = socket.socket()
-host = socket.gethostname()
-port = 12345
-s.connect((host, port))
+host = "192.168.25.93"
+port = 12344
+s.connect(("localhost", port))
 print("已连接")
 
 while True:
     send_data = input("输入发送内容:")
-    if not send_data:
+    if not send_data or send_data == "断开连接":
+        s.send("断开连接".encode())
         break
     s.send(send_data.encode())
-    string = ""
 
-    length = int(s.recv(100).decode())
-    data = s.recv(length)
-    print(data, type(data))
-    string += data.decode()
-    print(string, length)
+    data = s.recv(10240)
+    string = data.decode()
     dic = json.loads(string)
     print(dic, type(dic))
     print(dic["overall_info"])
