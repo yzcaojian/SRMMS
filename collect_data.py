@@ -53,6 +53,7 @@ def get_disk_total_capacity():
         return None, None
 
 
+# 总容量/已使用容量
 def get_disk_used_capacity(disk_dict, part_dict):
     (status, output) = subprocess.getstatusoutput("df")
 
@@ -88,6 +89,7 @@ def get_disk_used_capacity(disk_dict, part_dict):
         return -1
 
 
+# 总容量/已使用容量/占用率/io负载(kB)
 def get_disk_io(disk_dict):
     (status, output) = subprocess.getstatusoutput("iostat -d")
 
@@ -117,8 +119,61 @@ def get_disk_io(disk_dict):
         return -1
 
 
-def get_disk_io(disk_dict):
-    pass
+# 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态
+def get_failure_rate_and_status(disk_dict):
+    for disk in disk_dict:
+        disk.append(0)
+        disk.append("正常")
+    return 0
+
+
+# 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态/硬盘类型
+def get_disk_type(disk_dict):
+    (status, output) = subprocess.getstatusoutput("lsblk -d -o name,rota")
+    if status == 0:
+        list_ = output.split('\n')[1:]
+        disk_list = []
+        for i in range(len(list_)):
+            disk_list.append(list_[i].split())
+        for item in range(len(disk_list)):
+            disk_id = disk_list[item][0]
+            if disk_id in disk_dict:
+                if disk_list[item][1] == "1":
+                    disk_dict[disk_id].append("HDD")
+                else:
+                    disk_dict[disk_id].append("SSD")
+            else:
+                continue
+        return 0
+    else:
+        return -1
+
+
+# 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态/硬盘类型/smart数据
+def get_smart_data(disk_dict):
+    for disk_id in disk_dict:
+        smart_data = []
+        (status, output) = subprocess.getstatusoutput("smartctl -i /dev/" + disk_id)
+        if status == 0:
+            list_ = output.split('\n')[4:]
+            device_model = list_[1].split()[-1]
+        else:
+            return -1
+        (status, output) = subprocess.getstatusoutput("smartctl -A /dev/" + disk_id)
+        if status == 0:
+            list_ = output.split('\n')[7:]
+            disk_list = []
+            # ID# / ATTRIBUTE_NAME / FLAG / VALUE / WORST / THRESH / TYPE / UPDATED / WHEN_FAILED / RAW_VALUE
+            for i in range(len(list_)):
+                disk_list.append(list_[i].split())
+            for item in range(len(disk_list)):
+                ID = disk_list[item][0]
+                RAW_VALUE = disk_list[item][9]
+                smart_data.append([ID, RAW_VALUE])
+        else:
+            return -1
+        disk_dict[disk_id].append([device_model, smart_data])
+    return 0
 
 
 while True:
@@ -140,5 +195,4 @@ while True:
             break
     sock.close()
     s.close()
-
 
