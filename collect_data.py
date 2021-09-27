@@ -195,5 +195,3 @@ while True:
             break
     sock.close()
     s.close()
-
-
