@@ -247,9 +247,6 @@ while loop_flag:
     s.listen(1)
     sock, addr = s.accept()
     print("连接已经建立")
-    # dic = {"overall_info": ["2000", "1000", "50%", "5", "4", "1200", "800", "50%", "50%", "0", "0", "100000", "200000"],
-    #        "detailed_info": [["0001", "SSD", "正常", "200", "100", "50%", "40000"]], "smart_data": []}
-    # string = json.dumps(dic)
     while True:
         info = sock.recv(1024).decode()
         if info == "请求数据":
