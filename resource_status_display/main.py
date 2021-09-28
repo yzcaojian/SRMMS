@@ -182,11 +182,12 @@ class RequestResourceThread(QThread):
                 analyse_data(ip)
             print("请求资源结束:")
             # 释放锁
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             threadLock_transaction.unlock()
             threadLock_drawing.unlock()
             print("请求资源释放锁")
             # QApplication.processEvents()
-            self.sleep(1)
+            time.sleep(0.9)  # 推迟执行0.9秒
 
 
 class TransactionProcessingThread(QThread):
@@ -216,11 +217,12 @@ class TransactionProcessingThread(QThread):
             resource_scheduling_allocation(disk_detailed_info, warning_message_queue)
             print("事务处理结束:")
             # 释放锁
+            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
             threadLock_log.unlock()
             threadLock_transaction.unlock()
             print("事务处理释放锁")
             # QApplication.processEvents()
-            self.sleep(2)
+            time.sleep(1.9)  # 推迟执行1.9秒
 
 
 class PredictionTrainingThread:
