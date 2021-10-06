@@ -7,8 +7,7 @@
 import socket
 import json
 s = socket.socket()
-host = "192.168.25.93"
-port = 12344
+port = 12345
 s.connect(("localhost", port))
 print("已连接")
 
@@ -25,6 +24,8 @@ while True:
     print(dic, type(dic))
     print(dic["overall_info"])
     print(dic["detailed_info"])
+    if "smart_data" in dic:
+        print(dic["smart_data"])
 
 print("传输完成...")
 s.close()

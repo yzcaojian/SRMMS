@@ -64,8 +64,8 @@ def get_disk_used_capacity(disk_dict, part_dict):
             disk_list.append(list_[i].split())
 
         # 总容量/已使用容量
-        for disk in disk_dict:
-            disk.append(0)
+        for disk_id in disk_dict:
+            disk_dict[disk_id].append(0)
 
         # Filesystem/1K-blocks/Used/Available/Use%/Mounted on
         for item in range(len(disk_list)):
@@ -79,10 +79,10 @@ def get_disk_used_capacity(disk_dict, part_dict):
             else:
                 continue
         # 总容量/已使用容量/占用率
-        for disk in disk_dict:
-            total = disk[0]
-            used = disk[1]
-            disk.append(used / total)
+        for disk_id in disk_dict:
+            total = disk_dict[disk_id][0]
+            used = disk_dict[disk_id][1]
+            disk_dict[disk_id].append(str(round(used / total * 100, 2)) + '%')
         return 0
 
     else:
@@ -100,8 +100,8 @@ def get_disk_io(disk_dict):
             disk_list.append(list_[i].split())
 
         # 总容量/已使用容量/占用率/io负载(kB)
-        for disk in disk_dict:
-            disk.append(0)
+        for disk_id in disk_dict:
+            disk_dict[disk_id].append(0)
 
         # Device / tps / kB_read/s / kB_wrtn/s / kB_dscd/s / kB_read / kB_wrtn / kB_dscd
         for item in range(len(disk_list)):
@@ -119,15 +119,14 @@ def get_disk_io(disk_dict):
         return -1
 
 
-# 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态
-def get_failure_rate_and_status(disk_dict):
-    for disk in disk_dict:
-        disk.append(0)
-        disk.append("正常")
+# 总容量/已使用容量/占用率/io负载(kB)/运行状态
+def get_disk_running_status(disk_dict):
+    for disk_id in disk_dict:
+        disk_dict[disk_id].append("正常")
     return 0
 
 
-# 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态/硬盘类型
+# 总容量/已使用容量/占用率/io负载(kB)/运行状态/硬盘类型
 def get_disk_type(disk_dict):
     (status, output) = subprocess.getstatusoutput("lsblk -d -o name,rota")
     if status == 0:
@@ -152,7 +151,7 @@ def get_disk_type(disk_dict):
 # 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态/硬盘类型/smart数据
 def get_smart_data(disk_dict):
     for disk_id in disk_dict:
-        smart_data = []
+        smartID_list, smartData_list = [], []
         (status, output) = subprocess.getstatusoutput("smartctl -i /dev/" + disk_id)
         if status == 0:
             list_ = output.split('\n')[4:]
@@ -161,38 +160,101 @@ def get_smart_data(disk_dict):
             return -1
         (status, output) = subprocess.getstatusoutput("smartctl -A /dev/" + disk_id)
         if status == 0:
-            list_ = output.split('\n')[7:]
+            list_ = output.split('\n')[7:-1]
             disk_list = []
             # ID# / ATTRIBUTE_NAME / FLAG / VALUE / WORST / THRESH / TYPE / UPDATED / WHEN_FAILED / RAW_VALUE
             for i in range(len(list_)):
                 disk_list.append(list_[i].split())
             for item in range(len(disk_list)):
-                ID = disk_list[item][0]
-                RAW_VALUE = disk_list[item][9]
-                smart_data.append([ID, RAW_VALUE])
+                smartID_list.append(disk_list[item][0])
+                smartData_list.append(disk_list[item][9])
         else:
             return -1
-        disk_dict[disk_id].append([device_model, smart_data])
+        disk_dict[disk_id].append([device_model, smartID_list, smartData_list])
     return 0
 
 
-while True:
-    port = 12344
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('localhost', port))
+def integrate_data():
+    # 获取总容量
+    disk_dict, part_dict = get_disk_total_capacity()
+    # 获取已使用容量和占用率
+    get_disk_used_capacity(disk_dict, part_dict)
+    # 获得io负载
+    get_disk_io(disk_dict)
+    # 获得故障率和运行状态
+    get_disk_running_status(disk_dict)
+    # 获得硬盘类型
+    get_disk_type(disk_dict)
+    # 获得smart数据
+    get_smart_data(disk_dict)
+
+    total_capacity, used_capacity, hdd_counts, ssd_counts, hdd_total_capacity, ssd_total_capacity, hdd_used_capacity,\
+        ssd_used_capacity, hdd_io, ssd_io = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    detailed_info = []
+    smart_data = []
+    # 总容量 / 已使用容量 / 占用率 / io负载(kB)  / 运行状态 / 硬盘类型 / smart数据
+    for disk_id in disk_dict:
+        total_capacity += disk_dict[disk_id][0]
+        used_capacity += disk_dict[disk_id][1]
+        if disk_dict[disk_id][5] == "hdd":
+            hdd_counts += 1
+            hdd_total_capacity += disk_dict[disk_id][0]
+            hdd_used_capacity += disk_dict[disk_id][1]
+            hdd_io += disk_dict[disk_id][3]
+        else:
+            ssd_counts += 1
+            ssd_total_capacity += disk_dict[disk_id][0]
+            ssd_used_capacity += disk_dict[disk_id][1]
+            ssd_io += disk_dict[disk_id][3]
+
+        detailed_info.append([disk_id, disk_dict[disk_id][5], disk_dict[disk_id][4], disk_dict[disk_id][0],
+                              disk_dict[disk_id][1], disk_dict[disk_id][2], disk_dict[disk_id][3]])
+
+        # smart数据
+        device_model = disk_dict[disk_id][6][0]
+        smartID_list = disk_dict[disk_id][6][1]
+        smartData_list = disk_dict[disk_id][6][2]
+
+        smart_data.append([disk_id, device_model, smartID_list, smartData_list])
+
+    # 总体占用率
+    occupied_rate = str(round(used_capacity / total_capacity * 100, 2)) + '%'
+    # hdd占用率
+    if hdd_counts == 0:
+        hdd_occupied_rate = 0
+    else:
+        hdd_occupied_rate = str(round(hdd_used_capacity / hdd_total_capacity * 100, 2)) + '%'
+    # ssd占用率
+    if ssd_counts == 0:
+        ssd_occupied_rate = 0
+    else:
+        ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
+
+    hdd_error_rate, ssd_error_rate = 0, 0
+    overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
+                    ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
+                    hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
+
+    dic = {"overall_info": overall_info, "detailed_info": detailed_info, "smart_data": smart_data}
+    return dic
+
+
+port = 12345
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('localhost', port))
+loop_flag = True
+while loop_flag:
     s.listen(1)
     sock, addr = s.accept()
     print("连接已经建立")
-    dic = {"overall_info": ["2000", "1000", "50%", "5", "4", "1200", "800", "50%", "50%", "0", "0", "100000", "200000"],
-           "detailed_info": [["0001", "SSD", "正常", "200", "100", "50%", "40000"]], "smart_data": []}
-    string = json.dumps(dic)
     while True:
         info = sock.recv(1024).decode()
         if info == "请求数据":
+            dic = integrate_data()
+            string = json.dumps(dic)
             byte = bytes(string, encoding="utf-8")
             sock.send(byte)
         elif info == "断开连接":
             break
     sock.close()
-    s.close()
-
+s.close()
