@@ -534,6 +534,8 @@ class in_interface_impl(in_interface):
         end = int(end_time - base)
         # 截取从start到end的数据
         RAID_io_past = cls.RAID_io_info_dict_past[ip][start:end+1]
+        if not RAID_io_past:
+            return [], []
         arr = np.array(RAID_io_past)
         RAID_io_past_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()
