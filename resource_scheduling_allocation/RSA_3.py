@@ -112,8 +112,10 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
             in_interface_impl.exception_list.append([[ip, 1]])
             in_interface_impl.exception_list.append([[disk_id, 1]])
         else:
-            in_interface_impl.exception_list[0].append([ip, 1])
-            in_interface_impl.exception_list[1].append([disk_id, 1])
+            if [ip, 1] not in in_interface_impl.exception_list[0]:
+                in_interface_impl.exception_list[0].append([ip, 1])
+            if [disk_id, 1] not in in_interface_impl.exception_list[1]:
+                in_interface_impl.exception_list[1].append([disk_id, 1])
         # 预警前端弹窗
         # failure_list.append([ip, disk_id])
     # return failure_list

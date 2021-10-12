@@ -110,8 +110,10 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                             in_interface_impl.exception_list.append([[ip, 1]])
                             in_interface_impl.exception_list.append([[disk_id, 1]])
                         else:
-                            in_interface_impl.exception_list[0].append(ip, 1)
-                            in_interface_impl.exception_list[1].append(disk_id, 1)
+                            if [ip, 1] not in in_interface_impl.exception_list[0]:
+                                in_interface_impl.exception_list[0].append([ip, 1])
+                            if [disk_id, 1] not in in_interface_impl.exception_list[1]:
+                                in_interface_impl.exception_list[1].append([disk_id, 1])
 
 
 class IoLoadPredictionThread(threading.Thread):
