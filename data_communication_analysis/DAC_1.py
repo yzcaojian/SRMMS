@@ -15,8 +15,6 @@ def analyse_data(ip):
     # 将json数据以字典形式读取出来
     dict_data = json_data  # json.loads(json_data)
 
-    send_data(ip, dict_data)
-
     overall_info = dict_data["overall_info"]
     detailed_info = dict_data["detailed_info"]
     if len(overall_info) > 5:  # 多硬盘架构
@@ -27,6 +25,8 @@ def analyse_data(ip):
         # two_disk_info = [hddCounts, sddCounts, hddTotalCapacity, ssdTotalCapacity, hddOccupiedCapacity,
         #                  ssdOccupiedCapacity, hddOccupiedRate, sddOccupiedRate, hddErrorRate, ssdErrorRate, hddIOPS, ssdIOPS]
 
+        send_data(ip, dict_data)
+        
         server_info = overall_info[0:3]
         two_disk_info = overall_info[3:]
 

@@ -6,12 +6,12 @@
 from interface.in_interface import in_interface_impl
 
 
-def send_data(ip, dict_data):
+def send_data(ip, dict_data):  # 多硬盘架构
     # 通过内部接口将资源信息发送给其它模块
     overall_info = dict_data["overall_info"]
     detailed_info = dict_data["detailed_info"]
-    if len(overall_info) > 5:  # 多硬盘架构
-        in_interface_impl.IN_DCA_RSA(ip, detailed_info)
+
+    in_interface_impl.IN_DCA_RSA(ip, detailed_info)
 
     if "smart_data" in dict_data:
         smart_data = dict_data["smart_data"]

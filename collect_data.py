@@ -239,6 +239,61 @@ def integrate_data():
     return dic
 
 
+def integrate_data_():  # 不带smart数据
+    # 获取总容量
+    disk_dict, part_dict = get_disk_total_capacity()
+    # 获取已使用容量和占用率
+    get_disk_used_capacity(disk_dict, part_dict)
+    # 获得io负载
+    get_disk_io(disk_dict)
+    # 获得故障率和运行状态
+    get_disk_running_status(disk_dict)
+    # 获得硬盘类型
+    get_disk_type(disk_dict)
+
+    total_capacity, used_capacity, hdd_counts, ssd_counts, hdd_total_capacity, ssd_total_capacity, hdd_used_capacity,\
+        ssd_used_capacity, hdd_io, ssd_io = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    detailed_info = []
+    # 总容量 / 已使用容量 / 占用率 / io负载(kB)  / 运行状态 / 硬盘类型 / smart数据
+    for disk_id in disk_dict:
+        total_capacity += disk_dict[disk_id][0]
+        used_capacity += disk_dict[disk_id][1]
+        if disk_dict[disk_id][5] == "hdd":
+            hdd_counts += 1
+            hdd_total_capacity += disk_dict[disk_id][0]
+            hdd_used_capacity += disk_dict[disk_id][1]
+            hdd_io += disk_dict[disk_id][3]
+        else:
+            ssd_counts += 1
+            ssd_total_capacity += disk_dict[disk_id][0]
+            ssd_used_capacity += disk_dict[disk_id][1]
+            ssd_io += disk_dict[disk_id][3]
+
+        detailed_info.append([disk_id, disk_dict[disk_id][5], disk_dict[disk_id][4], disk_dict[disk_id][0],
+                              disk_dict[disk_id][1], disk_dict[disk_id][2], disk_dict[disk_id][3]])
+
+    # 总体占用率
+    occupied_rate = str(round(used_capacity / total_capacity * 100, 2)) + '%'
+    # hdd占用率
+    if hdd_counts == 0:
+        hdd_occupied_rate = 0
+    else:
+        hdd_occupied_rate = str(round(hdd_used_capacity / hdd_total_capacity * 100, 2)) + '%'
+    # ssd占用率
+    if ssd_counts == 0:
+        ssd_occupied_rate = 0
+    else:
+        ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
+
+    hdd_error_rate, ssd_error_rate = 0, 0
+    overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
+                    ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
+                    hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
+
+    dic_ = {"overall_info": overall_info, "detailed_info": detailed_info}
+    return dic_
+
+
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', port))
@@ -247,14 +302,23 @@ while loop_flag:
     s.listen(1)
     sock, addr = s.accept()
     print("连接已经建立")
-    while True:
-        info = sock.recv(1024).decode()
-        if info == "请求数据":
-            dic = integrate_data()
-            string = json.dumps(dic)
-            byte = bytes(string, encoding="utf-8")
-            sock.send(byte)
-        elif info == "断开连接":
-            break
+
+    info = sock.recv(1024).decode().split('/')
+    if info[0] == "请求数据1":  # 包含smart数据
+        dic = integrate_data()
+        string = json.dumps(dic)
+        byte = bytes(string, encoding="utf-8")
+        sock.send(byte)
+    elif info[0] == "请求数据2":  # 不包含smart数据
+        dic = integrate_data_()
+        string = json.dumps(dic)
+        byte = bytes(string, encoding="utf-8")
+        sock.send(byte)
+    elif info[0] == "接收指令":
+        instructions = info[1]
+        file = open('./instructions.txt', 'a+')
+        file.writelines(instructions + "\n")
+        file.close()
+
     sock.close()
 s.close()

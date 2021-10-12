@@ -25,24 +25,21 @@ class out_interface:
 
 class out_interface_impl(out_interface):
     # 端口号
-    port = 8888
+    port = 12345
+    index = 0
 
     @classmethod
     def OUT_SS_SRMMS(cls, ip):
-        # # 连接服务器 ip_addr=("localhost",8888)
+        # # 连接服务器
         # client = socket.socket()
         # ip_addr = (ip, cls.port)
         # client.connect(ip_addr)
-        #
-        # # 构建json格式
-        # file_msg = {"action": Request_Resources}
-        # # 发送json信息
-        # client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
-        #
-        # # 首先接收数据的长度
-        # length = int(client.recv(1024).decode())
-        # # 接收指定长度的数据 类型为string
-        # data = client.recv(length).decode()
+        # if cls.index % (60 * 60 * 24) == 0:  # 请求数据(包含smart数据)
+        #     client.send(bytes("请求数据1", encoding="utf-8"))
+        # else:  # 请求数据(不包含smart数据)
+        #     client.send(bytes("请求数据2", encoding="utf-8"))
+        # cls.index = (cls.index + 1) % (60 * 60 * 24)
+        # data = client.recv(10240).decode()
         #
         # client.close()
         # # 将接收到的数据返回
@@ -58,18 +55,16 @@ class out_interface_impl(out_interface):
 
         return data
 
-    @classmethod
-    def OUT_SRMMS_SS(cls, ip, instructions):
-        # 连接服务器 ip_addr=("localhost",8888)
-        # client = socket.socket()
-        # ip_addr = (ip, cls.port)
-        # client.connect(ip_addr)
-        # # 构建json格式
-        # file_msg = {"action": Send_Instructions, "instructions": instructions}
-        # # 发送json信息
-        # client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
-        # client.close()
-        print("send ok")
+    # @classmethod
+    # def OUT_SRMMS_SS(cls, ip, instructions):
+    #     # 连接服务器
+    #     client = socket.socket()
+    #     ip_addr = (ip, cls.port)
+    #     client.connect(ip_addr)
+    #     message = "接收指令" + '/' + instructions
+    #     client.send(bytes(message, encoding="utf-8"))
+    #
+    #     client.close()
 
 
 # with open('D:/test_SRMMS/192.168.225.1_4.txt', "r", encoding='utf-8') as f:

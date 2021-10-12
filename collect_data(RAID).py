@@ -48,7 +48,7 @@ def integrate_data():
     return dic
 
 
-port = 12344
+port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', port))
 loop_flag = True
@@ -56,14 +56,18 @@ while loop_flag:
     s.listen(1)
     sock, addr = s.accept()
     print("连接已经建立")
-    while True:
-        info = sock.recv(1024).decode()
-        if info == "请求数据":
-            dic = integrate_data()
-            string = json.dumps(dic)
-            byte = bytes(string, encoding="utf-8")
-            sock.send(byte)
-        elif info == "断开连接":
-            break
+
+    info = sock.recv(1024).decode().split('/')
+    if info[0] == "请求数据":
+        dic = integrate_data()
+        string = json.dumps(dic)
+        byte = bytes(string, encoding="utf-8")
+        sock.send(byte)
+    elif info[0] == "接收指令":
+        instructions = info[1]
+        file = open('./instructions.txt', 'a+')
+        file.writelines(instructions + "\n")
+        file.close()
+
     sock.close()
 s.close()
