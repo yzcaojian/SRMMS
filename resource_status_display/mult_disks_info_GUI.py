@@ -28,7 +28,7 @@ class MultDisksInfoWidget(QWidget):
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list[:]  # 告警信息列表
-        self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
+        self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list
         self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)

@@ -117,6 +117,6 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
             if [disk_id, 1] not in in_interface_impl.exception_list[1]:
                 in_interface_impl.exception_list[1].append([disk_id, 1])
         # 预警前端弹窗
-        in_interface_impl.hard_disk_failure_prediction_list_.append([ip, disk_id, [health_degree, timestamp]])
+        # in_interface_impl.hard_disk_failure_prediction_list_.append([ip, disk_id, [health_degree, timestamp]])
 
-    hard_disk_failure_prediction.clear()
+    # hard_disk_failure_prediction.clear()
