@@ -205,7 +205,7 @@ class TransactionProcessingThread(QThread):
             # 动态训练、负载预测、硬盘故障预测
             start_prediction_training_thread()
             # 检查是否有硬盘故障预警
-            failure_list = hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
+            hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
             # for failure in failure_list:
             #     main.main_ui.show_disk_error_warning(failure[0], failure[1])
             # 判断服务器失联告警
