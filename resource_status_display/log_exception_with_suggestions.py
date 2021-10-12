@@ -56,9 +56,9 @@ class Warning:
     def get_content(self, extra):
         content = self.timeslot + " 服务器" + self.serverName
         if self.errorId == 1:  # 硬盘即将故障的情况：extra为healthState
-            content += "上标识为" + self.diskId + "的机械硬盘健康度下降为" + extra + "。"
+            content += "上标识为" + self.diskId + "的机械硬盘健康度下降为R" + str(extra) + "。"
         elif self.errorId == 2:  # I/O即将高负载的情况：extra为[time, IOPeak]
-            content += "上标识为" + self.diskId + "的机械硬盘预计在" + extra[0] + "出现高负载需求，" + "负载最大量将达到" + str(extra[1]) + "KB。"
+            content += "上标识为" + self.diskId + "的机械硬盘预计在" + str(extra[0]) + "出现高负载需求，" + "负载最大量将达到" + str(extra[1]) + "KB。"
         elif self.errorId == 3:
             content += "由于未知原因长时间未响应，处理为失联，并尝试重新连接。"
         elif self.errorId == 4:
@@ -67,7 +67,7 @@ class Warning:
 
     def write_file(self):
         file = open('./txt/warning.txt', 'a+')
-        file.writelines(str(self.errorId) + self.warningContent + "\n")
+        file.writelines(str(self.errorId) + " " + self.warningContent + "\n")
         file.close()
 
 

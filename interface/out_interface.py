@@ -61,14 +61,15 @@ class out_interface_impl(out_interface):
     @classmethod
     def OUT_SRMMS_SS(cls, ip, instructions):
         # 连接服务器 ip_addr=("localhost",8888)
-        client = socket.socket()
-        ip_addr = (ip, cls.port)
-        client.connect(ip_addr)
-        # 构建json格式
-        file_msg = {"action": Send_Instructions, "instructions": instructions}
-        # 发送json信息
-        client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
-        client.close()
+        # client = socket.socket()
+        # ip_addr = (ip, cls.port)
+        # client.connect(ip_addr)
+        # # 构建json格式
+        # file_msg = {"action": Send_Instructions, "instructions": instructions}
+        # # 发送json信息
+        # client.send(bytes(json.dumps(file_msg), encoding="utf-8"))
+        # client.close()
+        print("send ok")
 
 
 # with open('D:/test_SRMMS/192.168.225.1_4.txt', "r", encoding='utf-8') as f:

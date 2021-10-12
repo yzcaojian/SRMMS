@@ -7,6 +7,7 @@ from resource_status_display.configuration_GUI import ConfigurationWidget
 from resource_status_display.get_info_item import get_warning_info_item, get_scheduling_info_item
 from resource_status_display.log_exception_with_suggestions import warning_list, scheduling_list
 from resource_status_display.tab_GUI import MultDisksInfoTabWidget
+from interface.in_interface import in_interface_impl
 
 """
 -*- coding: utf-8 -*- 
@@ -27,6 +28,7 @@ class MultDisksInfoWidget(QWidget):
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list[:]  # 告警信息列表
+        self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list
         self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)
@@ -139,13 +141,32 @@ class MultDisksInfoWidget(QWidget):
         self.setLayout(self.whole_layout)
 
         self.update_log_thread.update_data.connect(lambda: update_log())
+        self.update_log_thread.update_data.connect(lambda: pop_up_window())
         self.update_log_thread.start()
 
         def update_log():
+            # if len(self.warning_list) != len(warning_list.warning_list):
+            #     self.warning_list = warning_list.warning_list[:]
+            #     show_scheduling_list(self.warning_list)
+            #     show_warning_list(self.warning_list)
             if len(self.warning_list) != len(warning_list.warning_list):
                 self.warning_list = warning_list.warning_list[:]
-                show_scheduling_list(self.warning_list)
                 show_warning_list(self.warning_list)
+            if len(self.scheduling_list) != len(scheduling_list.scheduling_list):
+                self.scheduling_list = scheduling_list.scheduling_list[:]
+                show_scheduling_list(self.scheduling_list)
+
+        def pop_up_window():
+            # 当出现对硬盘故障预警的情况时弹窗告警
+            if len(self.disk_failure_message) != 0:
+                for failure_message in self.disk_failure_message:
+                    server_ip = failure_message[0]
+                    disk_id = failure_message[1]
+                    health_state = failure_message[2][0]
+                    liftime = [10, 30, 70, 150, 310, 360, 2, 5, 10]
+                    QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R" +
+                                        str(health_state) + "，剩余寿命在" + str(liftime[health_state - 1]) + "天以下", QMessageBox.Ok)
+                del self.disk_failure_message[:]
 
     def display_detailed_log_info(self, index):
         QMessageBox.information(self, "全部", self.scheduling_list[index[0].row()])
