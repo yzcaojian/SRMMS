@@ -57,17 +57,19 @@ class DiskHealthPredictionThread(threading.Thread):
                     disk_list = disk[:]  # 切片复制
                     disk_list[3] = disk[3][:20]
                     del disk[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
-
                     health_degree = predict_disk_health_state(disk_list)
                     if ip not in self.health_degree_dict:
                         self.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
                     if disk_list[0] not in self.health_degree_dict[ip]:
                         self.health_degree_dict[ip][disk_list[0]] = 6
 
-                    if self.health_degree_dict[ip][disk_list[0]] > health_degree:  # 健康度下降
-                        timestamp = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(time.time())).\
+                    if (health_degree < self.health_degree_dict[ip][disk_list[0]] <= 6) or \
+                            (self.health_degree_dict[ip][disk_list[0]] <= 6 < health_degree) or \
+                            (6 < health_degree < self.health_degree_dict[ip][disk_list[0]]):  # 健康度下降
+                        timestamp = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(time.time())). \
                             format(y='年', m='月', d='日')
-                        self.hard_disk_failure_prediction_list.append([ip, disk_list[0], [health_degree, timestamp]])
+                        self.hard_disk_failure_prediction_list.append(
+                            [ip, disk_list[0], [health_degree, timestamp]])
                     self.health_degree_dict[ip][disk_list[0]] = health_degree  # disk_id和健康度
 
         print("硬盘故障预测结束:")
