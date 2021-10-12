@@ -211,6 +211,7 @@ class in_interface_impl(in_interface):
     health_degree_dict = {}
     # 存放硬盘故障预测处理信息
     hard_disk_failure_prediction_list = []
+    hard_disk_failure_prediction_list_ = []
     # 关于图标闪烁的两种需求下的预警方式
     exception_list = []
     
