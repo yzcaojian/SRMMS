@@ -20,7 +20,7 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         errorID, timeslot, serverName, diskID = warning_message.errorId, warning_message.timeslot, warning_message.serverName, warning_message.diskId
         serverIP = configuration_info.NametoIP(serverName)
         now_time = time.time()
-        now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
+        now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
         # 生成调度信息，一方面写入调度分配文件，一方面生成调度分配指令
         scheduling = Scheduling(errorID, now_time, serverName, diskID, situation=warning_message.warningContent)
         scheduling_list.add_new_scheduling(scheduling)

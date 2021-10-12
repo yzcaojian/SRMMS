@@ -159,14 +159,13 @@ class MultDisksInfoWidget(QWidget):
         def pop_up_window():
             # 当出现对硬盘故障预警的情况时弹窗告警
             if len(self.disk_failure_message) != 0:
-                for failure_message in self.disk_failure_message:
-                    server_ip = failure_message[0]
-                    disk_id = failure_message[1]
-                    health_state = failure_message[2][0]
-                    liftime = [10, 30, 70, 150, 310, 360, 2, 5, 10]
-                    QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R" +
-                                        str(health_state) + "，剩余寿命在" + str(liftime[health_state - 1]) + "天以下", QMessageBox.Ok)
-                del self.disk_failure_message[:]
+                server_ip = self.disk_failure_message[0][0]
+                disk_id = self.disk_failure_message[0][1]
+                health_state = self.disk_failure_message[0][2][0]
+                liftime = [10, 30, 70, 150, 310, 360, 2, 5, 10]
+                QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R" +
+                                    str(health_state) + "，剩余寿命在" + str(liftime[health_state - 1]) + "天以下", QMessageBox.Ok)
+                del self.disk_failure_message[0:1]
 
     def display_detailed_log_info(self, index):
         QMessageBox.information(self, "全部", self.scheduling_list[index[0].row()])

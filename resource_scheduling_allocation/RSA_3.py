@@ -29,7 +29,7 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             # 间隔超过十分钟  视作服务器失联
             if now_time - time_stamp > 600:
                 errorID = 3
-                now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
+                now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
                 warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(ip), "")
                 # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
                 warning_message_queue.append(warning)
@@ -87,7 +87,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                     sum += item[0]
                 average_io = sum / len(high_io_load_queue[serverIP][diskID])
                 errorID = 4
-                now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
+                now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
                 warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(serverIP), average_io)
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]
                 warning_message_queue.append(warning)
@@ -97,7 +97,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
 
 # 硬盘故障预警
 def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_queue):
-    failure_list = []  # 包括故障预警的server_ip和disk_id的列表
+    # failure_list = []  # 包括故障预警的server_ip和disk_id的列表
     # 如果列表不为空
     for hard_disk_failure_prediction_list in hard_disk_failure_prediction:
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
@@ -115,5 +115,5 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
             in_interface_impl.exception_list[0].append([ip, 1])
             in_interface_impl.exception_list[1].append([disk_id, 1])
         # 预警前端弹窗
-        failure_list.append([ip, disk_id])
-    return failure_list
+        # failure_list.append([ip, disk_id])
+    # return failure_list
