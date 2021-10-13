@@ -108,14 +108,13 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
         # 硬盘健康度下降告警信息 to资源状态显示模块
         in_interface_impl.IN_RSA_RSD(warning)
         # 预警前端图标闪烁
-        if not in_interface_impl.exception_list:
-            in_interface_impl.exception_list.append([[ip, 1]])
-            in_interface_impl.exception_list.append([[disk_id, 1]])
+        if ip not in in_interface_impl.exception_dict:
+            in_interface_impl.exception_dict[ip] = []
+            in_interface_impl.exception_dict[ip].append(1)
+            in_interface_impl.exception_dict[ip].append({disk_id: 1})
         else:
-            if [ip, 1] not in in_interface_impl.exception_list[0]:
-                in_interface_impl.exception_list[0].append([ip, 1])
-            if [disk_id, 1] not in in_interface_impl.exception_list[1]:
-                in_interface_impl.exception_list[1].append([disk_id, 1])
+            if disk_id not in in_interface_impl.exception_dict[ip][1]:
+                in_interface_impl.exception_dict[ip][1][disk_id] = 1
         # 预警前端弹窗
         in_interface_impl.hard_disk_failure_prediction_list_.append([ip, disk_id, [health_degree, timestamp]])
 
