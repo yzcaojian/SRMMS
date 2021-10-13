@@ -29,7 +29,7 @@ class MultDisksInfoWidget(QWidget):
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = warning_list.warning_list[:]  # 告警信息列表
         self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
-        self.scheduling_list = scheduling_list.scheduling_list  # 调度分配日志信息列表
+        self.scheduling_list = scheduling_list.scheduling_list[:]  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)
         self.initUI()
@@ -86,7 +86,7 @@ class MultDisksInfoWidget(QWidget):
             for warning in warning_list:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                item.setSizeHint(QSize(self.size().width() * 0.2 + 40, 104))  # 必须设置Item大小，否则默认很小
+                item.setSizeHint(QSize(280, 104))  # 必须设置Item大小，否则默认很小
                 # 添加告警信息条目
                 warning_item = get_warning_info_item(warning)
                 warning_widget.addItem(item)

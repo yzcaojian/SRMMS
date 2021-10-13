@@ -199,11 +199,11 @@ class MultDisksInfoTabWidget(QTabWidget):
                 yaxis_opts=opts.AxisOpts(name="故障率/%", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 tooltip_opts=opts.TooltipOpts(
-                    formatter=JsCode("function(x){return '故障率：' + Number(x.data).toFixed() + '%';}")))
+                    formatter=JsCode("function(x){return '故障率：' + parseFloat(x.data).toFixed() + '%';}")))
                    .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x){return Number(x.data).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
+                    formatter=JsCode("function(x){return parseFloat(x.data).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
             ).render("./html/second.html"))
 
             second_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
@@ -528,10 +528,8 @@ class RaidInfoTabWidget(QTabWidget):
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
-        server_storage_table.clicked.connect(
-            lambda: show_volume_storage_list(server_storage_table.selectedRanges(), False))
-        server_storage_table.clicked.connect(
-            lambda: set_server_io_line(server_storage_table.selectedRanges(), False))  # 单击改变总体信息I/O负载图
+        server_storage_table.clicked.connect(lambda: show_volume_storage_list())
+        server_storage_table.clicked.connect(lambda: set_server_io_line())  # 单击改变总体信息I/O负载图
         # server_storage_table.clicked.connect(lambda: printSize())
 
         server_storage_table_layout = QVBoxLayout()

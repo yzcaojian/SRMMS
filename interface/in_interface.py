@@ -260,21 +260,21 @@ class in_interface_impl(in_interface):
             for disk_id in cls.io_load_input_queue_display[ip]:
                 # 只保存3小时内的数据
                 length = len(cls.io_load_input_queue_display[ip][disk_id])
-                if length > 3 * 60:
+                if length > 6:  # 3 * 60
                     if ip not in cls.io_load_input_queue_display_past:
                         cls.io_load_input_queue_display_past[ip] = {}
-                        if disk_id not in cls.io_load_input_queue_display_past[ip]:
-                            cls.io_load_input_queue_display_past[ip][disk_id] = []
-                        # 将多的数据添加到历史数据中
-                        for i in range(length - 3 * 60):
-                            cls.io_load_input_queue_display_past[ip][disk_id].append(
-                                cls.io_load_input_queue_display[ip][disk_id][i])
-                        # 删除前面的数据
-                        del cls.io_load_input_queue_display[ip][disk_id][:length - 3 * 60]
-                        # 历史数据最多保存24小时
-                        _length = len(cls.io_load_input_queue_display_past[ip][disk_id])
-                        if _length > 24 * 60:
-                            del cls.io_load_input_queue_display_past[ip][disk_id][:_length - 24 * 60]
+                    if disk_id not in cls.io_load_input_queue_display_past[ip]:
+                        cls.io_load_input_queue_display_past[ip][disk_id] = []
+                    # 将多的数据添加到历史数据中
+                    for i in range(length - 6):
+                        cls.io_load_input_queue_display_past[ip][disk_id].append(
+                            cls.io_load_input_queue_display[ip][disk_id][i])
+                    # 删除前面的数据
+                    del cls.io_load_input_queue_display[ip][disk_id][:length - 6]
+                    # 历史数据最多保存24小时
+                    _length = len(cls.io_load_input_queue_display_past[ip][disk_id])
+                    if _length > 24 * 60:
+                        del cls.io_load_input_queue_display_past[ip][disk_id][:_length - 24 * 60]
 
         # 检查io_load_output_queue里面的数据是否过多
         if ip in cls.io_load_output_queue:
@@ -284,17 +284,17 @@ class in_interface_impl(in_interface):
                 if length > 3 * 60:
                     if ip not in cls.io_load_output_queue_past:
                         cls.io_load_output_queue_past[ip] = {}
-                        if disk_id not in cls.io_load_output_queue_past[ip]:
-                            cls.io_load_output_queue_past[ip][disk_id] = []
-                        # 将多的数据添加到历史数据中
-                        for i in range(length - 3 * 60):
-                            cls.io_load_output_queue_past[ip][disk_id].append(cls.io_load_output_queue[ip][disk_id][i])
-                        # 删除前面的数据
-                        del cls.io_load_output_queue[ip][disk_id][:length - 3 * 60]
-                        # 历史数据最多保存24小时
-                        _length = len(cls.io_load_output_queue_past[ip][disk_id])
-                        if _length > 24 * 60:
-                            del cls.io_load_output_queue_past[ip][disk_id][:_length - 24 * 60]
+                    if disk_id not in cls.io_load_output_queue_past[ip]:
+                        cls.io_load_output_queue_past[ip][disk_id] = []
+                    # 将多的数据添加到历史数据中
+                    for i in range(length - 3 * 60):
+                        cls.io_load_output_queue_past[ip][disk_id].append(cls.io_load_output_queue[ip][disk_id][i])
+                    # 删除前面的数据
+                    del cls.io_load_output_queue[ip][disk_id][:length - 3 * 60]
+                    # 历史数据最多保存24小时
+                    _length = len(cls.io_load_output_queue_past[ip][disk_id])
+                    if _length > 24 * 60:
+                        del cls.io_load_output_queue_past[ip][disk_id][:_length - 24 * 60]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
@@ -312,7 +312,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
-        if ip not in cls.io_load_input_queue_display_past or id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
+        if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
             return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
@@ -326,11 +326,15 @@ class in_interface_impl(in_interface):
         # 将时间元组转化为浮点数
         begin_time = time.mktime(begin_tuple)
         end_time = time.mktime(end_tuple)
+        print("----------end_time-----", end_time, "-------base_time---------", base)
 
         start = int((begin_time - base) // 60 + 1) if (begin_time - base) > 0 else 0
-        end = int((end_time - base) // 60 + 1)
+        end = int((end_time - base) // 60 + 1) if (end_time - base) < 0 else -1
+        print("---------------------------------------------------------------选择的时间", start, end)
         # 截取从start到end的数据
         io_load_past = cls.io_load_input_queue_display_past[ip][disk_id][start:end + 1]
+        if not io_load_past:
+            return [], []
         arr = np.array(io_load_past)
         io_load_past_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()
@@ -354,7 +358,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_io_load_output_queue_display_past(cls, ip, disk_id, time_begin, time_end):
-        if ip not in cls.io_load_output_queue_past or id not in cls.io_load_output_queue_past[ip]:  # 如果为空
+        if ip not in cls.io_load_output_queue_past or disk_id not in cls.io_load_output_queue_past[ip]:  # 如果为空
             return [], []
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
@@ -599,6 +603,8 @@ class in_interface_impl(in_interface):
         end = int(end_time - base)
         # 截取从start到end的数据
         hdd_io_past = cls.two_disk_io_dict_past[ip]["hdd"][start:end + 1]
+        if not hdd_io_past:
+            return [], []
         arr = np.array(hdd_io_past)
         hdd_io_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()
@@ -635,6 +641,8 @@ class in_interface_impl(in_interface):
         end = int(end_time - base)
         # 截取从start到end的数据
         ssd_io_past = cls.two_disk_io_dict_past[ip]["ssd"][start:end + 1]
+        if not ssd_io_past:
+            return [], []
         arr = np.array(ssd_io_past)
         ssd_io_list = arr[:, 0].tolist()
         time_list = arr[:, 1].tolist()

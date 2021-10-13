@@ -45,11 +45,20 @@ class HistoryIO(QWidget):
         time_layout = QHBoxLayout()
         time_widget = QWidget()
         time_start = QTimeEdit(QTime.currentTime())
-        time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3))
-        time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60))
         time_end = QTimeEdit(QTime.currentTime())
-        time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 2))
-        time_end.setMaximumTime(QTime.currentTime())
+        if self.level == 0:
+            # time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 24))
+            # time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60))
+            # time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 23))
+            # time_end.setMaximumTime(QTime.currentTime())
+            time_start.setMaximumTime(QTime.currentTime())
+            time_end.setMaximumTime(QTime.currentTime())
+        else:
+            time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3 - 420))
+            time_start.setMaximumTime(QTime.currentTime().addSecs(-420))
+            time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 2 - 420))
+            time_end.setMaximumTime(QTime.currentTime().addSecs(-420))
+
         # 时间段选择的改变刷新历史I/O事件
         time_start.timeChanged.connect(self.start_time_changed)
         time_end.timeChanged.connect(self.end_time_changed)
@@ -140,6 +149,7 @@ class HistoryIO(QWidget):
             # 1019, 1155, 1221, 1504, 984, 843]
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
             y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
+            print("IO历史数据-------------------------------------------", y_data)
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
             if not y_predict_data:
