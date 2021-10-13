@@ -23,7 +23,7 @@ class HistoryIO(QWidget):
         self.disk_id = disk_id
         time = QTime.currentTime()
         self.time_end = str(time.hour()) + ":" + str(time.minute())
-        time = time.addSecs(-60 * 60)
+        # time = time.addSecs(-60 * 60)
         self.time_start = str(time.hour()) + ":" + str(time.minute())
         self.level = level  # 历史负载信息显示分为显示秒级的和显示分钟级的，0表示服硬盘级以分钟显示，
         # 1表示服务器级SSD总负载以秒显示，2表示服务器级HDD总负载以秒显示，3表示RAID架构服务器总负载以秒显示
@@ -149,7 +149,6 @@ class HistoryIO(QWidget):
             # 1019, 1155, 1221, 1504, 984, 843]
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
             y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
-            print("IO历史数据-------------------------------------------", y_data)
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
             if not y_predict_data:
