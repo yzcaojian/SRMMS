@@ -260,17 +260,17 @@ class in_interface_impl(in_interface):
             for disk_id in cls.io_load_input_queue_display[ip]:
                 # 只保存3小时内的数据
                 length = len(cls.io_load_input_queue_display[ip][disk_id])
-                if length > 2:
+                if length > 3 * 60:
                     if ip not in cls.io_load_input_queue_display_past:
                         cls.io_load_input_queue_display_past[ip] = {}
                     if disk_id not in cls.io_load_input_queue_display_past[ip]:
                         cls.io_load_input_queue_display_past[ip][disk_id] = []
                     # 将多的数据添加到历史数据中
-                    for i in range(length - 2):
+                    for i in range(length - 3 * 60):
                         cls.io_load_input_queue_display_past[ip][disk_id].append(
                             cls.io_load_input_queue_display[ip][disk_id][i])
                     # 删除前面的数据
-                    del cls.io_load_input_queue_display[ip][disk_id][:length - 2]  # 3 * 60
+                    del cls.io_load_input_queue_display[ip][disk_id][:length - 3 * 60]  # 3 * 60
                     # 历史数据最多保存24小时
                     _length = len(cls.io_load_input_queue_display_past[ip][disk_id])
                     if _length > 24 * 60:
@@ -314,18 +314,22 @@ class in_interface_impl(in_interface):
     def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
         if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
             return [], []
+
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
-        base = cls.io_load_input_queue_display_past[ip][disk_id][0][1]  # 第一个数据的时间  浮点型
+        base = time.strftime("%H:%M:%S", time.localtime(cls.io_load_input_queue_display_past[ip][disk_id][0][1]))  # 第一个数据的时间
+        base = time.strptime(base, "%H:%M:%S")
 
         # 时间元组初始化为2000年1月1日
         begin_tuple = (2000, 1, 1) + begin[3:]
         end_tuple = (2000, 1, 1) + end[3:]
+        base_tuple = (2000, 1, 1) + base[3:]
 
         # 将时间元组转化为浮点数
         begin_time = time.mktime(begin_tuple)
         end_time = time.mktime(end_tuple)
+        base = time.mktime(base_tuple)
 
         start = int((begin_time - base) // 60 + 1) if (begin_time - base) > 0 else 0
         end = int((end_time - base) // 60 + 1)

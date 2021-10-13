@@ -87,8 +87,8 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     # 将浮点数类型的时间戳转化为时间元组，并按照X时X分的格式转化为字符串
                     now_time = time.time()
                     local_time = time.strftime("%H:%M", time.localtime(now_time))
-                    now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月',
-                                                                                                       d='日')
+                    now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月',
+                                                                                                      d='日')
                     # 将预测值添加到输出队列中
                     if ip not in io_load_output_queue:
                         io_load_output_queue[ip] = {}
