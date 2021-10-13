@@ -38,7 +38,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
         self.Tab_list = []
         self.lock = lock
-        self.exception_list = in_interface_impl.get_exception_list()  # 异常信号收集，内部为两个列表，分别是server_ip和turn标志的列表、disk_id和turn标志的列表
+        self.exception_dict = in_interface_impl.get_exception_dict()  # 异常信号收集
         self.server_overall_info = in_interface_impl.get_server_overall_info(0)  # 多硬盘架构下服务器总体信息列表
         # 选中的服务器IP地址，默认是总体信息表中第一个serverIP
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
@@ -100,16 +100,12 @@ class MultDisksInfoTabWidget(QTabWidget):
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
-                if not self.exception_list:  # 还有服务器图标闪烁
+                if single_server_info.serverIP not in self.exception_dict:  # 还有服务器图标闪烁
                     line = get_server_storage_info_item(single_server_info)
                 else:
-                    for e in self.exception_list[0]:
-                        if single_server_info.serverIP == e[0]:
-                            e[1] = 0 - e[1]  # 将标志反转
-                            line = get_server_storage_info_item(single_server_info, e[1])
-                            break  # 图标闪烁待优化
-                        else:
-                            line = get_server_storage_info_item(single_server_info)
+                    self.exception_dict[single_server_info.serverIP][0] = -self.exception_dict[single_server_info.serverIP][0]
+                    line = get_server_storage_info_item(single_server_info, self.exception_dict[single_server_info.serverIP][0])
+
                 for j, cell in enumerate(line):
                     if j == 0:
                         server_storage_table.setCellWidget(i, j, cell)

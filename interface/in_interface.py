@@ -175,7 +175,7 @@ class in_interface:
 
     # 关于图标闪烁的两种需求下的预警方式
     @classmethod
-    def get_exception_list(cls):
+    def get_exception_dict(cls):
         pass
 
 
@@ -213,7 +213,7 @@ class in_interface_impl(in_interface):
     hard_disk_failure_prediction_list = []
     hard_disk_failure_prediction_list_ = []
     # 关于图标闪烁的两种需求下的预警方式
-    exception_list = []
+    exception_dict = {}
     
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
@@ -260,21 +260,21 @@ class in_interface_impl(in_interface):
             for disk_id in cls.io_load_input_queue_display[ip]:
                 # 只保存3小时内的数据
                 length = len(cls.io_load_input_queue_display[ip][disk_id])
-                if length > 3 * 60:
+                if length > 20:
                     if ip not in cls.io_load_input_queue_display_past:
                         cls.io_load_input_queue_display_past[ip] = {}
-                        if disk_id not in cls.io_load_input_queue_display_past[ip]:
-                            cls.io_load_input_queue_display_past[ip][disk_id] = []
-                        # 将多的数据添加到历史数据中
-                        for i in range(length - 3 * 60):
-                            cls.io_load_input_queue_display_past[ip][disk_id].append(
-                                cls.io_load_input_queue_display[ip][disk_id][i])
-                        # 删除前面的数据
-                        del cls.io_load_input_queue_display[ip][disk_id][:length - 3 * 60]
-                        # 历史数据最多保存24小时
-                        _length = len(cls.io_load_input_queue_display_past[ip][disk_id])
-                        if _length > 24 * 60:
-                            del cls.io_load_input_queue_display_past[ip][disk_id][:_length - 24 * 60]
+                    if disk_id not in cls.io_load_input_queue_display_past[ip]:
+                        cls.io_load_input_queue_display_past[ip][disk_id] = []
+                    # 将多的数据添加到历史数据中
+                    for i in range(length - 20):
+                        cls.io_load_input_queue_display_past[ip][disk_id].append(
+                            cls.io_load_input_queue_display[ip][disk_id][i])
+                    # 删除前面的数据
+                    del cls.io_load_input_queue_display[ip][disk_id][:length - 20]  # 3 * 60
+                    # 历史数据最多保存24小时
+                    _length = len(cls.io_load_input_queue_display_past[ip][disk_id])
+                    if _length > 24 * 60:
+                        del cls.io_load_input_queue_display_past[ip][disk_id][:_length - 24 * 60]
 
         # 检查io_load_output_queue里面的数据是否过多
         if ip in cls.io_load_output_queue:
@@ -284,17 +284,17 @@ class in_interface_impl(in_interface):
                 if length > 3 * 60:
                     if ip not in cls.io_load_output_queue_past:
                         cls.io_load_output_queue_past[ip] = {}
-                        if disk_id not in cls.io_load_output_queue_past[ip]:
-                            cls.io_load_output_queue_past[ip][disk_id] = []
-                        # 将多的数据添加到历史数据中
-                        for i in range(length - 3 * 60):
-                            cls.io_load_output_queue_past[ip][disk_id].append(cls.io_load_output_queue[ip][disk_id][i])
-                        # 删除前面的数据
-                        del cls.io_load_output_queue[ip][disk_id][:length - 3 * 60]
-                        # 历史数据最多保存24小时
-                        _length = len(cls.io_load_output_queue_past[ip][disk_id])
-                        if _length > 24 * 60:
-                            del cls.io_load_output_queue_past[ip][disk_id][:_length - 24 * 60]
+                    if disk_id not in cls.io_load_output_queue_past[ip]:
+                        cls.io_load_output_queue_past[ip][disk_id] = []
+                    # 将多的数据添加到历史数据中
+                    for i in range(length - 3 * 60):
+                        cls.io_load_output_queue_past[ip][disk_id].append(cls.io_load_output_queue[ip][disk_id][i])
+                    # 删除前面的数据
+                    del cls.io_load_output_queue[ip][disk_id][:length - 3 * 60]
+                    # 历史数据最多保存24小时
+                    _length = len(cls.io_load_output_queue_past[ip][disk_id])
+                    if _length > 24 * 60:
+                        del cls.io_load_output_queue_past[ip][disk_id][:_length - 24 * 60]
 
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
@@ -722,8 +722,8 @@ class in_interface_impl(in_interface):
         return list1
 
     @classmethod
-    def get_exception_list(cls):
-        return cls.exception_list
+    def get_exception_dict(cls):
+        return cls.exception_dict
 
 
 # if __name__ == "__main__":

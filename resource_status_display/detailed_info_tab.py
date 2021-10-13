@@ -30,7 +30,7 @@ class DetailedInfoTab(QTabWidget):
         self.selected_server_ip = server_selected_ip
         self.selected_disk_id = None
         self.update_thread = UpdateTabDataThread(lock)
-        self.exception_list = in_interface_impl.get_exception_list()
+        self.exception_dict = in_interface_impl.get_exception_dict()
         self.detailed_tab = None
         self.server_detailed_info = None
         self.initUI()
@@ -43,13 +43,6 @@ class DetailedInfoTab(QTabWidget):
         if len(self.server_detailed_info) != 0:
 
             self.selected_disk_id = [self.selected_server_ip, self.server_detailed_info[0].diskID]
-
-        # 如果有异常服务器图标闪烁，双击后去掉闪烁效果，即对应exception_list删除
-        if self.exception_list:
-            for e in self.exception_list[0]:
-                if e[0] == self.selected_server_ip:
-                    self.exception_list[0].remove(e)
-                    break
 
         # 详细信息的tab页
         # 服务器详细信息表和硬盘健康度、I/O负载图的布局
@@ -93,15 +86,15 @@ class DetailedInfoTab(QTabWidget):
             for i, single_disk_info in enumerate(disks_storage_info_list):
                 disk_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
-                if not self.exception_list:  # 还有硬盘图标闪烁
-                    line = get_disk_storage_info_item(single_disk_info)
+                if self.selected_server_ip in self.exception_dict:
+                    if single_disk_info.diskID not in self.exception_dict[self.selected_server_ip][1]:  # 还有硬盘图标闪烁
+                        line = get_disk_storage_info_item(single_disk_info)
+                    else:
+                        self.exception_dict[self.selected_server_ip][1][single_disk_info.diskID] = -self.exception_dict[self.selected_server_ip][1][single_disk_info.diskID]
+                        line = get_disk_storage_info_item(single_disk_info, self.exception_dict[self.selected_server_ip][1][single_disk_info.diskID])
                 else:
-                    for e in self.exception_list[1]:
-                        if single_disk_info.diskID == e[0]:
-                            e[1] = 0 - e[1]  # 将标志反转
-                            line = get_disk_storage_info_item(single_disk_info, e[1])
-                        else:
-                            line = get_disk_storage_info_item(single_disk_info)
+                    line = get_disk_storage_info_item(single_disk_info)
+
                 for j, cell in enumerate(line):
                     if j == 0:
                         disk_storage_table.setCellWidget(i, j, cell)
@@ -406,13 +399,18 @@ class DetailedInfoTab(QTabWidget):
 
     def set_selected_disk_id(self, disk_selected):
         # index 表示当前tab页在selected_disk_id列表中对应的索引
-        # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_list删除
-        if self.exception_list:
-            for e in self.exception_list[1]:
-                if e[0] == self.selected_disk_id[1]:
-                    self.exception_list[1].remove(e)
-                    break
+        # 如果有异常硬盘图标闪烁，单击后去掉闪烁效果，即对应exception_dict删除
+
         self.selected_disk_id[1] = self.server_detailed_info[disk_selected[0].topRow()].diskID  # 获取到选中的diskID
+
+        if self.selected_server_ip in self.exception_dict:
+            if self.selected_disk_id[1] in self.exception_dict[self.selected_server_ip][1]:
+                del self.exception_dict[self.selected_server_ip][1][self.selected_disk_id[1]]
+
+        # 如果对应服务器内无硬盘图标闪烁，则去掉该服务器图标闪烁效果，即对应exception_dict删除
+        if self.selected_server_ip in self.exception_dict:
+            if not self.exception_dict[self.selected_server_ip][1]:
+                del self.exception_dict[self.selected_server_ip]
 
         # 查看历史I/O负载信息
 
