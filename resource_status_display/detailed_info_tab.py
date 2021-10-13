@@ -415,7 +415,5 @@ class DetailedInfoTab(QTabWidget):
         # 查看历史I/O负载信息
 
     def show_history_io_line(self, level):
-        self.server_history_io = HistoryIO(self.selected_disk_id[0],
-                                           self.selected_disk_id[1], level) if level == 0 \
-            else HistoryIO(self.selected_server_ip, "", level)
+        self.server_history_io = HistoryIO(self.selected_disk_id[0], self.selected_disk_id[1], level)
         self.server_history_io.show()
