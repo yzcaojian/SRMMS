@@ -103,7 +103,7 @@ class WarningList:
 
     # 调用添加告警信息，在资源调度分配模块产生告警信息时调用，warning是Waning类的对象
     def add_new_warning(self, warning):
-        self.warning_list.append([warning.errorId, warning.warningContent])
+        self.warning_list.append([warning.errorId, warning.warningContent + "\n"])
 
     # 读文件初始化，开始文件为空，之后退出程序再进入程序能读入以前的告警信息
     def read_file(self):

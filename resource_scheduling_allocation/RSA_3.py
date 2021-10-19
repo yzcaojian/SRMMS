@@ -103,7 +103,7 @@ def hard_disk_failutre_warning(hard_disk_failure_prediction, warning_message_que
         ip, disk_id, failure_info = hard_disk_failure_prediction_list
         health_degree, timestamp = failure_info
         errorID = 1
-        warning = Warning(errorID, timestamp, disk_id, configuration_info.IPtoName(ip), health_degree)
+        warning = Warning(errorID, timestamp, configuration_info.IPtoName(ip), disk_id, health_degree)
         warning_message_queue.append(warning)
         # 硬盘健康度下降告警信息 to资源状态显示模块
         in_interface_impl.IN_RSA_RSD(warning)

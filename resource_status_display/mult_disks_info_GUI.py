@@ -27,9 +27,9 @@ class MultDisksInfoWidget(QWidget):
         self.lock_log = lock_log
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
-        self.warning_list = warning_list.warning_list[:]  # 告警信息列表
+        self.warning_list = list(reversed(warning_list.warning_list))  # 告警信息列表
         self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
-        self.scheduling_list = scheduling_list.scheduling_list[:]  # 调度分配日志信息列表
+        self.scheduling_list = list(reversed(scheduling_list.scheduling_list))  # 调度分配日志信息列表
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)
         self.initUI()
@@ -84,9 +84,11 @@ class MultDisksInfoWidget(QWidget):
         def show_warning_list(warning_list):
             warning_widget.clear()  # 清空刷新前的所有项
             for warning in warning_list:
+                print(warning[0], warning[1])
+            for warning in warning_list:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                item.setSizeHint(QSize(280, 104))  # 必须设置Item大小，否则默认很小
+                item.setSizeHint(QSize(280, 100))  # 必须设置Item大小，否则默认很小
                 # 添加告警信息条目
                 warning_item = get_warning_info_item(warning)
                 warning_widget.addItem(item)
@@ -150,10 +152,10 @@ class MultDisksInfoWidget(QWidget):
             #     show_scheduling_list(self.warning_list)
             #     show_warning_list(self.warning_list)
             if len(self.warning_list) != len(warning_list.warning_list):
-                self.warning_list = warning_list.warning_list[:]
+                self.warning_list = list(reversed(warning_list.warning_list))
                 show_warning_list(self.warning_list)
             if len(self.scheduling_list) != len(scheduling_list.scheduling_list):
-                self.scheduling_list = scheduling_list.scheduling_list[:]
+                self.scheduling_list = list(reversed(scheduling_list.scheduling_list))
                 show_scheduling_list(self.scheduling_list)
 
         def pop_up_window():
