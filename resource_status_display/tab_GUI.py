@@ -103,8 +103,10 @@ class MultDisksInfoTabWidget(QTabWidget):
                 if single_server_info.serverIP not in self.exception_dict:  # 还有服务器图标闪烁
                     line = get_server_storage_info_item(single_server_info)
                 else:
-                    self.exception_dict[single_server_info.serverIP][0] = -self.exception_dict[single_server_info.serverIP][0]
-                    line = get_server_storage_info_item(single_server_info, self.exception_dict[single_server_info.serverIP][0])
+                    self.exception_dict[single_server_info.serverIP][0] = - \
+                    self.exception_dict[single_server_info.serverIP][0]
+                    line = get_server_storage_info_item(single_server_info,
+                                                        self.exception_dict[single_server_info.serverIP][0])
 
                 for j, cell in enumerate(line):
                     if j == 0:
@@ -130,6 +132,8 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_storage_bar():
             two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
+            if not two_disk_list:
+                return
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = float(two_disk_list.hddTotalCapacity[:-2])
             hdd_used = float(two_disk_list.hddOccupiedCapacity[:-2])
@@ -137,9 +141,10 @@ class MultDisksInfoTabWidget(QTabWidget):
             ssd_all = float(two_disk_list.ssdTotalCapacity[:-2])
             ssd_used = float(two_disk_list.ssdOccupiedCapacity[:-2])
             ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
-            used = [{"value": hdd_used, "percent": hdd_used/hdd_all}, {"value": ssd_used, "percent": ssd_used/ssd_all}]
-            left = [{"value": hdd_all - hdd_used, "percent": (hdd_all - hdd_used)/hdd_all},
-                    {"value": ssd_all - ssd_used, "percent": (ssd_all - ssd_used)/ssd_all}]
+            used = [{"value": hdd_used, "percent": hdd_used / hdd_all},
+                    {"value": ssd_used, "percent": ssd_used / ssd_all}]
+            left = [{"value": hdd_all - hdd_used, "percent": (hdd_all - hdd_used) / hdd_all},
+                    {"value": ssd_all - ssd_used, "percent": (ssd_all - ssd_used) / ssd_all}]
             occ = [hdd_occ, ssd_occ]
 
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
@@ -147,13 +152,13 @@ class MultDisksInfoTabWidget(QTabWidget):
 
             bar = (Bar(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
                                                animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-                .add_xaxis(["HDD", "SSD"])
-                .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
-                .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
-                .set_global_opts(
+                   .add_xaxis(["HDD", "SSD"])
+                   .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
+                   .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
+                   .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
-                .set_series_opts(
+                   .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
                     formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'TB'"
@@ -178,6 +183,8 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         def draw_two_disk_error_rate_bar():
             two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
+            if not two_disk_list:
+                return
 
             hdd_rate = two_disk_list.hddErrorRate * 100
             ssd_rate = two_disk_list.ssdErrorRate * 100
@@ -225,12 +232,11 @@ class MultDisksInfoTabWidget(QTabWidget):
         disks_io_right_layout = QVBoxLayout()
 
         # 两个负载图各自的label和button
-        # 改正！！！！！！！！！！！
-        left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts))
+        left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts)) if self.two_disk_info else QLabel()
         left_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
         # "border-width:1px; border-style:solid; border-color:black")
         left_label.setContentsMargins(0, 0, 50, 0)
-        right_label = QLabel("HDD数量 " + str(self.two_disk_info.hddCounts))
+        right_label = QLabel("HDD数量 " + str(self.two_disk_info.hddCounts)) if self.two_disk_info else QLabel()
         right_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
         # "border-width:1px; border-style:solid; border-color:black")
         right_label.setContentsMargins(0, 0, 50, 0)
@@ -252,6 +258,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         first_line_widget = QWebEngineView()
 
         def draw_ssd_io_line():
+            if not self.selected_server_ip:
+                return
             # 用于设置窗口宽高度，目前是设置固定高度
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
@@ -292,12 +300,12 @@ class MultDisksInfoTabWidget(QTabWidget):
             disks_io_left_layout.addWidget(left_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         def set_ssd_io_line():
+            if not self.selected_server_ip:
+                return
             # 用于设置窗口宽高度，目前是设置固定高度
             # 后期有高度设置不平衡的问题直接改这里，改为overall_tab宽高度一半少一点
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
-            # disks_io_width = str(self.size().width() / 2 - 40) + "px"
-            # disks_io_height = str(self.size().height() / 2 - 100) + "px"
 
             # 获取得到指定IP地址的SSD的IOPS信息
             y_data, x_data = in_interface_impl.get_ssd_disk_io_info(self.selected_server_ip)
@@ -340,7 +348,9 @@ class MultDisksInfoTabWidget(QTabWidget):
         second_line_widget = QWebEngineView()
 
         def draw_hdd_io_line():
-            # clearLayout(disks_io_right_layout)
+            if not self.selected_server_ip:
+                return
+
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
 
@@ -381,11 +391,11 @@ class MultDisksInfoTabWidget(QTabWidget):
             disks_io_right_layout.addWidget(right_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         def set_hdd_io_line():
+            if not self.selected_server_ip:
+                return
 
             disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
-            # disks_io_width = str(self.size().width() / 2 - 40) + "px"
-            # disks_io_height = str(self.size().height() / 2 - 100) + "px"
 
             # 获取得到指定IP地址的HDD的IOPS信息
             y_data, x_data = in_interface_impl.get_hdd_disk_io_info(self.selected_server_ip)
@@ -445,8 +455,6 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_io_info_layout = QHBoxLayout()
         server_io_info_layout.addWidget(disks_io_widget)
         server_io_info_widget.setLayout(server_io_info_layout)
-        # print(server_storage_info_widget.size())
-        # print(server_io_info_widget.size())
 
         splitter = QSplitter(Qt.Vertical)
         # 设置分割线的样式，宽度为3，颜色为黑色
@@ -577,7 +585,8 @@ class RaidInfoTabWidget(QTabWidget):
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从volume_storage_info_list中取数据放入volume_storage_table中去
         def show_volume_storage_list():
-            volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)  # 刷新的情况下直接用当前serverIP
+            volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip,
+                                                                                  1)  # 刷新的情况下直接用当前serverIP
             for i, single_volume_info in enumerate(volume_storage_info_list):
                 volume_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
@@ -616,12 +625,14 @@ class RaidInfoTabWidget(QTabWidget):
         line_widget = QWebEngineView()
 
         def draw_server_io_line():
-            # clearLayout(disks_io_right_layout)
-            # io_width = str(line_widget.size().width() - 20) + "px"
-            # io_height = str(line_widget.size().height() - 20) + "px"
+            if not self.selected_server_ip:
+                return
+
             # 根据屏幕大小来确定I/O负载图的比例
-            io_width = str(self.size().width() - 50) + "px"
+            io_width = str(self.size().width() * 2) + "px"
             io_height = str(self.size().height() / 2 - 100) + "px"
+            print("size---------------------------------------------------", server_io_widget.geometry())
+            print("size---------------------------------------------------", self.graph_widget.geometry())
 
             y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
 
@@ -647,7 +658,6 @@ class RaidInfoTabWidget(QTabWidget):
                     boundary_gap=False))
                     .render("./html/server_io.html"))
 
-            # line_widget = QWebEngineView()
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             # line_widget.setFixedSize(server_io_widget.size().width() - 20, server_io_widget.size().height() - 100)
             line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
@@ -655,12 +665,15 @@ class RaidInfoTabWidget(QTabWidget):
             line_widget.load(QUrl("file:///./html/server_io.html"))
             server_io_layout.addWidget(line_widget, alignment=Qt.AlignLeft | Qt.AlignBottom)
             server_io_layout.addWidget(io_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
-            # io_button.setContentsMargins(400, 0, 0, 0)
 
         def set_server_io_line():
+            if not self.selected_server_ip:
+                return
+
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 50) + "px"
-            io_height = str(self.size().height() / 2 - 100) + "px"
+            # io_height = str(self.size().height() / 2 - 100) + "px"
+            io_height = str(server_io_widget.size().height() - 80) + "px"
 
             y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
 
@@ -668,7 +681,7 @@ class RaidInfoTabWidget(QTabWidget):
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                     .add_xaxis(xaxis_data=x_data)
                     .add_yaxis(
-                series_name="HDD 实时I/O负载",
+                series_name="服务器 实时I/O负载",
                 y_axis=y_data,
                 areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False), )
@@ -687,8 +700,8 @@ class RaidInfoTabWidget(QTabWidget):
                     .render("./html/raid_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            # line_widget.setFixedSize(server_io_widget.size().width() - 24, server_io_widget.size().height() - 80)
-            line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
+            # line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
+            line_widget.resize(self.size().width() - 50, server_io_widget.size().height() - 60)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/raid_server_io.html"))
 
@@ -702,6 +715,7 @@ class RaidInfoTabWidget(QTabWidget):
         splitter.setHandleWidth(3)
         splitter.addWidget(table_widget)
         splitter.addWidget(server_io_widget)
+        splitter.setSizes([50000, 70000])
         graph_layout.addWidget(splitter)
         self.graph_widget.setLayout(graph_layout)
 

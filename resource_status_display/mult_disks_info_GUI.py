@@ -84,8 +84,6 @@ class MultDisksInfoWidget(QWidget):
         def show_warning_list(warning_list):
             warning_widget.clear()  # 清空刷新前的所有项
             for warning in warning_list:
-                print(warning[0], warning[1])
-            for warning in warning_list:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
                 item.setSizeHint(QSize(280, 100))  # 必须设置Item大小，否则默认很小

@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
 from resource_status_display.configuration_GUI import ConfigurationWidget
-from resource_status_display.tab_GUI_ import RaidInfoTabWidget
+from resource_status_display.tab_GUI import RaidInfoTabWidget
 
 
 """
