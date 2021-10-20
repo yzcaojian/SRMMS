@@ -628,42 +628,22 @@ class RaidInfoTabWidget(QTabWidget):
             if not self.selected_server_ip:
                 return
 
-            # 根据屏幕大小来确定I/O负载图的比例
-            io_width = str(self.size().width() * 2) + "px"
-            io_height = str(self.size().height() / 2 - 100) + "px"
-            print("size---------------------------------------------------", server_io_widget.geometry())
-            print("size---------------------------------------------------", self.graph_widget.geometry())
-
-            y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
-
-            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
-                                                 animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
-                    .add_xaxis(xaxis_data=x_data)
-                    .add_yaxis(
-                series_name="服务器 实时I/O负载",
-                y_axis=y_data,
-                areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-                label_opts=opts.LabelOpts(is_show=False), )
-                    .set_global_opts(
-                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
-                yaxis_opts=opts.AxisOpts(
-                    name="IOPS/KB",
-                    type_="value",
-                    axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
-                    splitline_opts=opts.SplitLineOpts(is_show=True), ),
-                xaxis_opts=opts.AxisOpts(
-                    name="时间",
-                    type_="category",
-                    axistick_opts=opts.AxisTickOpts(is_inside=True),
-                    boundary_gap=False))
-                    .render("./html/server_io.html"))
+            line_widget.setHtml('''<!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <title>1</title>
+                                </head>
+                                <body>
+                                </body>
+                                </html>''')
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             # line_widget.setFixedSize(server_io_widget.size().width() - 20, server_io_widget.size().height() - 100)
             line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/server_io.html"))
-            server_io_layout.addWidget(line_widget, alignment=Qt.AlignLeft | Qt.AlignBottom)
+            server_io_layout.addWidget(line_widget, alignment=Qt.AlignTop | Qt.AlignLeft)
             server_io_layout.addWidget(io_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         def set_server_io_line():
@@ -672,11 +652,23 @@ class RaidInfoTabWidget(QTabWidget):
 
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 50) + "px"
-            # io_height = str(self.size().height() / 2 - 100) + "px"
             io_height = str(server_io_widget.size().height() - 80) + "px"
 
-            y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
+            # 在刷新期间有个逐步调整布局的过程，需要两轮刷新才会适应最终布局大小，在这期间显示空白，初始布局默认是(640, 480)
+            if line_widget.size().width() == 590:
+                line_widget.resize(self.size().width() - 50, server_io_widget.size().height() - 60)
+                line_widget.setHtml('''<!DOCTYPE html>
+                                    <html lang="en">
+                                    <head>
+                                        <meta charset="UTF-8">
+                                        <title>1</title>
+                                    </head>
+                                    <body>
+                                    </body>
+                                    </html>''')
+                return
 
+            y_data, x_data = in_interface_impl.get_RAID_overall_io_info(self.selected_server_ip)
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                     .add_xaxis(xaxis_data=x_data)
@@ -699,8 +691,6 @@ class RaidInfoTabWidget(QTabWidget):
                     boundary_gap=False))
                     .render("./html/raid_server_io.html"))
 
-            line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            # line_widget.resize(self.size().width() - 50, self.size().height() / 2 - 80)
             line_widget.resize(self.size().width() - 50, server_io_widget.size().height() - 60)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/raid_server_io.html"))
