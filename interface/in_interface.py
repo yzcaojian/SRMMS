@@ -8,7 +8,6 @@ from resource_status_display.log_exception_with_suggestions import Warning, warn
 from resource_status_display.servers_and_disks_info import TwoDiskInfo, DiskInfo, LogicVolumeInfo, ServerInfo
 from hard_disk_failure_prediction.predict import predict_disk_health_state
 import time
-import numpy as np
 
 
 class in_interface:
@@ -179,6 +178,15 @@ class in_interface:
         pass
 
 
+def list_split(raw_list):
+    data_list = []
+    time_list = []
+    for item in raw_list:
+        data_list.append(item[0])
+        time_list.append(item[1])
+    return data_list, time_list
+
+
 class in_interface_impl(in_interface):
     # 存放总体信息 供资源状态显示模块使用
     server_info_dict = {}
@@ -301,9 +309,7 @@ class in_interface_impl(in_interface):
         if ip not in cls.io_load_input_queue_display or id not in cls.io_load_input_queue_display[ip]:  # 如果为空
             return [], []
         io_load = cls.io_load_input_queue_display[ip][id]
-        arr = np.array(io_load)
-        io_load_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        io_load_list, time_list = list_split(io_load)
         # 转化为时间字符串
         for i in range(len(time_list)):
            time_list[i] = time.strftime("%H:%M", time.localtime(time_list[i]))
@@ -337,9 +343,7 @@ class in_interface_impl(in_interface):
         io_load_past = cls.io_load_input_queue_display_past[ip][disk_id][start:end + 1]
         if not io_load_past:
             return [], []
-        arr = np.array(io_load_past)
-        io_load_past_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        io_load_past_list, time_list = list_split(io_load_past)
         # 转化为时间字符串
         for i in range(len(time_list)):
             time_list[i] = time.strftime("%H:%M", time.localtime(time_list[i]))
@@ -352,9 +356,7 @@ class in_interface_impl(in_interface):
             return [], []
         # 输出队列里的时间数据为 %H:%M 的字符串格式
         io_load = cls.io_load_output_queue[ip][id]
-        arr = np.array(io_load)
-        io_load_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        io_load_list, time_list = list_split(io_load)
 
         return io_load_list, time_list
 
@@ -384,9 +386,7 @@ class in_interface_impl(in_interface):
         io_load_past = cls.io_load_output_queue_past[ip][disk_id][start:end + 1]
         if not io_load_past:
             return [], []
-        arr = np.array(io_load_past)
-        io_load_past_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        io_load_past_list, time_list = list_split(io_load_past)
 
         return io_load_past_list, time_list
 
@@ -515,9 +515,7 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_RAID_overall_io_info(cls, ip):
         RAID_io_info_list = cls.RAID_io_info_dict[ip]
-        arr = np.array(RAID_io_info_list)
-        RAID_io_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        RAID_io_list, time_list = list_split(RAID_io_info_list)
 
         return RAID_io_list, time_list
 
@@ -545,9 +543,7 @@ class in_interface_impl(in_interface):
         RAID_io_past = cls.RAID_io_info_dict_past[ip][start:end+1]
         if not RAID_io_past:
             return [], []
-        arr = np.array(RAID_io_past)
-        RAID_io_past_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        RAID_io_past_list, time_list = list_split(RAID_io_past)
 
         return RAID_io_past_list, time_list
 
@@ -580,9 +576,8 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_hdd_disk_io_info(cls, ip):
         hdd_disk_list = cls.two_disk_io_dict[ip]["hdd"]
-        arr = np.array(hdd_disk_list)
-        hdd_io_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        hdd_io_list, time_list = list_split(hdd_disk_list)
+
         return hdd_io_list, time_list
 
     @classmethod
@@ -609,18 +604,15 @@ class in_interface_impl(in_interface):
         hdd_io_past = cls.two_disk_io_dict_past[ip]["hdd"][start:end + 1]
         if not hdd_io_past:
             return [], []
-        arr = np.array(hdd_io_past)
-        hdd_io_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        hdd_io_list, time_list = list_split(hdd_io_past)
 
         return hdd_io_list, time_list
 
     @classmethod
     def get_ssd_disk_io_info(cls, ip):
         ssd_disk_list = cls.two_disk_io_dict[ip]["ssd"]
-        arr = np.array(ssd_disk_list)
-        ssd_io_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        ssd_io_list, time_list = list_split(ssd_disk_list)
+
         return ssd_io_list, time_list
 
     @classmethod
@@ -647,9 +639,7 @@ class in_interface_impl(in_interface):
         ssd_io_past = cls.two_disk_io_dict_past[ip]["ssd"][start:end + 1]
         if not ssd_io_past:
             return [], []
-        arr = np.array(ssd_io_past)
-        ssd_io_list = arr[:, 0].tolist()
-        time_list = arr[:, 1].tolist()
+        ssd_io_list, time_list = list_split(ssd_io_past)
 
         return ssd_io_list, time_list
 
@@ -737,10 +727,4 @@ class in_interface_impl(in_interface):
     def get_exception_dict(cls):
         return cls.exception_dict
 
-
-# if __name__ == "__main__":
-#     list1 = [[1, 2]]
-#     arr = np.array(list1)
-#     list2 = arr[:, 0]
-#     print(list2)
 
