@@ -140,7 +140,9 @@ class HistoryIO(QWidget):
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
             if len(y_predict_data) != len(y_data):
-                y_predict_data = [None] * (len(y_data) - len(y_predict_data)) + y_predict_data
+                y_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + y_predict_data
+            else:
+                y_predict_data_ = y_predict_data
 
             line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
@@ -153,7 +155,7 @@ class HistoryIO(QWidget):
                 itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
                     .add_yaxis(
                 series_name="预测I/O负载",
-                y_axis=y_predict_data,
+                y_axis=y_predict_data_,
                 areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
                 itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))

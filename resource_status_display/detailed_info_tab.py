@@ -335,7 +335,7 @@ class DetailedInfoTab(QTabWidget):
                                                      animation_opts=opts.AnimationOpts(
                                                          animation=False)))  # 设置宽高度，去掉加载动画
                         .add_xaxis(xaxis_data=x_data)
-                        .extend_axis(xaxis_data=x_predict_data_)
+                        # .extend_axis(xaxis_data=x_predict_data_)
                         .add_yaxis(
                     series_name="实时I/O负载",
                     y_axis=y_data,
