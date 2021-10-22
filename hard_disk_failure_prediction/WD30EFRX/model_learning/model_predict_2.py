@@ -50,6 +50,7 @@ def mulitGRU(x):
 def predict_2nd(smart_data, smart_id):
     tf.reset_default_graph()
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：1、3、4、9、12、192、193、194、197
+    # 和一级健康度预测所需的smart_id一致，直接选用之前的数据
     # 根据提前准备好的训练集中最大最小值进行数据归一化
     smart_data = smart_data[np.newaxis, :, :]
     smart_data = smart_data.astype(np.float32)

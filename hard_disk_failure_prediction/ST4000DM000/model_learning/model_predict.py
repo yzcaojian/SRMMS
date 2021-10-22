@@ -50,19 +50,33 @@ def mulitGRU(x):
 def predict_1st(smart_data, smart_id):
     tf.reset_default_graph()
     # 将SAMRT数据按照训练集同样的方式裁剪选择九个特征：4、9、12、187、193、197、198、241、242
+    temp = [4, 9, 12, 187, 193, 197, 198, 241, 242]
+    index = 0
+    delete_col = []
+    for i in range(len(smart_id)):
+        if index > 8:
+            # 将剩余的删除列加入col，剩余的smart_id不会等于temp[index]
+            index -= 1
+        if smart_id[i] != temp[index]:
+            delete_col.append(i)
+        else:
+            index += 1
+    smart_data_ = np.delete(smart_data, delete_col, axis=1)
+    if len(smart_data_[0]) != 9:
+        return -1
     # 根据提前准备好的训练集中最大最小值进行数据归一化
-    smart_data = smart_data.astype(np.float32)
+    smart_data_ = smart_data_.astype(np.float32)
     smart_max = [2690, 51311, 76, 65535, 786529, 60440, 60440, 68843842616, 921249276720]
     smart_min = [1, 0, 0, 0, 2, 0, 0, 0, 1614]
     for i in range(len(smart_max)):
-        for j in range(smart_data.shape[1]):
-            if smart_data[0][j][i] >= smart_max[i]:
-                smart_data[0][j][i] = 1
-            elif smart_data[0][j][i] <= smart_min[i]:
-                smart_data[0][j][i] = 0
+        for j in range(smart_data_.shape[1]):
+            if smart_data_[0][j][i] >= smart_max[i]:
+                smart_data_[0][j][i] = 1
+            elif smart_data_[0][j][i] <= smart_min[i]:
+                smart_data_[0][j][i] = 0
             else:
-                smart_data[0][j][i] = float((smart_data[0][j][i] - smart_min[i]) / (smart_max[i] - smart_min[i]))
-    # print(smart_data)
+                smart_data_[0][j][i] = float((smart_data_[0][j][i] - smart_min[i]) / (smart_max[i] - smart_min[i]))
+    # print(smart_data_)
 
     # 数据通过GRU网络计算
     x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 20, 9])
@@ -75,7 +89,7 @@ def predict_1st(smart_data, smart_id):
         # saver = tf.train.import_meta_graph('./model/hdd_GRU_model.ckpt.meta')  # 不能加这一步
         saver.restore(sess, tf.train.latest_checkpoint('../hard_disk_failure_prediction/ST4000DM000/model_learning/model/'))
 
-        prediction = sess.run(pred, feed_dict={x: smart_data})
+        prediction = sess.run(pred, feed_dict={x: smart_data_})
         print(prediction)
         # print(prediction.shape)  # 结果是二维数组
         print(np.max(prediction, axis=1))  # 概率最大的健康度预测结果
