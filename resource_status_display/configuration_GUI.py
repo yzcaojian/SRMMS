@@ -37,14 +37,12 @@ class ConfigurationWidget(QWidget):
         # self.setStyleSheet('#ConfigurationWidget{border-image:url(zuanshi.png);}')  # 设置背景图
         self.setStyleSheet("#ConfigurationWidget{background-color:#cccccc}")  # 设置背景颜色
         # 新建的窗口始终位于当前屏幕的最前面
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        # self.setWindowFlags(Qt.WindowStaysOnTopHint)
         # 父类窗口不能点击
-        self.setWindowModality(Qt.ApplicationModal)
+        # self.setWindowModality(Qt.ApplicationModal)
 
         # 读取配置文件configuration.txt文件内容
         # server_info = []
-        # 获取执行状态信息
-        events_info = []
 
         # 全局布局
         whole_layout = QVBoxLayout(self)

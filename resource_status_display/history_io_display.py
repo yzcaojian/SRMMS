@@ -34,9 +34,9 @@ class HistoryIO(QWidget):
         self.setWindowTitle("历史I/O负载信息")
         self.setWindowIcon(QIcon('./png/history_io.png'))  # 设置窗体图标
         # 新建的窗口始终位于当前屏幕的最前面
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        # self.setWindowFlags(Qt.WindowStaysOnTopHint)
         # 父类窗口不能点击
-        self.setWindowModality(Qt.ApplicationModal)
+        # self.setWindowModality(Qt.ApplicationModal)
 
         # 总体布局，时间选择与I/O负载图
         server_io_layout = QVBoxLayout()

@@ -58,6 +58,8 @@ class DiskHealthPredictionThread(threading.Thread):
                     disk_list[3] = disk[3][:20]
                     del disk[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
                     health_degree = predict_disk_health_state(disk_list)
+                    if health_degree == -1:  # 预测发生错误
+                        break
                     if ip not in self.health_degree_dict:
                         self.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}
                     if disk_list[0] not in self.health_degree_dict[ip]:
