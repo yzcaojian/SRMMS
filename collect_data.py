@@ -258,7 +258,7 @@ def integrate_data_():  # 不带smart数据
     for disk_id in disk_dict:
         total_capacity += disk_dict[disk_id][0]
         used_capacity += disk_dict[disk_id][1]
-        if disk_dict[disk_id][5] == "hdd":
+        if disk_dict[disk_id][5] == "HDD":
             hdd_counts += 1
             hdd_total_capacity += disk_dict[disk_id][0]
             hdd_used_capacity += disk_dict[disk_id][1]
