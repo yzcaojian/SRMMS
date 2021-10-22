@@ -13,7 +13,7 @@ def analyse_data(ip):
     # 通过外部接口请求资源信息
     json_data = out_interface_impl.OUT_SS_SRMMS(ip)
     # 将json数据以字典形式读取出来
-    dict_data = json_data  # json.loads(json_data)
+    dict_data = json.loads(json_data)
 
     overall_info = dict_data["overall_info"]
     detailed_info = dict_data["detailed_info"]
