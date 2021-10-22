@@ -196,7 +196,7 @@ def integrate_data():
     for disk_id in disk_dict:
         total_capacity += disk_dict[disk_id][0]
         used_capacity += disk_dict[disk_id][1]
-        if disk_dict[disk_id][5] == "hdd":
+        if disk_dict[disk_id][5] == "HDD":
             hdd_counts += 1
             hdd_total_capacity += disk_dict[disk_id][0]
             hdd_used_capacity += disk_dict[disk_id][1]
@@ -296,7 +296,7 @@ def integrate_data_():  # 不带smart数据
 
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('localhost', port))
+s.bind(('10.17.19.124', port))
 loop_flag = True
 while loop_flag:
     s.listen(1)

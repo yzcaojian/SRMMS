@@ -8,7 +8,7 @@ import socket
 import json
 s = socket.socket()
 port = 12345
-s.connect(("localhost", port))
+s.connect(("10.17.19.124", port))
 print("已连接")
 
 while True:
