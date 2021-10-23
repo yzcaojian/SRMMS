@@ -27,12 +27,6 @@ def get_ServerInfo_Item(serverInfo):
     server_image = QLabel()
     server_image.setFixedSize(50, 50)
     # 对读入图标进行调整，不能简单用resize
-    # img = QImage('server.png')
-    # scale = 0.2
-    # mgnWidth = int(img.width() * scale)
-    # mgnHeight = int(img.height() * scale)  # 缩放宽高尺寸
-    # size = QSize(mgnWidth, mgnHeight)
-    # png = QPixmap.fromImage(img.scaled(size, Qt.IgnoreAspectRatio))
     png = QPixmap('./png/server.png').scaled(30, 50)
     server_image.setPixmap(png)
 
@@ -73,28 +67,6 @@ def get_execution_state_item(line, IsDate=False):
     return line_label
 
 
-# # 获取一天的执行状态的Item，Item内部包括日期、该日期下各时间点和其对应的事件内容，弃用
-# def get_execution_state_item(daily, IsDate=False):
-#     date = daily["date"]
-#     events = daily["events"]
-#
-#     # 总体窗口
-#     events_widget = QWidget()
-#     # 执行状态信息的垂直布局
-#     events_layout = QVBoxLayout()
-#     date_label = QLabel(date)
-#     date_label.setStyleSheet("height:20px; font-size:20px; font-color:black; font-family:'黑体'")
-#     events_layout.addWidget(date_label, alignment=QtCore.Qt.AlignLeft)
-#     for event in events:
-#         event_label = QLabel(event)
-#         event_label.setWordWrap(True)  # 设置文本超出限制则换行
-#         event_label.setAlignment(QtCore.Qt.AlignTop)
-#         event_label.setStyleSheet("height:20px; font-size:16px; font-color:black; font-family:'黑体'; text-indent:4px")
-#         events_layout.addWidget(event_label)
-#     events_widget.setLayout(events_layout)
-#
-#     return events_widget
-
 # 获取总体信息表的表格item, server_storage_info是ServerInfo的对象
 def get_server_storage_info_item(server_storage_info, turn=1):
     # 设置默认字体为宋体，大小设为14，并且加粗(划掉)
@@ -122,11 +94,11 @@ def get_server_storage_info_item(server_storage_info, turn=1):
     server_name_widget.setLayout(server_name_layout)
 
     # 服务器存储总容量
-    server_total_storage = QLabel(server_storage_info.totalCapacity)
+    server_total_storage = QLabel(str(server_storage_info.totalCapacity) + "GB")
     server_total_storage.setFont(text_font)
 
     # 服务器已使用容量
-    server_occupied_storage = QLabel(server_storage_info.occupiedCapacity)
+    server_occupied_storage = QLabel(str(server_storage_info.occupiedCapacity) + "GB")
     server_occupied_storage.setFont(text_font)
 
     # 服务器容量使用占用率
@@ -170,11 +142,11 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     disk_state.setFont(text_font)
 
     # 硬盘存储容量
-    disk_total_storage = QLabel(disk_storage_info.totalCapacity)
+    disk_total_storage = QLabel(str(disk_storage_info.totalCapacity) + "GB")
     disk_total_storage.setFont(text_font)
 
     # 硬盘已使用容量
-    disk_occupied_storage = QLabel(disk_storage_info.occupiedCapacity)
+    disk_occupied_storage = QLabel(str(disk_storage_info.occupiedCapacity) +"GB")
     disk_occupied_storage.setFont(text_font)
 
     # 硬盘容量使用占用率
@@ -203,15 +175,15 @@ def get_volume_storage_info_item(volume_storage_info):
     volume_name_layout.addWidget(volume_name, alignment=Qt.AlignLeft)
     volume_name_widget.setLayout(volume_name_layout)
 
-    # 硬盘存储容量
-    volume_total_storage = QLabel(volume_storage_info.totalCapacity)
+    # 逻辑盘存储容量
+    volume_total_storage = QLabel(str(volume_storage_info.totalCapacity) + "GB")
     volume_total_storage.setFont(text_font)
 
-    # 硬盘已使用容量
-    volume_occupied_storage = QLabel(volume_storage_info.occupiedCapacity)
+    # 逻辑盘已使用容量
+    volume_occupied_storage = QLabel(str(volume_storage_info.occupiedCapacity) + "GB")
     volume_occupied_storage.setFont(text_font)
 
-    # 硬盘容量使用占用率
+    # 逻辑盘容量使用占用率
     volume_storage_occupied_rate = QLabel(volume_storage_info.occupiedRate)
     volume_storage_occupied_rate.setFont(text_font)
 

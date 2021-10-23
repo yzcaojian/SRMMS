@@ -135,11 +135,11 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not two_disk_list:
                 return
             # clearLayout(bar_layout)  # 清除之前的布局
-            hdd_all = float(two_disk_list.hddTotalCapacity[:-2])
-            hdd_used = float(two_disk_list.hddOccupiedCapacity[:-2])
+            hdd_all = two_disk_list.hddTotalCapacity
+            hdd_used = two_disk_list.hddOccupiedCapacity[:-2]
             hdd_occ = float(two_disk_list.hddOccupiedRate[:-1])
-            ssd_all = float(two_disk_list.ssdTotalCapacity[:-2])
-            ssd_used = float(two_disk_list.ssdOccupiedCapacity[:-2])
+            ssd_all = two_disk_list.ssdTotalCapacity
+            ssd_used = two_disk_list.ssdOccupiedCapacity
             ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
             used = [{"value": hdd_used, "percent": hdd_used / hdd_all},
                     {"value": ssd_used, "percent": ssd_used / ssd_all}]
@@ -156,21 +156,15 @@ class MultDisksInfoTabWidget(QTabWidget):
                    .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
                    .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
                    .set_global_opts(
-                yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
+                yaxis_opts=opts.AxisOpts(name="容量\n单位GB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
                    .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'TB'"
-                                     "+ ' ' + Number(x.data.percent * 100).toFixed() + '%';}"))
+                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'GB'"
+                                     "+ '\\n' + Number(x.data.percent * 100).toFixed() + '%';}"))
 
             ).render("./html/first.html"))
-
-            # line = Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
-            #                                     animation_opts=opts.AnimationOpts(animation=False))) \
-            #     .add_xaxis(["HDD", "SSD"]).add_yaxis(series_name="容量占用率", yaxis_index=1, y_axis=occ) \
-            #     .set_series_opts(label_opts=opts.LabelOpts(position="left", formatter=JsCode("function(x){return Number(x.data).toFixed() + '%';}")))
-            # bar.overlap(line).render("./html/first.html")
 
             first_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                      False)  # 将滑动条隐藏，避免遮挡内容
@@ -190,8 +184,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             ssd_rate = two_disk_list.ssdErrorRate * 100
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
-            # bar_width = str(self.size().width() / 3) + "px"
-            # bar_height = str(self.size().height() / 2 - 60) + "px"
 
             bar = (Bar(
                 init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,  # rgb(200,200,200,1)
@@ -215,8 +207,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_bar_widget.resize(self.size().width() / 3, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_bar_widget.load(QUrl("file:///./html/second.html"))
-            # print("self", self.size(), "server_table", server_storage_table_widget.size(), "bar", bar_widget.size())
-            # print(first_bar_widget.size(), second_bar_widget.size())
 
         bar_layout.addWidget(second_bar_widget, alignment=Qt.AlignCenter)
 
@@ -543,7 +533,6 @@ class RaidInfoTabWidget(QTabWidget):
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从server_storage_info_list中取数据放入server_storage_table中去
         def show_server_storage_list(server_storage_info_list):
-            # server_storage_table.clear()  # 清空刷新前的所有项
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
