@@ -100,7 +100,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     # 高于平均负载的1.2倍或者高于60 * 10w视作高负载
                     if predict > averageIO * 1.2 * 60 or predict >= 100000 * 60:
                         errorID = 2
-                        warning = Warning(errorID, now_time, disk_id, configuration_info.IPtoName(ip), [local_time, predict])
+                        warning = Warning(errorID, now_time, configuration_info.IPtoName(ip), disk_id, [local_time, predict])
                         # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
                         warning_message_queue.append(warning)
                         # 服务器失联告警信息 to资源状态显示模块

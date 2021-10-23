@@ -17,6 +17,10 @@ def analyse_data(ip, lock):
         json_data = out_interface_impl.OUT_SS_SRMMS(ip)
     # 服务器失联 捕获异常
     except TimeoutError:
+        print("连接超时，IP地址不存在")
+        return
+    except ConnectionRefusedError:
+        print("拒绝连接，目标服务器未开启代理程序")
         return
     else:
         # 获得资源锁
@@ -54,7 +58,17 @@ def analyse_data(ip, lock):
 # 发送资源调度分配指令
 def send_instructions(ip, instructions):
     # 调用外部接口发送调度指令
-    out_interface_impl.OUT_SRMMS_SS(ip, instructions)
+    try:
+        out_interface_impl.OUT_SRMMS_SS(ip, instructions)
+        # 服务器失联 捕获异常
+    except TimeoutError:
+        print("连接超时，IP地址不存在")
+        return
+    except ConnectionRefusedError:
+        print("拒绝连接，目标服务器未开启代理程序")
+        return
+    else:
+        print("成功向服务器" + ip + "发送调度指令")
 
 # name_emb = {'a': '1111', 'b': '2222', 'c': '3333', 'd': '4444'}
 # filename = 'file.txt'

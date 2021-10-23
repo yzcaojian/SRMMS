@@ -44,8 +44,8 @@ def integrate_data():
     used_capacity = round(used_capacity, 2)
 
     read_count, write_count, read_bytes, write_bytes, read_time, write_time = psutil.disk_io_counters()
-    # I/O负载单位统一为kB
-    total_io = (read_bytes + write_bytes) / 1024
+    # I/O负载单位统一为kB，保留一位小数
+    total_io = round((read_bytes + write_bytes) / 1024, 1)
     overall_info = [total_capacity, used_capacity, occupied_rate, total_io]
 
     dic = {"overall_info": overall_info, "detailed_info": detailed_info}

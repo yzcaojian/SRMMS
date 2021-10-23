@@ -74,10 +74,10 @@ def get_disk_used_capacity(disk_dict, part_dict):
             disk_id = disk_list[item][0].split('/')[-1]
             # 该disk是单个物理盘
             if disk_id in disk_dict:
-                disk_dict[disk_id][1] += round(float(disk_list[item][2]) / 1024, 2)
+                disk_dict[disk_id][1] += round(float(disk_list[item][2]) / 1024 / 1024, 2)
             # 该disk是某个物理盘上的分区
             elif disk_id in part_dict:
-                disk_dict[part_dict[disk_id]][1] += round(float(disk_list[item][2]) / 1024, 2)
+                disk_dict[part_dict[disk_id]][1] += round(float(disk_list[item][2]) / 1024 / 1024, 2)
             else:
                 continue
         # 总容量/已使用容量/占用率
@@ -109,10 +109,10 @@ def get_disk_io(disk_dict):
         for item in range(len(disk_list)):
             disk_id = disk_list[item][0]
             if disk_id in disk_dict:
-                kB_read = float(disk_list[item][5])
-                kB_wrtn = float(disk_list[item][6])
-
-                disk_dict[disk_id][3] = kB_read + kB_wrtn
+                kB_read = float(disk_list[item][2])
+                kB_wrtn = float(disk_list[item][3])
+                # 保留一位小数
+                disk_dict[disk_id][3] = round(kB_read + kB_wrtn, 1)
             else:
                 continue
         return 0
@@ -241,6 +241,10 @@ def integrate_data():
     hdd_used_capacity = round(hdd_used_capacity, 2)
     ssd_used_capacity = round(ssd_used_capacity, 2)
 
+    # I/O负载数据保留一位小数
+    hdd_io = round(hdd_io, 1)
+    ssd_io = round(ssd_io, 1)
+
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
                     hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
@@ -303,6 +307,10 @@ def integrate_data_():  # 不带smart数据
     ssd_total_capacity = round(ssd_total_capacity, 2)
     hdd_used_capacity = round(hdd_used_capacity, 2)
     ssd_used_capacity = round(ssd_used_capacity, 2)
+
+    # I/O负载数据保留一位小数
+    hdd_io = round(hdd_io, 1)
+    ssd_io = round(ssd_io, 1)
 
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,

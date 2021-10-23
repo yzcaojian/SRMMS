@@ -30,7 +30,7 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             if now_time - time_stamp > 60:
                 errorID = 3
                 now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
-                warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(ip), "")
+                warning = Warning(errorID, now_time, configuration_info.IPtoName(ip), diskID, "")
                 # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
                 warning_message_queue.append(warning)
                 # 服务器失联告警信息 to资源状态显示模块
@@ -88,7 +88,7 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                 average_io = sum / len(high_io_load_queue[serverIP][diskID])
                 errorID = 4
                 now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
-                warning = Warning(errorID, now_time, diskID, configuration_info.IPtoName(serverIP), average_io)
+                warning = Warning(errorID, now_time, configuration_info.IPtoName(serverIP), diskID, average_io)
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]
                 warning_message_queue.append(warning)
                 # 硬盘持续高I/O告警信息 to资源状态显示模块
