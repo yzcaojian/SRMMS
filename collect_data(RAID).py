@@ -17,13 +17,13 @@ def get_disk_list():
     return disk_list
 
 
-# 逻辑盘标识/路径/总容量(kB)/已使用容量/占用率
+# 逻辑盘标识/路径/总容量(GB)/已使用容量/占用率
 def get_disk_total_and_used_capacity(disk_list):
     for item in disk_list:
         total, used, free, percent = psutil.disk_usage(item[1])
-        # 单位统一转化为kB
-        item.append(total / 1024)
-        item.append(used / 1024)
+        # 单位统一转化为GB
+        item.append(round(total / 1024 / 1024 / 1024, 2))
+        item.append(round(used / 1024 / 1024 / 1024, 2))
         item.append(str(round(percent, 2)) + '%')
     return 0
 
@@ -39,8 +39,12 @@ def integrate_data():
         detailed_info.append([item[0], item[2], item[3], item[4]])
     # 总体占用率
     occupied_rate = str(round(used_capacity / total_capacity * 100, 2)) + '%'
+    # 单位为GB,保留两位小数
+    total_capacity = round(total_capacity, 2)
+    used_capacity = round(used_capacity, 2)
+
     read_count, write_count, read_bytes, write_bytes, read_time, write_time = psutil.disk_io_counters()
-    # 单位统一为kB
+    # I/O负载单位统一为kB
     total_io = (read_bytes + write_bytes) / 1024
     overall_info = [total_capacity, used_capacity, occupied_rate, total_io]
 
@@ -63,11 +67,12 @@ while loop_flag:
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)
-    elif info[0] == "接收指令":
-        instructions = info[1]
-        file = open('./instructions.txt', 'a+')
-        file.writelines(instructions + "\n")
-        file.close()
+    # elif info[0] == "接收指令":
+    #     instructions = info[1]
+    #     file = open('./instructions.txt', 'a+')
+    #     file.writelines(instructions + "\n")
+    #     file.close()
 
     sock.close()
+    print("连接已经断开")
 s.close()
