@@ -25,15 +25,17 @@ def get_disk_total_capacity():
             if disk_list[item][5].lower() == "disk":
                 disk_dict[disk_list[item][0]] = []
 
-                # 将硬盘容量单位都换算为KB
+                # 将硬盘容量单位都换算为GB
                 temp = disk_list[item][3]
                 capacity = float(temp[:-1])
                 if temp[-1].lower() == "t":
-                    capacity *= 1024 * 1024 * 1024
+                    capacity = round(capacity * 1024, 2)
                 elif temp[-1].lower() == "g":
-                    capacity *= 1024 * 1024
+                    capacity = round(capacity, 2)
+                elif temp[-1].lower() == "m":
+                    capacity = round(capacity / 1024, 2)
                 else:
-                    capacity *= 1024
+                    capacity = round(capacity / 1024 / 1204, 2)
                 disk_dict[disk_list[item][0]].append(capacity)
 
             elif disk_list[item][5].lower() == "part":
@@ -72,10 +74,10 @@ def get_disk_used_capacity(disk_dict, part_dict):
             disk_id = disk_list[item][0].split('/')[-1]
             # 该disk是单个物理盘
             if disk_id in disk_dict:
-                disk_dict[disk_id][1] += float(disk_list[item][2])
+                disk_dict[disk_id][1] += round(float(disk_list[item][2]) / 1024, 2)
             # 该disk是某个物理盘上的分区
             elif disk_id in part_dict:
-                disk_dict[part_dict[disk_id]][1] += float(disk_list[item][2])
+                disk_dict[part_dict[disk_id]][1] += round(float(disk_list[item][2]) / 1024, 2)
             else:
                 continue
         # 总容量/已使用容量/占用率
@@ -231,6 +233,14 @@ def integrate_data():
         ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
 
     hdd_error_rate, ssd_error_rate = 0, 0
+    # 单位为GB,保留两位小数
+    total_capacity = round(total_capacity, 2)
+    used_capacity = round(used_capacity, 2)
+    hdd_total_capacity = round(hdd_total_capacity, 2)
+    ssd_total_capacity = round(ssd_total_capacity, 2)
+    hdd_used_capacity = round(hdd_used_capacity, 2)
+    ssd_used_capacity = round(ssd_used_capacity, 2)
+
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
                     hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
@@ -286,6 +296,14 @@ def integrate_data_():  # 不带smart数据
         ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
 
     hdd_error_rate, ssd_error_rate = 0, 0
+    # 单位为GB,保留两位小数
+    total_capacity = round(total_capacity, 2)
+    used_capacity = round(used_capacity, 2)
+    hdd_total_capacity = round(hdd_total_capacity, 2)
+    ssd_total_capacity = round(ssd_total_capacity, 2)
+    hdd_used_capacity = round(hdd_used_capacity, 2)
+    ssd_used_capacity = round(ssd_used_capacity, 2)
+
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
                     hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
@@ -321,4 +339,5 @@ while loop_flag:
         file.close()
 
     sock.close()
+    print("连接已经断开")
 s.close()
