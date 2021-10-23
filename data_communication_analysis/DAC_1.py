@@ -9,7 +9,7 @@ from data_communication_analysis.DCA_2 import send_data, send_data_RSD
 
 
 # 解析各类资源信息
-def analyse_data(ip):
+def analyse_data(ip, lock):
     if not ip:
         return
     # 通过外部接口请求资源信息
@@ -19,6 +19,8 @@ def analyse_data(ip):
     except TimeoutError:
         return
     else:
+        # 获得资源锁
+        lock.lock()
         # 将json数据以字典形式读取出来
         dict_data = json.loads(json_data)
 
@@ -45,6 +47,8 @@ def analyse_data(ip):
             server_info = overall_info
 
             send_data_RSD(ip, server_info, detailed_info)
+        # 释放资源锁
+        lock.unlock()
 
 
 # 发送资源调度分配指令

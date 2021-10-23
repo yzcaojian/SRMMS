@@ -136,7 +136,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                 return
             # clearLayout(bar_layout)  # 清除之前的布局
             hdd_all = two_disk_list.hddTotalCapacity
-            hdd_used = two_disk_list.hddOccupiedCapacity[:-2]
+            hdd_used = two_disk_list.hddOccupiedCapacity
             hdd_occ = float(two_disk_list.hddOccupiedRate[:-1])
             ssd_all = two_disk_list.ssdTotalCapacity
             ssd_used = two_disk_list.ssdOccupiedCapacity

@@ -1,5 +1,5 @@
 import sys
-import threading
+import _thread
 import time
 
 from PyQt5.QtCore import Qt, QSize, QMutex, QThread
@@ -179,15 +179,15 @@ class RequestResourceThread(QThread):
             print("请求资源获得锁")
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
-                analyse_data(ip)
+                _thread.start_new_thread(analyse_data, (ip, threadLock_resource))
             print("请求资源结束:")
             # 释放锁
-            time.sleep(0.1)  # 保持锁0.1秒 便于刷新数据
+            time.sleep(0.5)  # 保持锁0.5秒 便于刷新数据
             threadLock_transaction.unlock()
             threadLock_drawing.unlock()
             print("请求资源释放锁")
             # QApplication.processEvents()
-            time.sleep(0.9)  # 推迟执行0.9秒
+            time.sleep(0.5)  # 推迟执行0.5秒
 
 
 class TransactionProcessingThread(QThread):
@@ -255,9 +255,10 @@ if __name__ == '__main__':
     threadLock_transaction = QMutex()
     threadLock_drawing = QMutex()
     threadLock_log = QMutex()
+    threadLock_resource = QMutex()
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
-        analyse_data(ip)
+        analyse_data(ip, threadLock_resource)
     # 先运行三个线程
     PredictionTrainingThread.online_training_thread.start()
     PredictionTrainingThread.io_load_prediction_thread.start()
