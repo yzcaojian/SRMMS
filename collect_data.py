@@ -166,8 +166,8 @@ def get_smart_data(disk_dict):
             for i in range(len(list_)):
                 disk_list.append(list_[i].split())
             for item in range(len(disk_list)):
-                smartID_list.append(disk_list[item][0])
-                smartData_list.append(disk_list[item][9])
+                smartID_list.append(int(disk_list[item][0]))
+                smartData_list.append(int(disk_list[item][9]))
         else:
             return -1
         disk_dict[disk_id].append([device_model, smartID_list, smartData_list])
