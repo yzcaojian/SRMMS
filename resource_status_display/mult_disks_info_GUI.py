@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QColor
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
 
 from resource_status_display.backward_thread import UpdateLogThread
@@ -30,6 +30,8 @@ class MultDisksInfoWidget(QWidget):
         self.warning_list = list(reversed(warning_list.warning_list))  # 告警信息列表
         self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
         self.scheduling_list = list(reversed(scheduling_list.scheduling_list))  # 调度分配日志信息列表
+        self.warning_update = False
+        self.scheduling_update = False
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)
         self.initUI()
@@ -68,8 +70,6 @@ class MultDisksInfoWidget(QWidget):
         button_layout.addWidget(update_button, alignment=Qt.AlignRight)
         button_layout.addWidget(configuration_button)  # 两个控件中只写一个Alignment就可以紧挨着了
         button_widget.setLayout(button_layout)
-        # update_button.move(self.size().width()-100, 200)
-        # configuration_button.move(self.size().width()-50, 200)
 
         # 告警信息
         warning_label = QLabel('''<font color=black face='黑体' size=5>告警信息<font>''')
@@ -83,6 +83,31 @@ class MultDisksInfoWidget(QWidget):
         # 定义内部函数事件，初始化或者是有告警信号后，从warning_list中取数据放入warning_widget中去，刷新告警信息
         def show_warning_list(warning_list):
             warning_widget.clear()  # 清空刷新前的所有项
+            if self.warning_update:
+                item = QListWidgetItem()
+                item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
+                item.setBackground(QColor(218, 255, 225, 155))
+
+                update_click = QPushButton()
+                update_click.setToolTip('刷新')
+                update_click.setFixedSize(30, 30)
+                update_icon = QIcon()
+                update_icon.addPixmap(QPixmap('./png/update.png'))
+                update_click.setIcon(update_button_icon)
+                update_click.setIconSize(QSize(25, 25))
+                update_click.setStyleSheet("background-color:white")
+                update_click.clicked.connect(lambda: update_warning())
+
+                update_tip = QLabel('''<font color=red face='黑体' size=3>有告警信息更新<font>''')
+
+                warning_item_layout = QHBoxLayout()
+                warning_item_layout.addWidget(update_click, alignment=Qt.AlignTop)
+                warning_item_layout.addWidget(update_tip, alignment=Qt.AlignLeft)
+                warning_item = QWidget()
+                warning_item.setLayout(warning_item_layout)
+                warning_widget.addItem(item)
+                warning_widget.setItemWidget(item, warning_item)
+
             for warning in warning_list:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
@@ -108,6 +133,32 @@ class MultDisksInfoWidget(QWidget):
         # 定义内部函数事件，初始化或者是有调度信号后，从scheduling_list中取数据放入log_widget中去，刷新调度分配日志信息
         def show_scheduling_list(scheduling_list):
             log_widget.clear()  # 清空刷新前的所有项
+
+            if self.scheduling_update:
+                item = QListWidgetItem()
+                item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
+                item.setBackground(QColor(218, 255, 225, 155))
+
+                update_click = QPushButton()
+                update_click.setToolTip('刷新')
+                update_click.setFixedSize(30, 30)
+                update_icon = QIcon()
+                update_icon.addPixmap(QPixmap('./png/update.png'))
+                update_click.setIcon(update_button_icon)
+                update_click.setIconSize(QSize(25, 25))
+                update_click.setStyleSheet("background-color:white")
+                update_click.clicked.connect(lambda: update_scheduling())
+
+                update_tip = QLabel('''<font color=red face='黑体' size=3>有日志信息更新<font>''')
+
+                scheduling_item_layout = QHBoxLayout()
+                scheduling_item_layout.addWidget(update_click, alignment=Qt.AlignTop)
+                scheduling_item_layout.addWidget(update_tip, alignment=Qt.AlignLeft)
+                scheduling_item = QWidget()
+                scheduling_item.setLayout(scheduling_item_layout)
+                log_widget.addItem(item)
+                log_widget.setItemWidget(item, scheduling_item)
+
             for scheduling in scheduling_list:
                 item = QListWidgetItem()
                 # item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
@@ -145,16 +196,22 @@ class MultDisksInfoWidget(QWidget):
         self.update_log_thread.start()
 
         def update_log():
-            # if len(self.warning_list) != len(warning_list.warning_list):
-            #     self.warning_list = warning_list.warning_list[:]
-            #     show_scheduling_list(self.warning_list)
-            #     show_warning_list(self.warning_list)
             if len(self.warning_list) != len(warning_list.warning_list):
-                self.warning_list = list(reversed(warning_list.warning_list))
+                self.warning_update = True
                 show_warning_list(self.warning_list)
+                self.warning_list = list(reversed(warning_list.warning_list))
             if len(self.scheduling_list) != len(scheduling_list.scheduling_list):
-                self.scheduling_list = list(reversed(scheduling_list.scheduling_list))
+                self.scheduling_update = True
                 show_scheduling_list(self.scheduling_list)
+                self.scheduling_list = list(reversed(scheduling_list.scheduling_list))
+
+        def update_warning():
+            self.warning_update = False
+            show_warning_list(self.warning_list)
+
+        def update_scheduling():
+            self.scheduling_update = False
+            show_scheduling_list(self.scheduling_list)
 
         def pop_up_window():
             # 当出现对硬盘故障预警的情况时弹窗告警
