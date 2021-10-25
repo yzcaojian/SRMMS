@@ -135,39 +135,39 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not two_disk_list:
                 return
             # clearLayout(bar_layout)  # 清除之前的布局
-            hdd_all = round(two_disk_list.hddTotalCapacity / 1024, 1)
-            hdd_used = round(two_disk_list.hddOccupiedCapacity / 1024, 1)
+            hdd_all = round(two_disk_list.hddTotalCapacity / 1024, 2)
+            hdd_used = round(two_disk_list.hddOccupiedCapacity / 1024, 2)
             hdd_occ = float(two_disk_list.hddOccupiedRate[:-1])
-            ssd_all = round(two_disk_list.ssdTotalCapacity / 1024, 1)
-            ssd_used = round(two_disk_list.ssdOccupiedCapacity / 1024, 1)
+            ssd_all = round(two_disk_list.ssdTotalCapacity / 1024, 2)
+            ssd_used = round(two_disk_list.ssdOccupiedCapacity / 1024, 2)
             ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
-            used = [{"value": hdd_used, "percent": hdd_occ / 100},
-                    {"value": ssd_used, "percent": ssd_occ / 100}]
-            left = [{"value": hdd_all - hdd_used, "percent": 1 - hdd_occ / 100},
-                    {"value": ssd_all - ssd_used, "percent": 1 - ssd_occ / 100}]
+            used = [{"value": hdd_used, "percent": hdd_occ},
+                    {"value": ssd_used, "percent": ssd_occ}]
+            left = [{"value": hdd_all - hdd_used, "percent": 100 - hdd_occ},
+                    {"value": ssd_all - ssd_used, "percent": 100 - ssd_occ}]
 
-            bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
+            bar_width = str(bar_widget.size().width() // 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
 
             bar = (Bar(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
                                                animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                    .add_xaxis(["HDD", "SSD"])
-                   .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
                    .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
+                   .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
                    .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
-                   .set_series_opts(
-                label_opts=opts.LabelOpts(
-                    position="right",
-                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'TB'"
-                                     "+ ' ' + Number(x.data.percent * 100).toFixed() + '%';}"))
-
+                .set_series_opts(
+                    label_opts=opts.LabelOpts(
+                        position="insideLeft",
+                        color='#000000',
+                        formatter=JsCode("function(x) {return Number(x.data.value).toFixed(2) + 'TB'"
+                                         "+ ' ' + Number(x.data.percent).toFixed(2) + '%';}"))
             ).render("./html/first.html"))
 
             first_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                      False)  # 将滑动条隐藏，避免遮挡内容
-            first_bar_widget.resize(bar_widget.size().width() / 2 - 14, bar_widget.size().height())
+            first_bar_widget.resize(bar_widget.size().width() // 2 - 14, bar_widget.size().height())
             # first_bar_widget.resize(self.size().width() / 3, self.size().height() / 2 - 40)
             # 打开本地html文件
             first_bar_widget.load(QUrl("file:///./html/first.html"))
@@ -181,7 +181,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
             hdd_rate = two_disk_list.hddErrorRate * 100
             ssd_rate = two_disk_list.ssdErrorRate * 100
-            bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
+            bar_width = str(bar_widget.size().width() // 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
 
             bar = (Bar(
@@ -202,7 +202,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
             second_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
-            second_bar_widget.resize(bar_widget.size().width() / 2 - 14, bar_widget.size().height())
+            second_bar_widget.resize(bar_widget.size().width() // 2 - 14, bar_widget.size().height())
             # first_bar_widget.resize(self.size().width() / 3, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_bar_widget.load(QUrl("file:///./html/second.html"))
@@ -250,7 +250,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not self.selected_server_ip:
                 return
             # 用于设置窗口宽高度，目前是设置固定高度
-            disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
+            disks_io_width = str(disks_io_widget.size().width() // 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
 
             y_data, x_data = in_interface_impl.get_ssd_disk_io_info(self.selected_server_ip)
@@ -279,7 +279,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
             first_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
-            first_line_widget.resize(disks_io_widget.size().width() / 2 - 20,
+            first_line_widget.resize(disks_io_widget.size().width() // 2 - 20,
                                      disks_io_widget.size().height() - 80)  # 高度设置小一点可以跟贴近底部
             # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
             # 打开本地html文件
@@ -293,7 +293,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                 return
             # 用于设置窗口宽高度，目前是设置固定高度
             # 后期有高度设置不平衡的问题直接改这里，改为overall_tab宽高度一半少一点
-            disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
+            disks_io_width = str(disks_io_widget.size().width() // 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
 
             # 获取得到指定IP地址的SSD的IOPS信息
@@ -324,7 +324,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_line_widget = QWebEngineView()
             first_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
-            first_line_widget.resize(disks_io_widget.size().width() / 2 - 20,
+            first_line_widget.resize(disks_io_widget.size().width() // 2 - 20,
                                      disks_io_widget.size().height() - 80)  # 高度设置小一点可以跟贴近底部
             # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 80)
             # 打开本地html文件
@@ -340,7 +340,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not self.selected_server_ip:
                 return
 
-            disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
+            disks_io_width = str(disks_io_widget.size().width() // 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
 
             # 获取得到指定IP地址的HDD的IOPS信息
@@ -371,7 +371,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             # second_line_widget = QWebEngineView()
             second_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                        False)  # 将滑动条隐藏，避免遮挡内容
-            second_line_widget.resize(disks_io_widget.size().width() / 2 - 20, disks_io_widget.size().height() - 80)
+            second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
             # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_line_widget.load(QUrl("file:///./html/hdd_io.html"))
@@ -383,7 +383,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not self.selected_server_ip:
                 return
 
-            disks_io_width = str(disks_io_widget.size().width() / 2 - 40) + "px"
+            disks_io_width = str(disks_io_widget.size().width() // 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
 
             # 获取得到指定IP地址的HDD的IOPS信息
@@ -413,7 +413,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
             # 将滑动条隐藏，避免遮挡内容
             second_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)
-            second_line_widget.resize(disks_io_widget.size().width() / 2 - 20, disks_io_widget.size().height() - 80)
+            second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
             # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_line_widget.load(QUrl("file:///./html/hdd_io.html"))
