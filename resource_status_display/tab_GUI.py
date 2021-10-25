@@ -135,17 +135,16 @@ class MultDisksInfoTabWidget(QTabWidget):
             if not two_disk_list:
                 return
             # clearLayout(bar_layout)  # 清除之前的布局
-            hdd_all = two_disk_list.hddTotalCapacity
-            hdd_used = two_disk_list.hddOccupiedCapacity
+            hdd_all = round(two_disk_list.hddTotalCapacity / 1024, 1)
+            hdd_used = round(two_disk_list.hddOccupiedCapacity / 1024, 1)
             hdd_occ = float(two_disk_list.hddOccupiedRate[:-1])
-            ssd_all = two_disk_list.ssdTotalCapacity
-            ssd_used = two_disk_list.ssdOccupiedCapacity
+            ssd_all = round(two_disk_list.ssdTotalCapacity / 1024, 1)
+            ssd_used = round(two_disk_list.ssdOccupiedCapacity / 1024, 1)
             ssd_occ = float(two_disk_list.ssdOccupiedRate[:-1])
-            used = [{"value": hdd_used, "percent": hdd_used / hdd_all},
-                    {"value": ssd_used, "percent": ssd_used / ssd_all}]
-            left = [{"value": hdd_all - hdd_used, "percent": (hdd_all - hdd_used) / hdd_all},
-                    {"value": ssd_all - ssd_used, "percent": (ssd_all - ssd_used) / ssd_all}]
-            occ = [hdd_occ, ssd_occ]
+            used = [{"value": hdd_used, "percent": hdd_occ / 100},
+                    {"value": ssd_used, "percent": ssd_occ / 100}]
+            left = [{"value": hdd_all - hdd_used, "percent": 1 - hdd_occ / 100},
+                    {"value": ssd_all - ssd_used, "percent": 1 - ssd_occ / 100}]
 
             bar_width = str(bar_widget.size().width() / 2 - 30) + "px"
             bar_height = str(bar_widget.size().height() - 20) + "px"
@@ -156,13 +155,13 @@ class MultDisksInfoTabWidget(QTabWidget):
                    .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
                    .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
                    .set_global_opts(
-                yaxis_opts=opts.AxisOpts(name="容量\n单位GB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
+                yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", type_='category', axistick_opts=opts.AxisTickOpts(is_inside=True)))
                    .set_series_opts(
                 label_opts=opts.LabelOpts(
                     position="right",
-                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'GB'"
-                                     "+ '\\n' + Number(x.data.percent * 100).toFixed() + '%';}"))
+                    formatter=JsCode("function(x) {return Number(x.data.value).toFixed() + 'TB'"
+                                     "+ ' ' + Number(x.data.percent * 100).toFixed() + '%';}"))
 
             ).render("./html/first.html"))
 
