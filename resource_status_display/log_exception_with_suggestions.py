@@ -83,8 +83,8 @@ class SchedulingList:
 
     # scheduling是Scheduling类的对象
     def add_new_scheduling(self, scheduling):
-        self.scheduling_list.append(scheduling.timeslot + " 系统向服务器" + scheduling.serverName + "发送调度建议，针对" +
-                                    scheduling.situation + "的情况，向服务器作出如下调度建议：" + scheduling.suggestion + "\n")
+        self.scheduling_list.append(scheduling.timeslot + " 系统向服务器" + scheduling.serverName + "发送调度建议，针对\"" +
+                                    scheduling.situation + "\"的情况，向服务器作出如下调度建议：" + scheduling.suggestion + "\n")
 
     def read_file(self):
         file = open('../resource_status_display/txt/schedule.txt', 'r')
