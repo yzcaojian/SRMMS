@@ -105,7 +105,11 @@ def get_server_storage_info_item(server_storage_info, turn=1):
     server_storage_occupied_rate = QLabel(server_storage_info.occupiedRate)
     server_storage_occupied_rate.setFont(text_font)
 
-    return [server_name_widget, server_total_storage, server_occupied_storage, server_storage_occupied_rate]
+    # 连接状态， QLabel('''<font color=red>异常<font>''')
+    connected_state = QLabel('''<font color=\'#00ff50\'>正常<font>''')
+    connected_state.setFont(text_font)
+
+    return [server_name_widget, server_total_storage, server_occupied_storage, server_storage_occupied_rate, connected_state]
 
 
 # 获取多硬盘架构下详细信息表的表格item，disk_storage_info是DiskInfo类的对象
@@ -189,7 +193,11 @@ def get_volume_storage_info_item(volume_storage_info):
     volume_storage_occupied_rate = QLabel(volume_storage_info.occupiedRate)
     volume_storage_occupied_rate.setFont(text_font)
 
-    return [volume_name_widget, volume_total_storage, volume_occupied_storage, volume_storage_occupied_rate]
+    # 连接状态， QLabel('''<font color=red>异常<font>''')
+    connected_state = QLabel('''<font color=\'#00ff50\'>正常<font>''')
+    connected_state.setFont(text_font)
+
+    return [volume_name_widget, volume_total_storage, volume_occupied_storage, volume_storage_occupied_rate, connected_state]
 
 
 # exception来自告警信息类Warning，内部字段

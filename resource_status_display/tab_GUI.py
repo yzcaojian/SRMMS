@@ -63,8 +63,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_title.setAlignment(Qt.AlignCenter)
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息页面的总体信息表格窗口
-        server_storage_table = QTableWidget(len(self.server_overall_info), 4)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率'])  # 设置表头
+        server_storage_table = QTableWidget(len(self.server_overall_info), 5)
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '连接状态'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
@@ -329,9 +329,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 80)
             # 打开本地html文件
             first_line_widget.load(QUrl("file:///./html/ssd_io.html"))
-            # disks_io_left_layout.addWidget(first_line_widget, alignment=Qt.AlignCenter | Qt.AlignBottom)
-            # print(disks_io_left_layout.itemAt(1).widget())
-            # print("line-chart----------", disks_io_widget.size(), first_line_widget.size(), second_line_widget.size())
 
         # 右边I/O负载图
         second_line_widget = QWebEngineView()
@@ -417,7 +414,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_line_widget.load(QUrl("file:///./html/hdd_io.html"))
-            # print(disks_io_right_layout.itemAt(1).widget())
 
         draw_ssd_io_line()
         draw_hdd_io_line()
@@ -509,8 +505,8 @@ class RaidInfoTabWidget(QTabWidget):
         server_title.setAlignment(Qt.AlignCenter)
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息表格窗口
-        server_storage_table = QTableWidget(len(self.server_overall_info), 4)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率'])  # 设置表头
+        server_storage_table = QTableWidget(len(self.server_overall_info), 5)
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '连接状态'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
