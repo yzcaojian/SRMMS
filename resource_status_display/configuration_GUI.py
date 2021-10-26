@@ -41,9 +41,6 @@ class ConfigurationWidget(QWidget):
         # 父类窗口不能点击
         # self.setWindowModality(Qt.ApplicationModal)
 
-        # 读取配置文件configuration.txt文件内容
-        # server_info = []
-
         # 全局布局
         whole_layout = QVBoxLayout(self)
 
@@ -57,9 +54,9 @@ class ConfigurationWidget(QWidget):
         middle_layout = QVBoxLayout()
         # 内部标题
         middle_title_layout = QVBoxLayout()
-        middle_title = QLabel('''<font color=black face='黑体' size=6>已接入存储服务器<font>''')
-        middle_title.setStyleSheet("background:white")
-        middle_title.setAlignment(Qt.AlignCenter)  # 文本居中
+        middle_title = QLabel('''<font color=black face='黑体' size=4>正在监控的存储服务器信息<font>''')
+        # middle_title.setStyleSheet("text-align:left")
+        middle_title.setAlignment(Qt.AlignLeft)  # 文本左对齐
         middle_title_layout.addWidget(middle_title)
 
         # 内部为一个listWidget，每行呈现两个server-info
@@ -69,51 +66,24 @@ class ConfigurationWidget(QWidget):
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):
             server_list.clear()  # 清空刷新前所有项
-            temp_data = []  # 每两个server-info为一组，所以需要临时保存只有单个server-info的data
             for (i, server_data) in enumerate(server_info):
-                if i % 2 == 0:
-                    temp_data = server_data
-                    if i == len(server_info) - 1:
-                        item = QListWidgetItem()
-                        item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                        item.setSizeHint(QSize(200, 100))
-                        server_widget = get_ServerInfo_Item(server_data)
-                        server_group_layout = QHBoxLayout()  # 最后一行只有单个服务器信息
-                        server_group_layout.addWidget(server_widget)
-                        server_group_layout.addWidget(QWidget())
-                        server_widget = QWidget()
-                        # server_widget.setStyleSheet("server_widget:hover{background:gray}")
-                        server_widget.setLayout(server_group_layout)
-                        server_list.addItem(item)
-                        server_list.setItemWidget(item, server_widget)
-                else:
-                    item = QListWidgetItem()
-                    item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                    item.setSizeHint(QSize(200, 100))
-                    server_widget_left = get_ServerInfo_Item(temp_data)
-                    server_widget_right = get_ServerInfo_Item(server_data)
-                    server_group_layout = QHBoxLayout()  # 每行两个服务器信息
-                    server_group_layout.addWidget(server_widget_left)
-                    server_group_layout.addWidget(server_widget_right)
-                    server_widget = QWidget()
-                    server_widget.setLayout(server_group_layout)
-                    server_list.addItem(item)
-                    server_list.setItemWidget(item, server_widget)
+                item = QListWidgetItem()
+                item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
+                item.setSizeHint(QSize(200, 100))
+                server_widget = get_ServerInfo_Item(server_data)
+                server_list.addItem(item)
+                server_list.setItemWidget(item, server_widget)
 
         show_server_info_list(self.server_info)
 
-        # 加上标题再布局组合成为中间部分所有布局
+        # 加上标题再布局组合成为左边部分所有布局
         middle_layout.addWidget(middle_title)
         middle_layout.addWidget(server_list)
         middle_widget = QWidget()
         middle_widget.setLayout(middle_layout)
-        # middle_widget.setStyleSheet('border-width: 2px; border-style: solid;')
-        # middle_widget.setStyleSheet('background:white')
 
         # 显示筛选条件按钮、输入框之类的人机交互的控件，以及输出信息展示框
-        down_layout = QHBoxLayout()
-        # 左下边部分的布局
-        left_down_layout = QVBoxLayout()
+        down_layout = QVBoxLayout()
         # 第一行布局：下拉框和确认按钮
         condition_layout = QHBoxLayout()
         # 定义下拉框
@@ -153,16 +123,17 @@ class ConfigurationWidget(QWidget):
         condition_layout.addWidget(button, alignment=Qt.AlignLeft)
         condition_widget = QWidget()
         condition_widget.setLayout(condition_layout)
+        condition_widget.setContentsMargins(0, 20, 0, 0)
 
         # 输入部分的布局
         input_layout = QVBoxLayout()
-        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=5>IP地址<font>'''), alignment=Qt.AlignBottom)
+        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=4>服务器IP地址<font>'''), alignment=Qt.AlignBottom)
         server_IP_input = QLineEdit()
         server_IP_input.setPlaceholderText('请输入服务器IP地址')
         server_IP_input.setFixedSize(300, 30)
         server_IP_input.setStyleSheet("height:30px")
         input_layout.addWidget(server_IP_input)
-        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=5>名称<font>'''), alignment=Qt.AlignBottom)
+        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=4>服务器名称<font>'''), alignment=Qt.AlignBottom)
         server_name_input = QLineEdit()
         server_name_input.setPlaceholderText('请输入服务器名称')
         server_name_input.setFixedSize(300, 30)
@@ -187,17 +158,10 @@ class ConfigurationWidget(QWidget):
             if self.edit_state == 1:
                 another_line_edit.setEnabled(False)
 
-        # def set_another_edit(another_line_edit):
-        #     if self.edit_state == 1:
-        #         another_line_edit.setEnabled(True)
-
-        # 左下角整体布局
-        left_down_layout.addWidget(condition_widget, alignment=Qt.AlignLeft)
-        left_down_layout.addWidget(input_widget)
-
-        # 右下角布局
-        # 内部为一个listWidget，列表呈现执行状态
+        # 系统配置日志信息，内部为一个listWidget，列表呈现执行状态
         events_list = QListWidget()
+
+        log_widget = QLabel('''<font color=black face='黑体' size=4>系统配置日志信息<font>''')
 
         # 定义内部函数事件，初始化或者是按钮提交后，从events_info中取数据放入events_list中去，刷新服务器显示信息
         def show_operation_result(event_info):
@@ -220,28 +184,24 @@ class ConfigurationWidget(QWidget):
                     events_list.addItem(item_t)
                     events_list.setItemWidget(item_t, date_widget)
 
-                # item = QListWidgetItem()
-                # item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                # # item.setSizeHint(QSize(400, 100))  # 必须设置Item大小，否则默认很小
-                # item.setSizeHint(QSize(400, len(daily["events"]) * 40 + 50))
-                # events_widget = get_execution_state_item(daily)
-                # events_list.addItem(item)
-                # events_list.setItemWidget(item, events_widget)
-
         show_operation_result(self.events_info)
 
-        # 界面下部分总体布局
-        right_down_layout = QHBoxLayout()
-        right_down_layout.addWidget(events_list)
-        down_layout.addLayout(left_down_layout)
-        down_layout.addLayout(right_down_layout)
+        # 界面右部分总体布局
+        down_layout.addWidget(condition_widget, alignment=Qt.AlignLeft)
+        down_layout.addWidget(input_widget)
+        down_layout.addWidget(log_widget)
+        down_layout.addWidget(events_list)
         down_widget = QWidget()
         down_widget.setLayout(down_layout)
 
+        # 界面左右布局
+        content_layout = QHBoxLayout()
+        content_layout.addWidget(middle_widget)
+        content_layout.addWidget(down_widget)
+
         # 全局布局
         whole_layout.addWidget(upper_title)
-        whole_layout.addWidget(middle_widget)
-        whole_layout.addWidget(down_widget)
+        whole_layout.addLayout(content_layout)
 
         self.setLayout(whole_layout)
         self.show()
