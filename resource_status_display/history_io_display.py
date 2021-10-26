@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QUrl, QTime, Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
-from PyQt5.QtWidgets import QPushButton, QTimeEdit, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QPushButton, QTimeEdit, QHBoxLayout, QVBoxLayout, QWidget, QLabel
 from pyecharts.charts import Line
 from pyecharts import options as opts
 
@@ -41,6 +41,12 @@ class HistoryIO(QWidget):
         # 总体布局，时间选择与I/O负载图
         server_io_layout = QVBoxLayout()
 
+        # 提示文字信息
+        raid_server_tip = QLabel('''<font color=black face='黑体' size=3>注：可选择查看服务器三个小时内的历史总I/O负载信息，横坐标以秒为单位<font>''')
+        ssd_server_tip = QLabel('''<font color=black face='黑体' size=3>注：可选择查看服务器三个小时内SSD的历史总I/O负载信息，横坐标以秒为单位<font>''')
+        hdd_server_tip = QLabel('''<font color=black face='黑体' size=3>注：可选择查看服务器三个小时内HDD的历史总I/O负载信息，横坐标以秒为单位<font>''')
+        disk_tip = QLabel('''<font color=black face='黑体' size=3>注：可选择查看硬盘十二个小时内的历史I/O负载信息，横坐标以分钟为单位<font>''')
+
         # 时间选择, 并控制时间选择范围最大值和最小值
         time_layout = QHBoxLayout()
         time_widget = QWidget()
@@ -63,6 +69,14 @@ class HistoryIO(QWidget):
         time_start.timeChanged.connect(self.start_time_changed)
         time_end.timeChanged.connect(self.end_time_changed)
 
+        # 时间选择的提示信息
+        tip_image = QLabel()
+        tip_image.setFixedSize(20, 20)
+        png = QPixmap('./png/tips.png').scaled(18, 18)
+        tip_image.setContentsMargins(0, 0, 30, 0)
+        tip_image.setPixmap(png)
+        tip_image.setToolTip("时间选择有上下界限制；\n时间选择通过点击上下键控制；\n只会显示输入时间范围内存在的数据。")
+
         # 确认按钮
         io_button = QPushButton("确认")
         io_button.setFixedSize(100, 30)
@@ -76,6 +90,7 @@ class HistoryIO(QWidget):
 
         time_layout.addWidget(time_start)
         time_layout.addWidget(time_end)
+        time_layout.addWidget(tip_image)
         time_layout.addWidget(io_button)
         time_widget.setLayout(time_layout)
 
@@ -93,7 +108,7 @@ class HistoryIO(QWidget):
 
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 20) + "px"
-            io_height = str(self.size().height() - 100) + "px"
+            io_height = str(self.size().height() - 130) + "px"
 
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
@@ -122,7 +137,7 @@ class HistoryIO(QWidget):
                     .render("./html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width(), self.size().height() - 70)
+            line_widget.resize(self.size().width(), self.size().height() - 90)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/history_server_io.html"))
 
@@ -133,7 +148,7 @@ class HistoryIO(QWidget):
 
             # 根据屏幕大小来确定I/O负载图的比例
             io_width = str(self.size().width() - 20) + "px"
-            io_height = str(self.size().height() - 100) + "px"
+            io_height = str(self.size().height() - 130) + "px"
 
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
             y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
@@ -174,7 +189,7 @@ class HistoryIO(QWidget):
                     .render("./html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width(), self.size().height() - 70)
+            line_widget.resize(self.size().width(), self.size().height() - 90)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/history_server_io.html"))
 
@@ -182,6 +197,15 @@ class HistoryIO(QWidget):
             draw_disk_io_line()
         else:
             draw_server_io_line()
+
+        if self.level == 0:
+            server_io_layout.addWidget(disk_tip, alignment=Qt.AlignLeft)
+        elif self.level == 1:
+            server_io_layout.addWidget(ssd_server_tip, alignment=Qt.AlignLeft)
+        elif self.level == 2:
+            server_io_layout.addWidget(hdd_server_tip, alignment=Qt.AlignLeft)
+        else:
+            server_io_layout.addWidget(raid_server_tip, alignment=Qt.AlignLeft)
 
         server_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
         server_io_layout.addWidget(time_widget, alignment=Qt.AlignCenter)

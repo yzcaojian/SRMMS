@@ -221,27 +221,39 @@ class MultDisksInfoTabWidget(QTabWidget):
         disks_io_right_layout = QVBoxLayout()
 
         # 两个负载图各自的label和button
+        left_tip_label = QLabel('''<font color=black face='黑体' size=3>注：默认显示SSD7分钟内的实时总I/O负载信息<font>''')
+        right_tip_label = QLabel('''<font color=black face='黑体' size=3>注：默认显示HDD7分钟内的实时总I/O负载信息<font>''')
+        left_tip_label.setContentsMargins(40, 0, 0, 0)
+        right_tip_label.setContentsMargins(40, 0, 0, 0)
         left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts)) if self.two_disk_info else QLabel()
         left_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
-        # "border-width:1px; border-style:solid; border-color:black")
-        left_label.setContentsMargins(0, 0, 50, 0)
         right_label = QLabel("HDD数量 " + str(self.two_disk_info.hddCounts)) if self.two_disk_info else QLabel()
         right_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
-        # "border-width:1px; border-style:solid; border-color:black")
-        right_label.setContentsMargins(0, 0, 50, 0)
-        left_button = QPushButton("历史信息")
-        left_button.setFixedSize(100, 30)
+
+        left_button = QPushButton("查看历史信息")
+        left_button.setFixedSize(130, 30)
         left_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
                                 border-width:2px; border-style:solid; border-color:black; border-radius:12px}
                                 QPushButton:pressed{background-color:#bbbbbb}''')
-        right_button = QPushButton("历史信息")
-        right_button.setFixedSize(100, 30)
+        right_button = QPushButton("查看历史信息")
+        right_button.setFixedSize(130, 30)
         right_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
                                 border-width:2px; border-style:solid; border-color:black; border-radius:12px}
                                 QPushButton:pressed{background-color:#bbbbbb}''')
         # 绑定I/O负载历史信息弹窗事件
         left_button.clicked.connect(lambda: self.show_history_io_line(1))
         right_button.clicked.connect(lambda: self.show_history_io_line(2))
+        
+        left_text_widget = QWidget()
+        left_text_layout = QHBoxLayout()
+        left_text_layout.addWidget(left_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        left_text_layout.addWidget(left_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        left_text_widget.setLayout(left_text_layout)
+        right_text_widget = QWidget()
+        right_text_layout = QHBoxLayout()
+        right_text_layout.addWidget(right_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        right_text_layout.addWidget(right_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        right_text_widget.setLayout(right_text_layout)
 
         # 左边I/O负载图
         first_line_widget = QWebEngineView()
@@ -284,7 +296,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
             # 打开本地html文件
             first_line_widget.load(QUrl("file:///./html/ssd_io.html"))
-            disks_io_left_layout.addWidget(left_label, alignment=Qt.AlignRight | Qt.AlignTop)
+            disks_io_left_layout.addWidget(left_text_widget)
             disks_io_left_layout.addWidget(first_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_left_layout.addWidget(left_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
@@ -326,7 +338,6 @@ class MultDisksInfoTabWidget(QTabWidget):
                                                       False)  # 将滑动条隐藏，避免遮挡内容
             first_line_widget.resize(disks_io_widget.size().width() // 2 - 20,
                                      disks_io_widget.size().height() - 80)  # 高度设置小一点可以跟贴近底部
-            # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 80)
             # 打开本地html文件
             first_line_widget.load(QUrl("file:///./html/ssd_io.html"))
 
@@ -369,10 +380,9 @@ class MultDisksInfoTabWidget(QTabWidget):
             second_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                        False)  # 将滑动条隐藏，避免遮挡内容
             second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
-            # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
             # 打开本地html文件
             second_line_widget.load(QUrl("file:///./html/hdd_io.html"))
-            disks_io_right_layout.addWidget(right_label, alignment=Qt.AlignRight | Qt.AlignTop)
+            disks_io_right_layout.addWidget(right_text_widget)
             disks_io_right_layout.addWidget(second_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_right_layout.addWidget(right_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
