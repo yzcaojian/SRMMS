@@ -119,7 +119,8 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     if turn > 0:
         disk_image = QLabel()
         disk_image.setFixedSize(40, 40)
-        png = QPixmap('./png/SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap('./png/HDD.png').scaled(38, 38)
+        png = QPixmap('./png/SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap(
+            './png/HDD.png').scaled(38, 38)
         disk_image.setPixmap(png)
     else:
         disk_image = QLabel()
@@ -146,14 +147,15 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     disk_total_storage.setFont(text_font)
 
     # 硬盘已使用容量
-    disk_occupied_storage = QLabel(str(disk_storage_info.occupiedCapacity) +"GB")
+    disk_occupied_storage = QLabel(str(disk_storage_info.occupiedCapacity) + "GB")
     disk_occupied_storage.setFont(text_font)
 
     # 硬盘容量使用占用率
     disk_storage_occupied_rate = QLabel(disk_storage_info.occupiedRate)
     disk_storage_occupied_rate.setFont(text_font)
 
-    return [disk_name_widget, disk_type, disk_state, disk_total_storage, disk_occupied_storage, disk_storage_occupied_rate]
+    return [disk_name_widget, disk_type, disk_state, disk_total_storage, disk_occupied_storage,
+            disk_storage_occupied_rate]
 
 
 # 获得RAID架构下详细信息表的表格item，disk_storage_info是LogicVolumeInfo类的对象
@@ -202,10 +204,19 @@ def get_warning_info_item(exception):
         './png/warning_orange.png').scaled(40, 40)
     slot_image.setPixmap(png)
     # 异常描述=告警描述=时间+内容
+    warning_level = ""
+    if exception[0] == 1:
+        warning_level = "磁盘故障告警："
+    elif exception[0] == 2:
+        warning_level = "硬盘高负载高警："
+    elif exception[0] == 3:
+        warning_level = "服务器失联告警："
+    if exception[0] == 4:
+        warning_level = "硬盘持续高负载告警："
     index = exception[1].find(' ')
     warning_time = QLabel(exception[1][:index])
     warning_time.setFont(text_font)
-    warning_content = QLabel(exception[1][index + 1:])
+    warning_content = QLabel(warning_level + exception[1][index + 1:])
     warning_content.setFont(text_font)
     warning_content.setWordWrap(True)  # 设置文本超出限制则换行
     # 告警时间与内容布局
