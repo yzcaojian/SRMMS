@@ -325,20 +325,17 @@ class DetailedInfoTab(QTabWidget):
                         boundary_gap=False))
                         .render("./html/" + self.selected_disk_id[1] + "_io.html"))
             else:
-                if len(y_predict_data) != len(y_data):
-                    y_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + y_predict_data
-                    x_predict_data_ = [None] * (len(y_data) - len(y_predict_data)) + x_predict_data
-                else:
-                    x_predict_data_ = x_predict_data
-                    y_predict_data_ = y_predict_data
+                time_list = in_interface_impl.merge_timeline(x_data, x_predict_data)
+                y_data_ = y_data + [None] * (len(time_list) - len(y_data))
+                y_predict_data_ = [None] * (len(time_list) - len(y_predict_data)) + y_predict_data
+
                 line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=disk_io_width, height=disk_io_height,
                                                      animation_opts=opts.AnimationOpts(
                                                          animation=False)))  # 设置宽高度，去掉加载动画
-                        .add_xaxis(xaxis_data=x_data)
-                        # .extend_axis(xaxis_data=x_predict_data_)
+                        .add_xaxis(xaxis_data=time_list)
                         .add_yaxis(
                     series_name="实时I/O负载",
-                    y_axis=y_data,
+                    y_axis=y_data_,
                     areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                     label_opts=opts.LabelOpts(is_show=False),
                     itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
