@@ -22,6 +22,9 @@ def analyse_data(ip, lock):
     except ConnectionRefusedError:
         print("拒绝连接，目标服务器未开启代理程序")
         return
+    except Exception as e:
+        print("其它异常类型:" + str(e))
+        return
     else:
         # 获得资源锁
         lock.lock()
@@ -66,6 +69,9 @@ def send_instructions(ip, instructions):
         return
     except ConnectionRefusedError:
         print("拒绝连接，目标服务器未开启代理程序")
+        return
+    except Exception as e:
+        print("其它异常类型:" + str(e))
         return
     else:
         print("成功向服务器" + ip + "发送调度指令")
