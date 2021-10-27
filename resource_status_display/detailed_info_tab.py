@@ -131,6 +131,7 @@ class DetailedInfoTab(QTabWidget):
         remaining_days_item_layout = QHBoxLayout()
         remaining_days_text_layout = QHBoxLayout()
         remaining_days_title = QLabel("硬盘剩余寿命预测")
+        remaining_days_title.setContentsMargins(0, 0, 0, 10)
         remaining_days_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
         days_title_layout.addWidget(remaining_days_title)
 
@@ -233,17 +234,40 @@ class DetailedInfoTab(QTabWidget):
         health_degree_layout.addLayout(health_degree_text_layout)
         remaining_days_layout.addLayout(remaining_days_item_layout)
         remaining_days_layout.addLayout(remaining_days_text_layout)
-        # 硬盘健康度信息，两个条形图布局
+
+        # I/O图提示信息
+        tip_layout = QVBoxLayout()
+        io_title = QLabel("硬盘I/O负载信息")
+        io_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        io_title.setContentsMargins(0, 50, 0, 10)
+        tip_layout.addWidget(io_title)
+        tip_label_1 = QLabel('''<font color=black face='黑体' size=3>注1：默认显示硬盘三小时内的实时和预测I/O负载信息；<font>''')
+        tip_label_2 = QLabel('''<font color=black face='黑体' size=3>注2：每个点纵坐标表示该硬盘一分钟内的IO总和。<font>''')
+        tip_layout.addWidget(tip_label_1)
+        tip_layout.addWidget(tip_label_2)
+        tip_label_1.setContentsMargins(20, 0, 0, 0)
+        tip_label_2.setContentsMargins(20, 0, 0, 0)
+
+        # 硬盘健康度信息，两个条形图，io注释信息布局
         disk_health_state_layout.addLayout(health_degree_layout)
         disk_health_state_layout.addLayout(remaining_days_layout)
 
         # 硬盘I/O负载信息，折线
         disk_io_layout = QVBoxLayout()
+        disk_io_layout.addLayout(tip_layout)
         line_widget = QWebEngineView()
+
+        # 历史信息的按钮
+        io_button = QPushButton("查看历史信息")
+        io_button.setFixedSize(130, 30)
+        io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
+                                               border-width:2px; border-style:solid; border-color:black; border-radius:12px}
+                                               QPushButton:pressed{background-color:#bbbbbb}''')
+        io_button.clicked.connect(lambda: self.show_history_io_line(0))  # 绑定事件
 
         def draw_disk_io_line():
             disk_io_width = str(disk_detailed_info_widget.size().width()) + "px"
-            disk_io_height = str(disk_detailed_info_widget.size().height() - 70) + "px"
+            disk_io_height = str(disk_detailed_info_widget.size().height() / 2 - 50) + "px"
 
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[0],
                                                                                self.selected_disk_id[1])
@@ -273,7 +297,7 @@ class DetailedInfoTab(QTabWidget):
                     .set_global_opts(
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
-                    name="IOPS/KB",
+                    name="每分钟IO/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                     splitline_opts=opts.SplitLineOpts(is_show=True)),
@@ -284,16 +308,17 @@ class DetailedInfoTab(QTabWidget):
                     boundary_gap=False))
                     .render("./html/" + self.selected_disk_id[1] + "_io.html"))  # 各硬盘有单独的IO图
 
-            line_widget.setContentsMargins(0, 50, 0, 0)
+            line_widget.setContentsMargins(0, 20, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.setFixedSize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height())
+            line_widget.resize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height() / 2 - 30)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[1] + "_io.html"))
-            disk_io_layout.addWidget(line_widget, alignment=Qt.AlignCenter)
+            disk_io_layout.addWidget(line_widget)
+            disk_io_layout.addWidget(io_button, alignment=Qt.AlignCenter | Qt.AlignTop)
 
         def set_disk_io_line():
             disk_io_width = str(self.detailed_tab.size().width() / 2 - 40) + "px"
-            disk_io_height = str(disk_detailed_info_widget.size().height() / 2) + "px"
+            disk_io_height = str(disk_detailed_info_widget.size().height() / 2 - 40) + "px"
 
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display(self.selected_disk_id[0], self.selected_disk_id[1])
             y_predict_data, x_predict_data = in_interface_impl.get_io_load_output_queue_display(
@@ -314,7 +339,7 @@ class DetailedInfoTab(QTabWidget):
                         .set_global_opts(
                     tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                     yaxis_opts=opts.AxisOpts(
-                        name="IOPS/KB",
+                        name="每分钟IO/KB",
                         type_="value",
                         axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                         splitline_opts=opts.SplitLineOpts(is_show=True)),
@@ -351,7 +376,7 @@ class DetailedInfoTab(QTabWidget):
                         .set_global_opts(
                     tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                     yaxis_opts=opts.AxisOpts(
-                        name="IOPS/KB",
+                        name="每分钟IO/KB",
                         type_="value",
                         axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
                         splitline_opts=opts.SplitLineOpts(is_show=True)),
@@ -362,23 +387,13 @@ class DetailedInfoTab(QTabWidget):
                         boundary_gap=False))
                         .render("./html/" + self.selected_disk_id[1] + "_io.html"))
 
-            line_widget.setContentsMargins(0, 50, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(self.detailed_tab.size().width() / 2 - 20,
-                                     disk_detailed_info_widget.size().height() / 2 + 40)
+                                     disk_detailed_info_widget.size().height() / 2 - 20)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./html/" + self.selected_disk_id[1] + "_io.html"))
 
         draw_disk_io_line()
-
-        # 历史信息的按钮
-        io_button = QPushButton("历史信息")
-        io_button.setFixedSize(100, 30)
-        io_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
-                                               border-width:2px; border-style:solid; border-color:black; border-radius:12px}
-                                               QPushButton:pressed{background-color:#bbbbbb}''')
-        io_button.clicked.connect(lambda: self.show_history_io_line(0))  # 绑定事件
-        disk_io_layout.addWidget(io_button, alignment=Qt.AlignTop | Qt.AlignCenter)
 
         disk_detailed_info_layout.addLayout(disk_health_state_layout)
         disk_detailed_info_layout.addLayout(disk_io_layout)
