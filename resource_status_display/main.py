@@ -158,7 +158,12 @@ class MainWidget(QWidget):
         QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
 
     def closeEvent(self, event):
-        MainWidget.running = False
+        reply = QMessageBox.question(self, '提醒', '你确认要退出程序吗？', QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            MainWidget.running = False
+            event.accept()
+        else:
+            event.ignore()
 
 
 class MainWindow(QMainWindow):
