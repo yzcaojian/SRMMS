@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import QMessageBox
+from interface.out_interface import check_ip
+from interface.in_interface import in_interface_impl
 """
 -*- coding: utf-8 -*- 
 @Project: GUI_beginning
@@ -64,6 +66,14 @@ class ConfigurationInfo:
             return "添加失败，服务器" + server_name + "已存在。"
         if self.IsIPAddressExist(ip_address):
             return "添加失败，服务器" + ip_address + "已存在。"
+        # 判断服务器ip是否可监控
+        data = check_ip(ip_address)
+        if data == 1:
+            return "添加失败，连接超时，IP地址" + ip_address + "不可达。"
+        elif data == 2:
+            return "添加失败，服务器" + ip_address + "未部署代理程序。"
+        elif data == 3:
+            return "添加失败，由于未知错误，IP地址连接出现问题。"
         self.server_names.append(server_name)
         self.server_IPs.append(ip_address)
         self.writeFile(1, server_name + ' ' + ip_address + "\n")
@@ -84,10 +94,11 @@ class ConfigurationInfo:
                 break
         selection = QMessageBox.information(widget, "注意", "您确定要删除该服务器连接信息吗", QMessageBox.Yes | QMessageBox.No)
         if selection == QMessageBox.Yes:
+            delete_server = self.server_IPs[delete_index]
             self.server_names.remove(self.server_names[delete_index])
             self.server_IPs.remove(self.server_IPs[delete_index])
+            in_interface_impl.delete_server(delete_server)
             self.writeFile(2, '')
-
             return "已成功删除服务器" + (server_name if server_name != '' else ip_address) + "。"
         else:
             return "您已取消删除操作。"
@@ -142,8 +153,6 @@ class ConfigurationInfo:
 
 # 单例模式，应用于整个系统进行IP地址和名称的对应
 configuration_info = ConfigurationInfo()
-# print(c.server_names)
-# print(c.server_IPs)
 
 # server1 192.168.1.1
 # serevr2 192.168.1.2
