@@ -2,6 +2,7 @@ import locale
 import re
 import time
 
+from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
 from PyQt5.QtCore import Qt, QSize
@@ -214,7 +215,9 @@ class ConfigurationWidget(QWidget):
         if op == "增加":
             feedback = self.configuration_info.addServer(server_ip, server_name)
         elif op == "删除":
-            feedback = self.configuration_info.deleteServer(self, server_ip, server_name)
+            feedback, is_delete = self.configuration_info.deleteServer(self, server_ip, server_name)
+            if is_delete == 1:
+                in_interface_impl.delete_server(server_ip)
         elif op == "更改":
             feedback = self.configuration_info.modifyName(server_ip, server_name)
         elif op == "查询":

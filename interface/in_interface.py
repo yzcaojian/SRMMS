@@ -262,7 +262,7 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_update_cycle(cls, ip):
         for disk_id in cls.io_load_input_queue[ip]:
-            return time.time() - cls.io_load_input_queue[ip][disk_id][-1][-1]
+            return round(time.time() - cls.io_load_input_queue[ip][disk_id][-1][-1], 2)
 
     @classmethod
     def check_for_data_overload_1(cls, ip):  # 检查输入队列和输出队列数据是否超载

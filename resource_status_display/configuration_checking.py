@@ -1,6 +1,5 @@
+import socket
 from PyQt5.QtWidgets import QMessageBox
-from interface.out_interface import check_ip
-from interface.in_interface import in_interface_impl
 """
 -*- coding: utf-8 -*- 
 @Project: GUI_beginning
@@ -9,6 +8,27 @@ from interface.in_interface import in_interface_impl
 @Author : cao jian
 """
 
+
+def check_ip(ip):
+    try:
+        client = socket.socket()
+        client.connect((ip, 12345))
+        client.send(bytes("请求数据2", encoding="utf-8"))
+        client.recv(10240).decode()
+        client.close()
+    # 服务器失联 捕获异常
+    except TimeoutError:
+        print("连接超时，IP地址不存在")
+        return 1
+    except ConnectionRefusedError:
+        print("拒绝连接，目标服务器未开启代理程序")
+        return 2
+    except Exception as e:
+        print("其它异常类型:" + str(e))
+        return 3
+    # 连接正常
+    else:
+        return 4
 
 class ConfigurationInfo:
     def __init__(self):
@@ -84,24 +104,23 @@ class ConfigurationInfo:
         delete_index = 0
         if server_name:
             if not self.IsNameExist(server_name):
-                return "删除失败，服务器" + server_name + "不存在。"
+                return "删除失败，服务器" + server_name + "不存在。", 0
         else:
             if not self.IsIPAddressExist(ip_address):
-                return "删除失败，服务器" + ip_address + "不存在。"
+                return "删除失败，服务器" + ip_address + "不存在。", 0
         for i in range(len(self.server_IPs)):
             if self.server_names[i] == server_name or self.server_IPs[i] == ip_address:
                 delete_index = i
                 break
         selection = QMessageBox.information(widget, "注意", "您确定要删除该服务器连接信息吗", QMessageBox.Yes | QMessageBox.No)
         if selection == QMessageBox.Yes:
-            delete_server = self.server_IPs[delete_index]
+            # delete_server = self.server_IPs[delete_index]
             self.server_names.remove(self.server_names[delete_index])
             self.server_IPs.remove(self.server_IPs[delete_index])
-            in_interface_impl.delete_server(delete_server)
             self.writeFile(2, '')
-            return "已成功删除服务器" + (server_name if server_name != '' else ip_address) + "。"
+            return "已成功删除服务器" + (server_name if server_name != '' else ip_address) + "。", 1
         else:
-            return "您已取消删除操作。"
+            return "您已取消删除操作。", 0
 
     # 修改配置信息，只能通过IP地址修改名称
     def modifyName(self, ip_address, new_name):
