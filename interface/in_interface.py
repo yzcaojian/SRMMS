@@ -742,4 +742,47 @@ class in_interface_impl(in_interface):
 
         return time_list
 
+    @classmethod
+    def delete_server(cls, ip):
+        if ip in cls.server_info_dict:
+            del cls.server_info_dict[ip]
+        if ip in cls.RAID_io_info_dict:
+            del cls.RAID_io_info_dict[ip]
+        if ip in cls.RAID_io_info_dict_past:
+            del cls.RAID_io_info_dict_past[ip]
+        if ip in cls.two_disk_io_dict:
+            del cls.two_disk_io_dict[ip]
+        if ip in cls.two_disk_io_dict_past:
+            del cls.two_disk_io_dict_past[ip]
+        if ip in cls.detailed_info_dict:
+            del cls.detailed_info_dict[ip]
+        if ip in cls.io_load_input_queue:
+            del cls.io_load_input_queue[ip]
+        if ip in cls.io_load_input_queue_display:
+            del cls.io_load_input_queue_display[ip]
+        if ip in cls.io_load_input_queue_display_past:
+            del cls.io_load_input_queue_display_past[ip]
+        if ip in cls.io_load_input_queue_predict:
+            del cls.io_load_input_queue_predict[ip]
+        if ip in cls.io_load_input_queue_train:
+            del cls.io_load_input_queue_train[ip]
+        if ip in cls.io_load_output_queue:
+            del cls.io_load_output_queue[ip]
+        if ip in cls.io_load_output_queue_past:
+            del cls.io_load_output_queue_past[ip]
+        if ip in cls.high_io_load_queue:
+            del cls.high_io_load_queue[ip]
+        if ip in cls.average_io_load:
+            del cls.average_io_load[ip]
+        if ip in cls.disk_detailed_info:
+            del cls.disk_detailed_info[ip]
+        if ip in cls.smart_data_dict:
+            del cls.smart_data_dict[ip]
+        if ip in cls.health_degree_dict:
+            del cls.health_degree_dict[ip]
+        if ip in cls.exception_dict:
+            del cls.exception_dict[ip]
+        if ip in cls.exception_dict:
+            del cls.exception_dict[ip]
+
 

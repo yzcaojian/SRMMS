@@ -4,8 +4,32 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/4/28 10:45
 import json
+import socket
 from interface.out_interface import out_interface_impl
 from data_communication_analysis.DCA_2 import send_data, send_data_RSD
+
+
+def check_ip(ip):
+    # 通过外部接口请求资源信息
+    try:
+        client = socket.socket()
+        client.connect((ip, 12345))
+        client.send(bytes("请求数据2", encoding="utf-8"))
+        data = client.recv(10240).decode()
+        client.close()
+    # 服务器失联 捕获异常
+    except TimeoutError:
+        print("连接超时，IP地址不存在")
+        return 1
+    except ConnectionRefusedError:
+        print("拒绝连接，目标服务器未开启代理程序")
+        return 2
+    except Exception as e:
+        print("其它异常类型:" + str(e))
+        return 3
+    # 连接正常
+    else:
+        return 4
 
 
 # 解析各类资源信息

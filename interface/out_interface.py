@@ -5,7 +5,6 @@
 # @Time: 2021/4/25 16:55
 import random
 import socket
-import json
 
 Request_Resources = 0
 Send_Instructions = 1
@@ -26,7 +25,7 @@ class out_interface:
 class out_interface_impl(out_interface):
     # 端口号
     port = 12345
-    index = 0
+    index_dic = {}
 
     @classmethod
     def OUT_SS_SRMMS(cls, ip):
@@ -34,11 +33,13 @@ class out_interface_impl(out_interface):
         client = socket.socket()
         ip_addr = (ip, cls.port)
         client.connect(ip_addr)
-        if cls.index % (60 * 60 * 24) == 0:  # 请求数据(包含smart数据)
+        if ip not in cls.index_dic:
+            cls.index_dic[ip] = 0
+        if cls.index_dic[ip] % (60 * 60 * 24) == 0:  # 请求数据(包含smart数据)
             client.send(bytes("请求数据1", encoding="utf-8"))
         else:  # 请求数据(不包含smart数据)
             client.send(bytes("请求数据2", encoding="utf-8"))
-        cls.index = (cls.index + 1) % (60 * 60 * 24)
+        cls.index_dic[ip] = (cls.index_dic[ip] + 1) % (60 * 60 * 24)
         data = client.recv(10240).decode()
 
         client.close()
