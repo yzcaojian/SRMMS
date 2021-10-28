@@ -208,7 +208,6 @@ class ConfigurationWidget(QWidget):
 
     # 定义事件，选择op（增删改查）后根据输入数据返回执行结果
     def server_info_op(self, op, server_name, server_ip):
-        # print(op, server_name, server_ip)
         feedback = ""
         if not self.illegal_ip_info(server_ip):
             return ""
@@ -220,7 +219,7 @@ class ConfigurationWidget(QWidget):
             feedback = self.configuration_info.modifyName(server_ip, server_name)
         elif op == "查询":
             feedback = self.configuration_info.searchServer(server_ip, server_name)
-        print(feedback)
+        # print(feedback)
         # 更新当前所保持的服务器信息
         self.server_info = self.get_server_info()
         # 更新所有执行结果，把最新的执行状态结果加上去

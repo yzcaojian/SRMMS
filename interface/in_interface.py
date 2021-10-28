@@ -17,6 +17,11 @@ class in_interface:
     def IN_DCA_RSA(cls, ip, detailed_info):
         pass
 
+    # 各服务器刷新周期，当前时间 - 数据上次刷新时间
+    @classmethod
+    def get_update_cycle(cls, ip):
+        pass
+
     # 通过ip、disk_id来显示单个硬盘的实时IO信息
     @classmethod
     def get_io_load_input_queue_display(cls, ip, id):
@@ -253,6 +258,11 @@ class in_interface_impl(in_interface):
         io_second_to_io_minute(ip, cls.io_load_input_queue, cls.io_load_input_queue_train)
         # 检查数据超载
         cls.check_for_data_overload_1(ip)
+
+    @classmethod
+    def get_update_cycle(cls, ip):
+        for disk_id in cls.io_load_input_queue[ip]:
+            return time.time() - cls.io_load_input_queue[ip][disk_id][-1][-1]
 
     @classmethod
     def check_for_data_overload_1(cls, ip):  # 检查输入队列和输出队列数据是否超载
