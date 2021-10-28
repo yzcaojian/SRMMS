@@ -131,12 +131,6 @@ class MainWidget(QWidget):
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
             self.title_branch.setText('''<font color=black face='黑体' size=6>（RAID架构）<font>''')
-            # for i in range(1, self.mult_disks_info_widget.tab_widget.count()):
-            #     self.mult_disks_info_widget.tab_widget.removeTab(i)  # 清除所有tab页
-            #     for (j, key) in enumerate(self.mult_disks_info_widget.tab_widget.tab_update_thread):
-            #         if j == i - 1:
-            #             self.mult_disks_info_widget.tab_widget.tab_update_thread[key].close_thread()
-            #             break
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
                 item.update_thread.close_thread()
@@ -152,10 +146,6 @@ class MainWidget(QWidget):
             self.raid_info_widget = None
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
-
-    # 当出现对硬盘故障预警的情况时弹窗告警
-    def show_disk_error_warning(self, server_ip, disk_id):
-        QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R4，剩余寿命在150天以下", QMessageBox.Ok)
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, '提醒', '你确认要退出程序吗？', QMessageBox.Yes, QMessageBox.No)
@@ -211,8 +201,6 @@ class TransactionProcessingThread(QThread):
             start_prediction_training_thread()
             # 检查是否有硬盘故障预警
             hard_disk_failutre_warning(hard_disk_failure_prediction_list, warning_message_queue)
-            # for failure in failure_list:
-            #     main.main_ui.show_disk_error_warning(failure[0], failure[1])
             # 判断服务器失联告警
             sever_disconnection_warning(io_load_input_queue, warning_message_queue)
             # 判断硬盘持续高I/O需求
