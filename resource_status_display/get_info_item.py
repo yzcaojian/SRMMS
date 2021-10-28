@@ -68,7 +68,7 @@ def get_execution_state_item(line, IsDate=False):
 
 
 # 获取总体信息表的表格item, server_storage_info是ServerInfo的对象
-def get_server_storage_info_item(server_storage_info, turn=1):
+def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
     # 设置默认字体为宋体，大小设为14，并且加粗(划掉)
     text_font = QFont("黑体", 14)  # , QFont.Bold)
 
@@ -105,8 +105,9 @@ def get_server_storage_info_item(server_storage_info, turn=1):
     server_storage_occupied_rate = QLabel(server_storage_info.occupiedRate)
     server_storage_occupied_rate.setFont(text_font)
 
-    # 连接状态， QLabel('''<font color=red>异常<font>''')
-    connected_state = QLabel('''<font color=\'#00ff50\'>正常<font>''')
+    # 连接状态
+    connected_state = QLabel('''<font color=\'#00ff50\'><font>''') if update_cycle < 2 else QLabel('''<font color=red><font>''')
+    connected_state.setText(str(update_cycle) + "s")
     connected_state.setFont(text_font)
 
     return [server_name_widget, server_total_storage, server_occupied_storage, server_storage_occupied_rate, connected_state]

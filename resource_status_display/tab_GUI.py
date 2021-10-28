@@ -64,7 +64,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息页面的总体信息表格窗口
         server_storage_table = QTableWidget(len(self.server_overall_info), 5)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '连接状态'])  # 设置表头
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '刷新延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
@@ -96,16 +96,15 @@ class MultDisksInfoTabWidget(QTabWidget):
             self.server_overall_info = in_interface_impl.get_server_overall_info(0)
             server_storage_info_list = self.server_overall_info
             server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
-            # server_storage_table.clear()  # 清空刷新前的所有项
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
+                update_cycle = in_interface_impl.get_update_cycle(single_server_info.serverIP)
                 # 添加单元格信息
-                if single_server_info.serverIP not in self.exception_dict:  # 还有服务器图标闪烁
-                    line = get_server_storage_info_item(single_server_info)
-                else:
-                    self.exception_dict[single_server_info.serverIP][0] = - \
-                    self.exception_dict[single_server_info.serverIP][0]
-                    line = get_server_storage_info_item(single_server_info,
+                if single_server_info.serverIP not in self.exception_dict:
+                    line = get_server_storage_info_item(single_server_info, update_cycle)
+                else:  # 还有服务器图标闪烁
+                    self.exception_dict[single_server_info.serverIP][0] = - self.exception_dict[single_server_info.serverIP][0]
+                    line = get_server_storage_info_item(single_server_info, update_cycle,
                                                         self.exception_dict[single_server_info.serverIP][0])
 
                 for j, cell in enumerate(line):
@@ -497,10 +496,10 @@ class RaidInfoTabWidget(QTabWidget):
         super().__init__()
         self.overall_info_tab = QWidget()
         self.server_overall_info = in_interface_impl.get_server_overall_info(1)  # 服务器总体信息列表
-        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[
-            0].serverIP  # 选中的服务器IP地址，默认是第一个
-        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip,
-                                                                               1)  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
+        # 选中的服务器IP地址，默认是第一个
+        self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
+        # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
+        self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
         self.update_thread = UpdateRAIDDataThread(lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
@@ -516,7 +515,7 @@ class RaidInfoTabWidget(QTabWidget):
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息表格窗口
         server_storage_table = QTableWidget(len(self.server_overall_info), 5)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '连接状态'])  # 设置表头
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '刷新延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
@@ -529,7 +528,6 @@ class RaidInfoTabWidget(QTabWidget):
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
         server_storage_table.clicked.connect(lambda: show_volume_storage_list())
         server_storage_table.clicked.connect(lambda: set_server_io_line())  # 单击改变总体信息I/O负载图
-        # server_storage_table.clicked.connect(lambda: printSize())
 
         server_storage_table_layout = QVBoxLayout()
         server_storage_table_layout.addWidget(server_title)
@@ -537,11 +535,15 @@ class RaidInfoTabWidget(QTabWidget):
         server_storage_table_widget.setLayout(server_storage_table_layout)
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从server_storage_info_list中取数据放入server_storage_table中去
-        def show_server_storage_list(server_storage_info_list):
+        def show_server_storage_list():
+            self.server_overall_info = in_interface_impl.get_server_overall_info(1)
+            server_storage_info_list = self.server_overall_info
+            server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
             for i, single_server_info in enumerate(server_storage_info_list):
                 server_storage_table.setRowHeight(i, 60)
+                update_cycle = in_interface_impl.get_update_cycle(single_server_info.serverIP)
                 # 添加单元格信息
-                line = get_server_storage_info_item(single_server_info)
+                line = get_server_storage_info_item(single_server_info, update_cycle)
                 for j, cell in enumerate(line):
                     if j == 0:
                         server_storage_table.setCellWidget(i, j, cell)
@@ -553,7 +555,7 @@ class RaidInfoTabWidget(QTabWidget):
                     cell_widget.setLayout(cell_layout)
                     server_storage_table.setCellWidget(i, j, cell_widget)
 
-        show_server_storage_list(self.server_overall_info)
+        show_server_storage_list()
 
         # 服务器详细信息表
         volume_title = QLabel('''<font color=black face='黑体' size=5>服务器详细信息<font>''')
@@ -711,7 +713,7 @@ class RaidInfoTabWidget(QTabWidget):
         self.setLayout(whole_layout)
 
         # 定时刷新
-        self.update_thread.update_data.connect(lambda: show_server_storage_list(self.server_overall_info))
+        self.update_thread.update_data.connect(lambda: show_server_storage_list())
         self.update_thread.update_data.connect(lambda: show_volume_storage_list())
         self.update_thread.update_data.connect(lambda: set_server_io_line())
         self.update_thread.start()
