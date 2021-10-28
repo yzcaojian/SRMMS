@@ -106,9 +106,10 @@ def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
     server_storage_occupied_rate.setFont(text_font)
 
     # 连接状态
-    connected_state = QLabel('''<font color=\'#00ff50\'><font>''') if update_cycle < 2 else QLabel('''<font color=red><font>''')
+    connected_state = QLabel()
     connected_state.setText(str(update_cycle) + "s")
-    connected_state.setFont(text_font)
+    connected_state.setStyleSheet("color:green; font-family:'黑体'; font-size:24px") if update_cycle < 2 else \
+        connected_state.setStyleSheet("color:red; font-family:'黑体'; font-size:24px")
 
     return [server_name_widget, server_total_storage, server_occupied_storage, server_storage_occupied_rate, connected_state]
 

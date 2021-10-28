@@ -64,7 +64,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息页面的总体信息表格窗口
         server_storage_table = QTableWidget(len(self.server_overall_info), 5)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '刷新延迟'])  # 设置表头
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '数据延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式
@@ -515,7 +515,7 @@ class RaidInfoTabWidget(QTabWidget):
         server_title.setStyleSheet("background-color:#dddddd;width:100px")
         server_storage_table_widget = QWidget()  # 总体信息表格窗口
         server_storage_table = QTableWidget(len(self.server_overall_info), 5)
-        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '刷新延迟'])  # 设置表头
+        server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '数据延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:rgb(155, 194, 200); font:14pt SimHei; color:black}")  # 设置表头样式
         server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #daeefe}")  # 设置行选中样式

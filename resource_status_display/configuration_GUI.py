@@ -215,9 +215,10 @@ class ConfigurationWidget(QWidget):
         if op == "增加":
             feedback = self.configuration_info.addServer(server_ip, server_name)
         elif op == "删除":
+            delete_ip = server_ip if not server_name else configuration_info.NametoIP(server_name)
             feedback, is_delete = self.configuration_info.deleteServer(self, server_ip, server_name)
             if is_delete == 1:
-                in_interface_impl.delete_server(server_ip)
+                in_interface_impl.delete_server(delete_ip)
         elif op == "更改":
             feedback = self.configuration_info.modifyName(server_ip, server_name)
         elif op == "查询":

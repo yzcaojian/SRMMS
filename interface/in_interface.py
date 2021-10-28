@@ -11,7 +11,7 @@ import time
 
 
 class in_interface:
-    
+
     # 服务器硬盘和I/O负载信息接口  数据通信解析模块->资源调度分配模块
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info):
@@ -200,6 +200,7 @@ class in_interface_impl(in_interface):
     two_disk_info_dict = {}  # 两类硬盘总体信息
     two_disk_io_dict = {}  # 两类硬盘实时I/O负载信息
     two_disk_io_dict_past = {}  # 两类硬盘历史I/O负载信息
+    update_time = {}  # 服务器上次刷新数据时间
 
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
@@ -227,7 +228,7 @@ class in_interface_impl(in_interface):
     hard_disk_failure_prediction_list_ = []
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
-    
+
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
         from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute
@@ -261,8 +262,10 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_update_cycle(cls, ip):
-        for disk_id in cls.io_load_input_queue[ip]:
-            return round(time.time() - cls.io_load_input_queue[ip][disk_id][-1][-1], 2)
+        if ip in cls.update_time:
+            return round(time.time() + 0.5 - cls.update_time[ip], 2)
+        else:
+            return 0
 
     @classmethod
     def check_for_data_overload_1(cls, ip):  # 检查输入队列和输出队列数据是否超载
@@ -323,19 +326,21 @@ class in_interface_impl(in_interface):
         io_load_list, time_list = list_split(io_load)
         # 转化为时间字符串
         for i in range(len(time_list)):
-           time_list[i] = time.strftime("%H:%M", time.localtime(time_list[i]))
+            time_list[i] = time.strftime("%H:%M", time.localtime(time_list[i]))
 
         return io_load_list, time_list
 
     @classmethod
     def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
-        if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
+        if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[
+            ip]:  # 如果为空
             return [], []
 
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
-        base = time.strftime("%H:%M:%S", time.localtime(cls.io_load_input_queue_display_past[ip][disk_id][0][1]))  # 第一个数据的时间
+        base = time.strftime("%H:%M:%S",
+                             time.localtime(cls.io_load_input_queue_display_past[ip][disk_id][0][1]))  # 第一个数据的时间
         base = time.strptime(base, "%H:%M:%S")
 
         # 时间元组初始化为2000年1月1日
@@ -486,6 +491,9 @@ class in_interface_impl(in_interface):
         # 检查数据超载
         cls.check_for_data_overload_2()
 
+        # 刷新ip更新数据时间
+        cls.update_time[ip] = time.time()
+
     @classmethod
     def check_for_data_overload_2(cls):  # 检查RAID架构总体负载和两类硬盘负载是否超载
         max_amount = 420
@@ -552,7 +560,7 @@ class in_interface_impl(in_interface):
         start = int(begin_time - base) if (begin_time - base) > 0 else 0
         end = int(end_time - base)
         # 截取从start到end的数据
-        RAID_io_past = cls.RAID_io_info_dict_past[ip][start:end+1]
+        RAID_io_past = cls.RAID_io_info_dict_past[ip][start:end + 1]
         if not RAID_io_past:
             return [], []
         RAID_io_past_list, time_list = list_split(RAID_io_past)
@@ -579,14 +587,15 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_two_disk_info(cls, ip):
-        if ip == "": return []
+        if not ip:
+            return None
         two_disk_info = cls.two_disk_info_dict[ip]
-
-        # return [] if two_disk_info == [] else TwoDiskInfo(two_disk_info)
         return TwoDiskInfo(two_disk_info)
 
     @classmethod
     def get_hdd_disk_io_info(cls, ip):
+        if not ip:
+            return [], []
         hdd_disk_list = cls.two_disk_io_dict[ip]["hdd"]
         hdd_io_list, time_list = list_split(hdd_disk_list)
 
@@ -622,6 +631,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_ssd_disk_io_info(cls, ip):
+        if not ip:
+            return [], []
         ssd_disk_list = cls.two_disk_io_dict[ip]["ssd"]
         ssd_io_list, time_list = list_split(ssd_disk_list)
 
@@ -669,7 +680,7 @@ class in_interface_impl(in_interface):
             for volume in detailed_info:
                 server_detailed_info.append(LogicVolumeInfo(volume))
         return server_detailed_info
-    
+
     @classmethod
     def IN_DCA_HDFP(cls, ip, smart_data):
         # print(smart_data)
@@ -794,5 +805,3 @@ class in_interface_impl(in_interface):
             del cls.exception_dict[ip]
         if ip in cls.exception_dict:
             del cls.exception_dict[ip]
-
-
