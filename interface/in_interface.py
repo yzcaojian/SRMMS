@@ -332,15 +332,13 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_io_load_input_queue_display_past(cls, ip, disk_id, time_begin, time_end):
-        if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[
-            ip]:  # 如果为空
+        if ip not in cls.io_load_input_queue_display_past or disk_id not in cls.io_load_input_queue_display_past[ip]:  # 如果为空
             return [], []
 
         # 将时间字符串转化为时间元组
         begin = time.strptime(time_begin, "%H:%M")
         end = time.strptime(time_end, "%H:%M")
-        base = time.strftime("%H:%M:%S",
-                             time.localtime(cls.io_load_input_queue_display_past[ip][disk_id][0][1]))  # 第一个数据的时间
+        base = time.strftime("%H:%M:%S", time.localtime(cls.io_load_input_queue_display_past[ip][disk_id][0][1]))  # 第一个数据的时间
         base = time.strptime(base, "%H:%M:%S")
 
         # 时间元组初始化为2000年1月1日
@@ -764,7 +762,9 @@ class in_interface_impl(in_interface):
         return time_list
 
     @classmethod
-    def delete_server(cls, ip):
+    def delete_server(cls, ip, lock):
+        # 删除前先申请锁
+        lock.lock()
         if ip in cls.server_info_dict:
             del cls.server_info_dict[ip]
         if ip in cls.RAID_io_info_dict:
@@ -805,3 +805,7 @@ class in_interface_impl(in_interface):
             del cls.exception_dict[ip]
         if ip in cls.exception_dict:
             del cls.exception_dict[ip]
+        if ip in cls.update_time:
+            del cls.update_time[ip]
+        # 释放锁
+        lock.unlock()

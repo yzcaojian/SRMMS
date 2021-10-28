@@ -45,7 +45,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 选中服务器两类硬盘容量、I/O负载、数量、故障率信息列表
         self.two_disk_info = in_interface_impl.get_two_disk_info(self.selected_server_ip)
         self.server_detailed_info = {}  # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为DiskInfo
-        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据局
+        self.update_thread = UpdateMDDataThread(lock)  # 后台线程，每秒钟更新数据
         self.initUI()
         self.update_thread.start()
 

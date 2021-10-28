@@ -21,8 +21,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplicat
 
 class ConfigurationWidget(QWidget):
     # init名字写错了没有界面！！
-    def __init__(self):
+    def __init__(self, lock):
         super().__init__()
+        self.lock = lock
         self.edit_state = 0  # 编辑状态，表示对输入框的编辑是都可以编辑还是存在限制，0表示无限制
         self.configuration_info = configuration_info  # 用于操作同步配置文件内容和server_info内容一致
         self.server_info = self.get_server_info()  # 维护服务器IP地址和名称的信息
@@ -218,7 +219,7 @@ class ConfigurationWidget(QWidget):
             delete_ip = server_ip if not server_name else configuration_info.NametoIP(server_name)
             feedback, is_delete = self.configuration_info.deleteServer(self, server_ip, server_name)
             if is_delete == 1:
-                in_interface_impl.delete_server(delete_ip)
+                in_interface_impl.delete_server(delete_ip, self.lock)
         elif op == "更改":
             feedback = self.configuration_info.modifyName(server_ip, server_name)
         elif op == "查询":

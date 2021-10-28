@@ -244,7 +244,7 @@ class MultDisksInfoWidget(QWidget):
         self.initUI()
 
     def show_configuration_GUI(self):
-        self.configuration = ConfigurationWidget()
+        self.configuration = ConfigurationWidget(self.lock)
 
 
 
