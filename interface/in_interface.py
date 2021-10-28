@@ -532,6 +532,8 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_RAID_overall_io_info(cls, ip):
+        if ip not in cls.RAID_io_info_dict:
+            return [], []
         RAID_io_info_list = cls.RAID_io_info_dict[ip]
         RAID_io_list, time_list = list_split(RAID_io_info_list)
 
@@ -585,14 +587,14 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_two_disk_info(cls, ip):
-        if not ip:
+        if ip not in cls.two_disk_info_dict:
             return None
         two_disk_info = cls.two_disk_info_dict[ip]
         return TwoDiskInfo(two_disk_info)
 
     @classmethod
     def get_hdd_disk_io_info(cls, ip):
-        if not ip:
+        if ip not in cls.two_disk_io_dict:
             return [], []
         hdd_disk_list = cls.two_disk_io_dict[ip]["hdd"]
         hdd_io_list, time_list = list_split(hdd_disk_list)
@@ -629,7 +631,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_ssd_disk_io_info(cls, ip):
-        if not ip:
+        if ip not in cls.two_disk_io_dict:
             return [], []
         ssd_disk_list = cls.two_disk_io_dict[ip]["ssd"]
         ssd_io_list, time_list = list_split(ssd_disk_list)
@@ -666,7 +668,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_server_detailed_info(cls, ip, tag):
-        if ip == "":
+        if ip not in cls.detailed_info_dict:
             return []
         # 获取server_ip对应的服务器详细信息
         detailed_info = cls.detailed_info_dict[ip]
@@ -721,12 +723,10 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_health_degree(cls, server_ip, disk_id):  # 获取健康度信息
-        for ip in cls.health_degree_dict:
-            if server_ip == ip:
-                for ID in cls.health_degree_dict[ip]:
-                    if disk_id == ID:
-                        return cls.health_degree_dict[ip][ID]  # 返回对应的健康度信息
-        return 0  # 表示没有对应型号的预测模型
+        if server_ip in cls.health_degree_dict and disk_id in cls.health_degree_dict[server_ip]:
+            return cls.health_degree_dict[server_ip][disk_id]
+        else:
+            return 0  # 表示没有对应型号的预测模型
 
     @classmethod
     def IN_RSA_RSD(cls, warning):
