@@ -38,11 +38,11 @@ def get_ServerInfo_Item(serverInfo):
     server_name_widget.setFixedWidth(150)
     # server_name_widget.setWordWrap(True)
     server_name_widget.setToolTip(server_name)
-    server_name_widget.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+    server_name_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
 
     # 服务器IP地址
     server_IP_widget = QLabel(server_IP)
-    server_IP_widget.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+    server_IP_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
 
     single_server_layout.addWidget(server_image)
     single_server_layout.addWidget(server_name_widget, alignment=Qt.AlignLeft)
@@ -57,12 +57,12 @@ def get_ServerInfo_Item(serverInfo):
 def get_execution_state_item(line, IsDate=False):
     if IsDate:
         line_label = QLabel(line)
-        line_label.setStyleSheet("height:20px; font-size:20px; font-color:black; font-family:'黑体'")
+        line_label.setStyleSheet("height:20px; font-size:20px; font-family:'黑体'")
     else:
         line_label = QLabel(line)
         line_label.setWordWrap(True)  # 设置文本超出限制则换行
         line_label.setAlignment(Qt.AlignTop)
-        line_label.setStyleSheet("height:20px; font-size:16px; font-color:black; font-family:'黑体'; text-indent:4px")
+        line_label.setStyleSheet("height:20px; font-size:16px; font-family:'黑体'; text-indent:4px")
 
     return line_label
 

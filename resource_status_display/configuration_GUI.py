@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplicat
 
 
 class ConfigurationWidget(QWidget):
-    # init名字写错了没有界面！！
+
     def __init__(self, lock):
         super().__init__()
         self.lock = lock
@@ -147,11 +147,13 @@ class ConfigurationWidget(QWidget):
         server_IP_input.textEdited.connect(lambda: set_another_not_edit(server_name_input))
         server_name_input.textEdited.connect(lambda: set_another_not_edit(server_IP_input))
         # 绑定button事件，确认按钮提交用户操作，参数：选择的执行操作：增删改查，输入的数据 IP地址和（或）名称
-        button.clicked.connect(lambda: self.server_info_op(comb.currentText(), server_name_input.text(), server_IP_input.text()))
+        button.clicked.connect(
+            lambda: self.server_info_op(comb.currentText(), server_name_input.text(), server_IP_input.text()))
         #  绑定刷新服务器信息展示的事件，按照逻辑必须在上一条语句后面
         button.clicked.connect(lambda: show_server_info_list(self.server_info))
         # 绑定刷新操作执行状态展示的事件
         button.clicked.connect(lambda: show_operation_result(self.events_info))
+
         # server_IP_input.editingFinished.connect(lambda: set_another_edit(server_name_input))
         # server_name_input.editingFinished.connect(lambda: set_another_edit(server_IP_input))
 

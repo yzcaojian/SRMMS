@@ -11,6 +11,7 @@ from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRA
 from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
 from resource_status_display.detailed_info_tab import DetailedInfoTab
+from resource_status_display.configuration_checking import configuration_info
 
 """
 -*- coding: utf-8 -*- 
@@ -35,7 +36,7 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self, lock):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
+        # self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
         self.Tab_list = []
         self.lock = lock
         self.exception_dict = in_interface_impl.get_exception_dict()  # 异常信号收集
@@ -92,6 +93,8 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从server_storage_info_list中取数据放入server_storage_table中去
         def show_server_storage_list():
+            if self.selected_server_ip not in configuration_info.server_IPs:
+                self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
             global line
             self.server_overall_info = in_interface_impl.get_server_overall_info(0)
             server_storage_info_list = self.server_overall_info
@@ -536,6 +539,8 @@ class RaidInfoTabWidget(QTabWidget):
 
         # 定义内部函数事件，初始化或者是到刷新周期后，从server_storage_info_list中取数据放入server_storage_table中去
         def show_server_storage_list():
+            if self.selected_server_ip not in configuration_info.server_IPs:
+                self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
             self.server_overall_info = in_interface_impl.get_server_overall_info(1)
             server_storage_info_list = self.server_overall_info
             server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
