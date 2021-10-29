@@ -23,7 +23,6 @@ class HistoryIO(QWidget):
         self.disk_id = disk_id
         time = QTime.currentTime()
         self.time_end = str(time.hour()) + ":" + str(time.minute())
-        # time = time.addSecs(-60 * 60)
         self.time_start = str(time.hour()) + ":" + str(time.minute())
         self.level = level  # 历史负载信息显示分为显示秒级的和显示分钟级的，0表示服硬盘级以分钟显示，
         # 1表示服务器级SSD总负载以秒显示，2表示服务器级HDD总负载以秒显示，3表示RAID架构服务器总负载以秒显示
@@ -53,17 +52,13 @@ class HistoryIO(QWidget):
         time_start = QTimeEdit(QTime.currentTime())
         time_end = QTimeEdit(QTime.currentTime())
         if self.level == 0:
-            # time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 24))
-            # time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60))
-            # time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 23))
-            # time_end.setMaximumTime(QTime.currentTime())
-            time_start.setMaximumTime(QTime.currentTime())
-            time_end.setMaximumTime(QTime.currentTime())
+            time_start.setMaximumTime(QTime.currentTime().addSecs(-60 * 60 * 3))
+            time_end.setMaximumTime(QTime.currentTime().addSecs(-60 * 60 * 3))
         else:
             time_start.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3 - 420))
-            time_start.setMaximumTime(QTime.currentTime().addSecs(-420))
-            time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 2 - 420))
-            time_end.setMaximumTime(QTime.currentTime().addSecs(-420))
+            time_start.setMaximumTime(QTime.currentTime())
+            time_end.setMinimumTime(QTime.currentTime().addSecs(-60 * 60 * 3 - 420))
+            time_end.setMaximumTime(QTime.currentTime())
 
         # 时间段选择的改变刷新历史I/O事件
         time_start.timeChanged.connect(self.start_time_changed)
