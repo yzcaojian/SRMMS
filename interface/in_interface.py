@@ -844,6 +844,8 @@ class in_interface_impl(in_interface):
             if current_length > minute * 60:
                 # 将多余数据放入历史列表中去
                 for i in range(current_length - minute * 60):
+                    if ip not in cls.two_disk_io_dict_past:
+                        cls.two_disk_io_dict_past[ip] = {"hdd": [], "ssd": []}
                     cls.two_disk_io_dict_past[ip]["hdd"].append(cls.two_disk_io_dict[ip]["hdd"][i])
                     cls.two_disk_io_dict_past[ip]["ssd"].append(cls.two_disk_io_dict[ip]["ssd"][i])
                 # 删除前面的数据
@@ -881,6 +883,8 @@ class in_interface_impl(in_interface):
             if current_length > minute * 60:
                 # 将多余数据放入历史列表中去
                 for i in range(current_length - minute * 60):
+                    if ip not in cls.RAID_io_info_dict_past:
+                        cls.RAID_io_info_dict_past[ip] = []
                     cls.RAID_io_info_dict_past[ip].append(cls.RAID_io_info_dict[ip][i])
                 # 删除前面的数据
                 del cls.RAID_io_info_dict[ip][:current_length - minute * 60]

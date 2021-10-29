@@ -218,39 +218,40 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # I/O负载信息布局
         disks_io_widget = QWidget()
-        disks_io_layout = QHBoxLayout()
+        disks_io_layout = QVBoxLayout()
         disks_io_left_layout = QVBoxLayout()
         disks_io_right_layout = QVBoxLayout()
+        disks_io_left_layout.addWidget(QLabel())  # 占位
+        disks_io_right_layout.addWidget(QLabel())
 
-        # 试验阶段
+        # 定义label提示信息
+        tip_label = QLabel('''<font color=black face='黑体' size=4>注：设置显示SSD/HDD的实时总I/O负载信息的时间范围：<font>''')
+        tip_label.setContentsMargins(40, 0, 0, 0)
         # 定义左右选择下拉框选
-        left_comb = QComboBox()
-        left_comb.setFixedSize(70, 20)
-        left_comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
-        left_comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        comb = QComboBox()
+        comb.setFixedSize(70, 20)
+        comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
+        comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        comb.setCurrentIndex(7 - in_interface_impl.get_two_disk_io_show_time())
         # 绑定事件，通过下拉框选择限制输入框的编辑
-        left_comb.currentIndexChanged.connect(lambda: comboBoxSelection(left_comb.currentIndex()))
-        right_comb = QComboBox()
-        right_comb.setFixedSize(70, 20)
-        right_comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
-        right_comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
-        # 绑定事件，通过下拉框选择限制输入框的编辑
-        right_comb.currentIndexChanged.connect(lambda: comboBoxSelection(right_comb.currentIndex()))
+        comb.currentIndexChanged.connect(lambda: comboBoxSelection(comb.currentIndex()))
+        # 定义hdd和ssd数量label
+        text = "监控硬盘分类：" + "SSD数量：" + str(self.two_disk_info.ssdCounts) if self.two_disk_info else "0"
+        text += "、HDD数量：" + str(self.two_disk_info.hddCounts) if self.two_disk_info else "0"
+        text_label = QLabel(text)
+        text_label.setStyleSheet("height:20px; font-size:20px; font-family:黑体; background-color:white;")
 
+        tip_layout = QHBoxLayout()
+        tip_layout.addWidget(tip_label, alignment=Qt.AlignRight)
+        tip_layout.addWidget(comb, alignment=Qt.AlignLeft)
+        tip_layout.addWidget(text_label, alignment=Qt.AlignRight)
+
+        # 绑定事件，通过下拉框选择限制输入框的编辑
         def comboBoxSelection(index):
             #  取7 - index内分钟的数据
-            pass
+            in_interface_impl.change_two_disk_io_show_time(7 - index, self.selected_server_ip, self.lock)
 
-        # 两个负载图各自的label和button
-        left_tip_label = QLabel('''<font color=black face='黑体' size=3>注：设置显示SSD的实时总I/O负载信息的范围：<font>''')
-        right_tip_label = QLabel('''<font color=black face='黑体' size=3>注：设置显示HDD的实时总I/O负载信息的范围：<font>''')
-        left_tip_label.setContentsMargins(40, 0, 0, 0)
-        right_tip_label.setContentsMargins(40, 0, 0, 0)
-        left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts)) if self.two_disk_info else QLabel()
-        left_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
-        right_label = QLabel("HDD数量 " + str(self.two_disk_info.hddCounts)) if self.two_disk_info else QLabel()
-        right_label.setStyleSheet("height:20px;font-size:20px; font-family:SimHei; background-color:white")
-
+        # 两个负载图各自的button
         left_button = QPushButton("查看历史信息")
         left_button.setFixedSize(130, 30)
         left_button.setStyleSheet('''QPushButton{background-color:white; font-size:20px; font-family:SimHei; 
@@ -264,19 +265,6 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 绑定I/O负载历史信息弹窗事件
         left_button.clicked.connect(lambda: self.show_history_io_line(1))
         right_button.clicked.connect(lambda: self.show_history_io_line(2))
-        
-        left_text_widget = QWidget()
-        left_text_layout = QHBoxLayout()
-        left_text_layout.addWidget(left_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        left_text_layout.addWidget(left_comb, alignment=Qt.AlignTop)
-        left_text_layout.addWidget(left_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        left_text_widget.setLayout(left_text_layout)
-        right_text_widget = QWidget()
-        right_text_layout = QHBoxLayout()
-        right_text_layout.addWidget(right_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        right_text_layout.addWidget(right_comb, alignment=Qt.AlignTop)
-        right_text_layout.addWidget(right_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        right_text_widget.setLayout(right_text_layout)
 
         # 左边I/O负载图
         first_line_widget = QWebEngineView()
@@ -319,7 +307,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
             # 打开本地html文件
             first_line_widget.load(QUrl("file:///./html/ssd_io.html"))
-            disks_io_left_layout.addWidget(left_text_widget)
             disks_io_left_layout.addWidget(first_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_left_layout.addWidget(left_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
@@ -405,7 +392,6 @@ class MultDisksInfoTabWidget(QTabWidget):
             second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
             # 打开本地html文件
             second_line_widget.load(QUrl("file:///./html/hdd_io.html"))
-            disks_io_right_layout.addWidget(right_text_widget)
             disks_io_right_layout.addWidget(second_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_right_layout.addWidget(right_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
@@ -451,12 +437,11 @@ class MultDisksInfoTabWidget(QTabWidget):
         draw_ssd_io_line()
         draw_hdd_io_line()
 
-        disks_io_left_widget = QWidget()
-        disks_io_left_widget.setLayout(disks_io_left_layout)
-        disks_io_right_widget = QWidget()
-        disks_io_right_widget.setLayout(disks_io_right_layout)
-        disks_io_layout.addWidget(disks_io_left_widget)
-        disks_io_layout.addWidget(disks_io_right_widget)
+        two_io_disk_layout = QHBoxLayout()
+        two_io_disk_layout.addLayout(disks_io_left_layout)
+        two_io_disk_layout.addLayout(disks_io_right_layout)
+        disks_io_layout.addLayout(tip_layout)
+        disks_io_layout.addLayout(two_io_disk_layout)
         disks_io_widget.setLayout(disks_io_layout)
 
         # 全局布局
@@ -524,8 +509,9 @@ class RaidInfoTabWidget(QTabWidget):
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
         # 根据不同服务器IP地址查询的详细信息，类型应为列表的列表。每个元素为LogicVolumeInfo
         self.server_detailed_info = in_interface_impl.get_server_detailed_info(self.selected_server_ip, 1)
+        self.lock = lock
         self.graph_widget = QWidget()  # 两张表和I/O负载图的窗口
-        self.update_thread = UpdateRAIDDataThread(lock)  # 后台线程，每秒钟更新数据局
+        self.update_thread = UpdateRAIDDataThread(self.lock)  # 后台线程，每秒钟更新数据局
         self.initUI()
 
     def initUI(self):
@@ -639,12 +625,13 @@ class RaidInfoTabWidget(QTabWidget):
         comb.setFixedSize(70, 20)
         comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
         comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        comb.setCurrentIndex(7 - in_interface_impl.get_RAID_io_show_time())
         # 绑定事件，通过下拉框选择限制输入框的编辑
         comb.currentIndexChanged.connect(lambda: comboBoxSelection(comb.currentIndex()))
 
         def comboBoxSelection(index):
             #  取7 - index内分钟的数据
-            pass
+            in_interface_impl.change_RAID_io_show_time(7 - index, self.selected_server_ip, self.lock)
 
         # 负载图注释label
         tip_label = QLabel('''<font color=black face='黑体' size=4>注：设置显示服务器的实时总I/O负载信息的范围：<font>''')
