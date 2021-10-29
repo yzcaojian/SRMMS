@@ -219,6 +219,9 @@ class in_interface_impl(in_interface):
     disk_detailed_info = {}  # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
     warning_message_queue = []  # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
 
+    two_disk_io_max_amount = 420
+    RAID_io_io_max_amount = 420
+
     # 存放smart数据
     smart_data_dict = {}
     # 存放健康度信息
@@ -494,18 +497,19 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def check_for_data_overload_2(cls):  # 检查RAID架构总体负载和两类硬盘负载是否超载
-        max_amount = 420
+        max_amount_RAID = cls.RAID_io_io_max_amount
+        max_amount = cls.two_disk_io_max_amount
         for sever_ip in cls.RAID_io_info_dict:  # 检查RAID架构总体负载数据是否超载
             # 最多保存420个数据
             length = len(cls.RAID_io_info_dict[sever_ip])
-            if length > max_amount:
+            if length > max_amount_RAID:
                 if sever_ip not in cls.RAID_io_info_dict_past:
                     cls.RAID_io_info_dict_past[sever_ip] = []
                 # 将多的数据添加到历史数据中
-                for i in range(length - max_amount):
+                for i in range(length - max_amount_RAID):
                     cls.RAID_io_info_dict_past[sever_ip].append(cls.RAID_io_info_dict[sever_ip][i])
                 # 删除前面的数据
-                del cls.RAID_io_info_dict[sever_ip][:length - max_amount]
+                del cls.RAID_io_info_dict[sever_ip][:length - max_amount_RAID]
                 # 历史数据最多保存3小时
                 _length = len(cls.RAID_io_info_dict_past[sever_ip])
                 if _length > 3 * 60 * 60:
@@ -807,5 +811,80 @@ class in_interface_impl(in_interface):
             del cls.exception_dict[ip]
         if ip in cls.update_time:
             del cls.update_time[ip]
+        # 释放锁
+        lock.unlock()
+
+    @classmethod
+    def get_two_disk_io_show_time(cls):
+        return cls.two_disk_io_max_amount // 60
+
+    @classmethod
+    def change_two_disk_io_show_time(cls, minute, ip, lock):
+        if ip not in cls.two_disk_io_dict or not cls.two_disk_io_dict[ip]["hdd"]:
+            return
+        # 删除前先申请锁
+        lock.lock()
+
+        current_length = len(cls.two_disk_io_dict[ip]["hdd"])
+
+        # 列表由小变大
+        if (cls.two_disk_io_max_amount // 60) < minute:
+            # 缺少的数据从历史列表中取回来
+            if ip in cls.two_disk_io_dict_past and cls.two_disk_io_dict_past[ip]["hdd"]:
+                cls.two_disk_io_dict[ip]["hdd"] = cls.two_disk_io_dict_past[ip]["hdd"][
+                                                  -(minute * 60 - current_length):] + cls.two_disk_io_dict[ip]["hdd"]
+                cls.two_disk_io_dict[ip]["ssd"] = cls.two_disk_io_dict_past[ip]["ssd"][
+                                                  -(minute * 60 - current_length):] + cls.two_disk_io_dict[ip]["ssd"]
+                # 删除取出的数据
+                del cls.two_disk_io_dict_past[ip]["hdd"][-(minute * 60 - current_length):]
+                del cls.two_disk_io_dict_past[ip]["ssd"][-(minute * 60 - current_length):]
+        # 列表由大变小
+        else:
+            # 当前数据对于缩小后的列表已经溢出
+            if current_length > minute * 60:
+                # 将多余数据放入历史列表中去
+                for i in range(current_length - minute * 60):
+                    cls.two_disk_io_dict_past[ip]["hdd"].append(cls.two_disk_io_dict[ip]["hdd"][i])
+                    cls.two_disk_io_dict_past[ip]["ssd"].append(cls.two_disk_io_dict[ip]["ssd"][i])
+                # 删除前面的数据
+                del cls.two_disk_io_dict[ip]["hdd"][:current_length - minute * 60]
+                del cls.two_disk_io_dict[ip]["ssd"][:current_length - minute * 60]
+
+        cls.two_disk_io_max_amount = int(minute * 60)
+        # 释放锁
+        lock.unlock()
+
+    @classmethod
+    def get_RAID_io_show_time(cls):
+        return cls.RAID_io_io_max_amount // 60
+
+    @classmethod
+    def change_RAID_io_show_time(cls, minute, ip, lock):
+        if ip not in cls.RAID_io_info_dict or not cls.RAID_io_info_dict[ip]:
+            return
+        # 删除前先申请锁
+        lock.lock()
+
+        current_length = len(cls.RAID_io_info_dict[ip])
+
+        # 列表由小变大
+        if (cls.RAID_io_io_max_amount // 60) < minute:
+            # 缺少的数据从历史列表中取回来
+            if ip in cls.RAID_io_info_dict_past and cls.RAID_io_info_dict_past[ip]:
+                cls.RAID_io_info_dict[ip] = cls.RAID_io_info_dict_past[ip][
+                                                  -(minute * 60 - current_length):] + cls.RAID_io_info_dict[ip]
+                # 删除取出的数据
+                del cls.RAID_io_info_dict_past[ip][-(minute * 60 - current_length):]
+        # 列表由大变小
+        else:
+            # 当前数据对于缩小后的列表已经溢出
+            if current_length > minute * 60:
+                # 将多余数据放入历史列表中去
+                for i in range(current_length - minute * 60):
+                    cls.RAID_io_info_dict_past[ip].append(cls.RAID_io_info_dict[ip][i])
+                # 删除前面的数据
+                del cls.RAID_io_info_dict[ip][:current_length - minute * 60]
+
+        cls.RAID_io_io_max_amount = int(minute * 60)
         # 释放锁
         lock.unlock()
