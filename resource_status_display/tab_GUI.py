@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
-    QSplitter, QTableWidget, QAbstractItemView, QHeaderView
+    QSplitter, QTableWidget, QAbstractItemView, QHeaderView, QComboBox
 from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
@@ -222,9 +222,28 @@ class MultDisksInfoTabWidget(QTabWidget):
         disks_io_left_layout = QVBoxLayout()
         disks_io_right_layout = QVBoxLayout()
 
+        # 试验阶段
+        # 定义左右选择下拉框选
+        left_comb = QComboBox()
+        left_comb.setFixedSize(70, 20)
+        left_comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
+        left_comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        # 绑定事件，通过下拉框选择限制输入框的编辑
+        left_comb.currentIndexChanged.connect(lambda: comboBoxSelection(left_comb.currentIndex()))
+        right_comb = QComboBox()
+        right_comb.setFixedSize(70, 20)
+        right_comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
+        right_comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        # 绑定事件，通过下拉框选择限制输入框的编辑
+        right_comb.currentIndexChanged.connect(lambda: comboBoxSelection(right_comb.currentIndex()))
+
+        def comboBoxSelection(index):
+            #  取7 - index内分钟的数据
+            pass
+
         # 两个负载图各自的label和button
-        left_tip_label = QLabel('''<font color=black face='黑体' size=3>注：默认显示SSD7分钟内的实时总I/O负载信息<font>''')
-        right_tip_label = QLabel('''<font color=black face='黑体' size=3>注：默认显示HDD7分钟内的实时总I/O负载信息<font>''')
+        left_tip_label = QLabel('''<font color=black face='黑体' size=3>注：设置显示SSD的实时总I/O负载信息的范围：<font>''')
+        right_tip_label = QLabel('''<font color=black face='黑体' size=3>注：设置显示HDD的实时总I/O负载信息的范围：<font>''')
         left_tip_label.setContentsMargins(40, 0, 0, 0)
         right_tip_label.setContentsMargins(40, 0, 0, 0)
         left_label = QLabel("SSD数量 " + str(self.two_disk_info.ssdCounts)) if self.two_disk_info else QLabel()
@@ -249,11 +268,13 @@ class MultDisksInfoTabWidget(QTabWidget):
         left_text_widget = QWidget()
         left_text_layout = QHBoxLayout()
         left_text_layout.addWidget(left_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        left_text_layout.addWidget(left_comb, alignment=Qt.AlignTop)
         left_text_layout.addWidget(left_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
         left_text_widget.setLayout(left_text_layout)
         right_text_widget = QWidget()
         right_text_layout = QHBoxLayout()
         right_text_layout.addWidget(right_tip_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        right_text_layout.addWidget(right_comb, alignment=Qt.AlignTop)
         right_text_layout.addWidget(right_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
         right_text_widget.setLayout(right_text_layout)
 
@@ -613,6 +634,25 @@ class RaidInfoTabWidget(QTabWidget):
         table_widget.setLayout(table_layout)
 
         # 总体I/O负载信息图
+        # 试验阶段
+        comb = QComboBox()
+        comb.setFixedSize(70, 20)
+        comb.addItems(["7分钟", "6分钟", "5分钟", "4分钟", "3分钟"])
+        comb.setStyleSheet("QComboBox{height:20px; width:20px; font-size:16px}")
+        # 绑定事件，通过下拉框选择限制输入框的编辑
+        comb.currentIndexChanged.connect(lambda: comboBoxSelection(comb.currentIndex()))
+
+        def comboBoxSelection(index):
+            #  取7 - index内分钟的数据
+            pass
+
+        # 负载图注释label
+        tip_label = QLabel('''<font color=black face='黑体' size=4>注：设置显示服务器的实时总I/O负载信息的范围：<font>''')
+        tip_layout = QHBoxLayout()
+        tip_layout.addWidget(tip_label, alignment=Qt.AlignRight)
+        tip_layout.addWidget(comb, alignment=Qt.AlignLeft)
+        tip_widget = QWidget()
+        tip_widget.setLayout(tip_layout)
         # 负载图的button
         io_button = QPushButton("历史信息")
         io_button.setFixedSize(100, 30)
@@ -623,6 +663,7 @@ class RaidInfoTabWidget(QTabWidget):
         # I/O负载图
         server_io_widget = QWidget()
         server_io_layout = QVBoxLayout()
+        server_io_layout.addWidget(tip_widget, alignment=Qt.AlignCenter)
         line_widget = QWebEngineView()
 
         def draw_server_io_line():
