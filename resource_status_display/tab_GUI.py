@@ -249,7 +249,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 绑定事件，通过下拉框选择限制输入框的编辑
         def comboBoxSelection(index):
             #  取7 - index内分钟的数据
-            in_interface_impl.change_two_disk_io_show_time(7 - index, self.selected_server_ip, self.lock)
+            in_interface_impl.change_two_disk_io_show_time(7 - index, self.lock)
 
         # 两个负载图各自的button
         left_button = QPushButton("查看历史信息")
@@ -631,7 +631,7 @@ class RaidInfoTabWidget(QTabWidget):
 
         def comboBoxSelection(index):
             #  取7 - index内分钟的数据
-            in_interface_impl.change_RAID_io_show_time(7 - index, self.selected_server_ip, self.lock)
+            in_interface_impl.change_RAID_io_show_time(7 - index, self.lock)
 
         # 负载图注释label
         tip_label = QLabel('''<font color=black face='黑体' size=4>注：设置显示服务器的实时总I/O负载信息的范围：<font>''')
