@@ -220,7 +220,7 @@ class in_interface_impl(in_interface):
     warning_message_queue = []  # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
 
     two_disk_io_max_amount = 420
-    RAID_io_io_max_amount = 420
+    RAID_io_max_amount = 420
 
     # 存放smart数据
     smart_data_dict = {}
@@ -497,7 +497,7 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def check_for_data_overload_2(cls):  # 检查RAID架构总体负载和两类硬盘负载是否超载
-        max_amount_RAID = cls.RAID_io_io_max_amount
+        max_amount_RAID = cls.RAID_io_max_amount
         max_amount = cls.two_disk_io_max_amount
         for sever_ip in cls.RAID_io_info_dict:  # 检查RAID架构总体负载数据是否超载
             # 最多保存420个数据
@@ -820,6 +820,9 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def change_two_disk_io_show_time(cls, minute, lock):
+        if (cls.two_disk_io_max_amount // 60) == minute:
+            return
+
         # 删除前先申请锁
         lock.lock()
         for ip in cls.two_disk_io_dict:
@@ -859,17 +862,20 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_RAID_io_show_time(cls):
-        return cls.RAID_io_io_max_amount // 60
+        return cls.RAID_io_max_amount // 60
 
     @classmethod
     def change_RAID_io_show_time(cls, minute, lock):
+        if (cls.RAID_io_max_amount // 60) == minute:
+            return
+        
         # 删除前先申请锁
         lock.lock()
         for ip in cls.RAID_io_info_dict:
             current_length = len(cls.RAID_io_info_dict[ip])
 
             # 列表由小变大
-            if (cls.RAID_io_io_max_amount // 60) < minute:
+            if (cls.RAID_io_max_amount // 60) < minute:
                 # 缺少的数据从历史列表中取回来
                 if ip in cls.RAID_io_info_dict_past and cls.RAID_io_info_dict_past[ip]:
                     cls.RAID_io_info_dict[ip] = cls.RAID_io_info_dict_past[ip][
@@ -888,6 +894,6 @@ class in_interface_impl(in_interface):
                     # 删除前面的数据
                     del cls.RAID_io_info_dict[ip][:current_length - minute * 60]
 
-        cls.RAID_io_io_max_amount = int(minute * 60)
+        cls.RAID_io_max_amount = int(minute * 60)
         # 释放锁
         lock.unlock()

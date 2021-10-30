@@ -14,7 +14,7 @@ def analyse_data(ip, lock):
         return
     # 通过外部接口请求资源信息
     try:
-        json_data = out_interface_impl.OUT_SS_SRMMS(ip)
+        json_data = out_interface_impl.OUT_SS_SRMMS_(ip)
     # 服务器失联 捕获异常
     except TimeoutError:
         print("连接超时，IP地址不存在")
