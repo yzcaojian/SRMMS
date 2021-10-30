@@ -5,6 +5,7 @@
 # @Time: 2021/5/6 15:56
 
 import time
+import _thread
 from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.log_exception_with_suggestions import Warning, Scheduling, scheduling_list
@@ -26,7 +27,7 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         scheduling_list.add_new_scheduling(scheduling)
 
         # 发送分配指令 to数据通信解析模块
-        in_interface_impl.IN_RSA_DCA(serverIP, scheduling.suggestion)
+        _thread.start_new_thread(in_interface_impl.IN_RSA_DCA, (serverIP, scheduling.suggestion))
 
         # 处理完所有请求,将异常消息列表清空
         warning_message_queue.clear()
