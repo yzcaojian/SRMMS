@@ -595,6 +595,7 @@ class RaidInfoTabWidget(QTabWidget):
         def show_volume_storage_list():
             volume_storage_info_list = in_interface_impl.get_server_detailed_info(self.selected_server_ip,
                                                                                   1)  # 刷新的情况下直接用当前serverIP
+            volume_storage_table.setRowCount(len(volume_storage_info_list))  # 设置表格行数
             for i, single_volume_info in enumerate(volume_storage_info_list):
                 volume_storage_table.setRowHeight(i, 60)
                 # 添加单元格信息
