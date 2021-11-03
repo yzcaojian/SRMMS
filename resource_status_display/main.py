@@ -152,6 +152,7 @@ class MainWidget(QWidget):
         if reply == QMessageBox.Yes:
             MainWidget.running = False
             event.accept()
+            sys.exit(0)
         else:
             event.ignore()
 
