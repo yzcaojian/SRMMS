@@ -26,7 +26,7 @@ class ConfigurationWidget(QWidget):
         self.lock = lock
         self.edit_state = 0  # 编辑状态，表示对输入框的编辑是都可以编辑还是存在限制，0表示无限制
         self.configuration_info = configuration_info  # 用于操作同步配置文件内容和server_info内容一致
-        self.server_info = self.get_server_info()  # 维护服务器IP地址和名称的信息
+        self.server_info = self.get_server_info()  # 维护服务器IP地址、名称和架构的信息
         self.events_info = []  # 维护所有服务型信息上的操作的历史结果
         self.initUI()
 
@@ -49,7 +49,6 @@ class ConfigurationWidget(QWidget):
         # 最顶端的文字：系统配置
         upper_title = QLabel('''<font color=black face='黑体' size=8>系 统 配 置<font>''')
         upper_title.setAlignment(Qt.AlignCenter)  # 文本居中
-        # upper_title.setStyleSheet('border-width: 2px; border-style: solid; text-align:center')
 
         # 显示已经连入的存储服务器部分
         # 内部再布局
@@ -57,13 +56,12 @@ class ConfigurationWidget(QWidget):
         # 内部标题
         middle_title_layout = QVBoxLayout()
         middle_title = QLabel('''<font color=black face='黑体' size=4>正在监控的存储服务器信息<font>''')
-        # middle_title.setStyleSheet("text-align:left")
         middle_title.setAlignment(Qt.AlignLeft)  # 文本左对齐
         middle_title_layout.addWidget(middle_title)
 
         # 内部为一个listWidget，每行呈现两个server-info
         server_list = QListWidget()
-        server_list.setStyleSheet('{text-align:left; display:compact}')
+        # server_list.setStyleSheet('{text-align:left; display:compact}')
 
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):
@@ -242,11 +240,11 @@ class ConfigurationWidget(QWidget):
             return False
         return True
 
-    # 获取服务器信息，包括服务器IP地址和名称对
+    # 获取服务器信息，包括服务器IP地址、名称和所属架构
     def get_server_info(self):
         server_info = []
         for i in range(len(self.configuration_info.server_IPs)):
-            server_info.append([self.configuration_info.server_names[i], self.configuration_info.server_IPs[i]])
+            server_info.append([self.configuration_info.server_names[i], self.configuration_info.server_IPs[i], self.configuration_info.server_types[i]])
         return server_info
 
     # 获取历史执行状态结果列表

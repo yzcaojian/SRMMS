@@ -32,21 +32,24 @@ def check_ip(ip):
 
 class ConfigurationInfo:
     def __init__(self):
-        self.server_names, self.server_IPs = self.readFile()
+        self.server_names, self.server_IPs, self.server_types = self.readFile()
 
     def readFile(self):
         file = open('../resource_status_display/txt/configuration.txt', 'r')
         line = file.readline()
         server_names = []
         server_IPs = []
+        server_types = []
         while line:
-            index = line.find(' ')
+            lindex = line.find(' ')
+            rindex = line.rfind(' ')
             last = line.find('\n') if line.find('\n') != -1 else len(line)
-            server_names.append(line[:index])
-            server_IPs.append(line[index+1:last])
+            server_names.append(line[:lindex])
+            server_IPs.append(line[lindex+1:rindex])
+            server_types.append(line[rindex+1:last])
             line = file.readline()
         file.close()
-        return server_names, server_IPs
+        return server_names, server_IPs, server_types
 
     def writeFile(self, mode, new_line):
         file = open('./txt/configuration.txt', 'a+')
@@ -57,12 +60,12 @@ class ConfigurationInfo:
             file.seek(0)
             file.truncate()
             for i in range(len(self.server_names)):
-                file.write(self.server_names[i] + ' ' + self.server_IPs[i] + "\n")
+                file.write(self.server_names[i] + ' ' + self.server_IPs[i] + ' ' + self.server_types[i] + "\n")
         elif mode == 3:  # 修改
             file.seek(0)
             file.truncate()
             for i in range(len(self.server_names)):
-                file.write(self.server_names[i] + ' ' + self.server_IPs[i] + "\n")
+                file.write(self.server_names[i] + ' ' + self.server_IPs[i] + ' ' + self.server_types[i] + "\n")
         file.close()
 
     def IsNameExist(self, server_name):
@@ -94,9 +97,10 @@ class ConfigurationInfo:
             return "添加失败，服务器" + ip_address + "未部署代理程序。"
         elif data == 3:
             return "添加失败，由于未知错误，IP地址连接出现问题。"
+        server_type = "0" if data == 5 else "1"
         self.server_names.append(server_name)
         self.server_IPs.append(ip_address)
-        self.writeFile(1, server_name + ' ' + ip_address + "\n")
+        self.writeFile(1, server_name + ' ' + ip_address + ' ' + server_type + "\n")
         return "已成功配置增加新的服务器" + server_name + "。"
 
     def deleteServer(self, widget, ip_address, server_name):
@@ -174,7 +178,7 @@ class ConfigurationInfo:
 configuration_info = ConfigurationInfo()
 
 # server1 192.168.1.1
-# serevr2 192.168.1.2
+# server2 192.168.1.2
 # server3 192.168.1.3
 # server4 192.168.1.4
 # local1 192.168.20.1

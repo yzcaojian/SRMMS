@@ -17,6 +17,7 @@ def get_ServerInfo_Item(serverInfo):
     # 读取的数据
     server_name = serverInfo[0]
     server_IP = serverInfo[1]
+    server_type = serverInfo[2]
 
     # 总体窗口
     server_widget = QWidget()
@@ -25,7 +26,7 @@ def get_ServerInfo_Item(serverInfo):
 
     # 图标
     server_image = QLabel()
-    server_image.setFixedSize(50, 50)
+    server_image.setFixedSize(30, 50)
     # 对读入图标进行调整，不能简单用resize
     png = QPixmap('./png/server.png').scaled(30, 50)
     server_image.setPixmap(png)
@@ -35,7 +36,7 @@ def get_ServerInfo_Item(serverInfo):
     # name_len表示对服务器名称长度的计算，英文一个字符，中文两个字符为长度计算规则
     name_len = int(len(server_name.encode('utf-8')) - len(server_name)) / 2 + len(server_name)
     server_name_widget = QLabel(server_name) if name_len <= 12 else QLabel(server_name[0:5] + '...')
-    server_name_widget.setFixedWidth(150)
+    # server_name_widget.setFixedWidth(120)
     # server_name_widget.setWordWrap(True)
     server_name_widget.setToolTip(server_name)
     server_name_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
@@ -44,9 +45,14 @@ def get_ServerInfo_Item(serverInfo):
     server_IP_widget = QLabel(server_IP)
     server_IP_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
 
+    # 服务器架构类型
+    server_type_widget = QLabel("多硬盘架构") if server_type == "1" else QLabel( "RAID架构")
+    server_type_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
+
     single_server_layout.addWidget(server_image)
-    single_server_layout.addWidget(server_name_widget, alignment=Qt.AlignLeft)
-    single_server_layout.addWidget(server_IP_widget, alignment=Qt.AlignLeft)
+    single_server_layout.addWidget(server_name_widget, alignment=Qt.AlignCenter)
+    single_server_layout.addWidget(server_IP_widget, alignment=Qt.AlignCenter)
+    single_server_layout.addWidget(server_type_widget, alignment=Qt.AlignCenter)
 
     server_widget.setLayout(single_server_layout)
 
