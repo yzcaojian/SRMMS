@@ -1,4 +1,5 @@
 import socket
+import json
 from PyQt5.QtWidgets import QMessageBox
 """
 -*- coding: utf-8 -*- 
@@ -14,7 +15,7 @@ def check_ip(ip):
         client = socket.socket()
         client.connect((ip, 12345))
         client.send(bytes("请求数据2", encoding="utf-8"))
-        client.recv(10240).decode()
+        data = client.recv(10240).decode()
         client.close()
     # 服务器失联 捕获异常
     except TimeoutError:
@@ -28,7 +29,14 @@ def check_ip(ip):
         return 3
     # 连接正常
     else:
-        return 4
+        # 将json数据以字典形式读取出来
+        dict_data = json.loads(data)
+        overall_info = dict_data["overall_info"]
+        if len(overall_info) > 5:  # 多硬盘架构
+            return 4
+        else:  # RAID架构
+            return 5
+
 
 class ConfigurationInfo:
     def __init__(self):
