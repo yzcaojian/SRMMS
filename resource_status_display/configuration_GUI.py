@@ -66,6 +66,27 @@ class ConfigurationWidget(QWidget):
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):
             server_list.clear()  # 清空刷新前所有项
+
+            # 标头
+            server_name = QLabel("服务器名称")
+            server_name.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            server_IP = QLabel("IP地址")
+            server_IP.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            server_type = QLabel("类型")
+            server_type.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            head_layout = QHBoxLayout()
+            head_layout.addWidget(server_name, alignment=Qt.AlignCenter)
+            head_layout.addWidget(server_IP, alignment=Qt.AlignCenter)
+            head_layout.addWidget(server_type, alignment=Qt.AlignCenter)
+            head_widget = QWidget()
+            head_widget.setLayout(head_layout)
+            head_widget.setStyleSheet("background-color:#eeeeee")
+            header_item = QListWidgetItem()
+            header_item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
+            header_item.setSizeHint(QSize(200, 50))
+            server_list.addItem(header_item)
+            server_list.setItemWidget(header_item, head_widget)
+
             for (i, server_data) in enumerate(server_info):
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
