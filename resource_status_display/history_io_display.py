@@ -67,7 +67,7 @@ class HistoryIO(QWidget):
         # 时间选择的提示信息
         tip_image = QLabel()
         tip_image.setFixedSize(20, 20)
-        png = QPixmap('./png/tips.png').scaled(18, 18)
+        png = QPixmap('./resource_status_display/png/tips.png').scaled(18, 18)
         tip_image.setContentsMargins(0, 0, 30, 0)
         tip_image.setPixmap(png)
         tip_image.setToolTip("时间选择有上下界限制；\n时间选择通过点击上下键控制；\n只会显示输入时间范围内存在的数据。")
