@@ -129,6 +129,7 @@ class ConfigurationInfo:
             # delete_server = self.server_IPs[delete_index]
             self.server_names.remove(self.server_names[delete_index])
             self.server_IPs.remove(self.server_IPs[delete_index])
+            self.server_types.remove(self.server_types[delete_index])
             self.writeFile(2, '')
             return "已成功删除服务器" + (server_name if server_name != '' else ip_address) + "。", 1
         else:
