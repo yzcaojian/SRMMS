@@ -31,7 +31,7 @@ class HistoryIO(QWidget):
     def init_ui(self):
         self.setFixedSize(900, 600)
         self.setWindowTitle("历史I/O负载信息")
-        self.setWindowIcon(QIcon('./png/history_io.png'))  # 设置窗体图标
+        self.setWindowIcon(QIcon('./resource_status_display/png/history_io.png'))  # 设置窗体图标
         # 新建的窗口始终位于当前屏幕的最前面
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)
         # 父类窗口不能点击
@@ -129,12 +129,12 @@ class HistoryIO(QWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/history_server_io.html"))
+                    .render("./resource_status_display/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.resize(self.size().width(), self.size().height() - 90)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/history_server_io.html"))
+            line_widget.load(QUrl("file:///./resource_status_display/html/history_server_io.html"))
 
         def draw_disk_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
@@ -181,12 +181,12 @@ class HistoryIO(QWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./html/history_server_io.html"))
+                    .render("./resource_status_display/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.resize(self.size().width(), self.size().height() - 90)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./html/history_server_io.html"))
+            line_widget.load(QUrl("file:///./resource_status_display/html/history_server_io.html"))
 
         if self.level == 0:
             draw_disk_io_line()

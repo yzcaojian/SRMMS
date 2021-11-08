@@ -47,7 +47,7 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
 
     with tf.Session() as sess:
         for ip in io_load_input_queue:
-            save_model_path_ip = '../IO_load_prediction_model_training/model/' + ip + '/'
+            save_model_path_ip = './IO_load_prediction_model_training/model/' + ip + '/'
             # 读模型操作比较耗时
             sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录

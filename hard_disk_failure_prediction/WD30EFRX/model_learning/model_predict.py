@@ -90,7 +90,7 @@ def predict_1st(smart_data, smart_id):
         # 先加载图和参数变量
         # saver = tf.train.import_meta_graph('./model/hdd_GRU_model.ckpt.meta')  # 不能加这一步
         saver.restore(sess,
-                      tf.train.latest_checkpoint('../hard_disk_failure_prediction/WD30EFRX/model_learning/model/'))
+                      tf.train.latest_checkpoint('./hard_disk_failure_prediction/WD30EFRX/model_learning/model/'))
 
         prediction = sess.run(pred, feed_dict={x: smart_data_})
         print(prediction)

@@ -35,7 +35,7 @@ class ConfigurationWidget(QWidget):
         self.setFixedSize(900, 600)
         self.setWindowTitle("系统配置")
         self.setObjectName('ConfigurationWidget')
-        self.setWindowIcon(QIcon('./png/configuration.png'))  # 设置窗体图标
+        self.setWindowIcon(QIcon('./resource_status_display/png/configuration.png'))  # 设置窗体图标
         # self.setStyleSheet('#ConfigurationWidget{border-image:url(zuanshi.png);}')  # 设置背景图
         self.setStyleSheet("#ConfigurationWidget{background-color:#cccccc}")  # 设置背景颜色
         # 新建的窗口始终位于当前屏幕的最前面
