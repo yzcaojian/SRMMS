@@ -260,6 +260,7 @@ def get_scheduling_info_item(log):
     # 调度时间与内容
     index = log.find(' ')
     scheduling_time = QLabel(log[:index])
+    log = log[index:]
     scheduling_time.setFont(text_font)
     scheduling_content = QLabel(log) if len(log) < 40 else QLabel(log[:35] + "...")
     scheduling_content.setFont(text_font)

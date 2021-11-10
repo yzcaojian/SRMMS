@@ -236,8 +236,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         # 绑定事件，通过下拉框选择限制输入框的编辑
         comb.currentIndexChanged.connect(lambda: comboBoxSelection(comb.currentIndex()))
         # 定义hdd和ssd数量label
-        text = "监控硬盘分类：" + "SSD数量：" + str(self.two_disk_info.ssdCounts) if self.two_disk_info else "0"
-        text += "、HDD数量：" + str(self.two_disk_info.hddCounts) if self.two_disk_info else "0"
+        text = "监控硬盘分类：" + "SSD数量：" + str(self.two_disk_info.ssdCounts) if self.two_disk_info else ""
+        text += "、HDD数量：" + str(self.two_disk_info.hddCounts) if self.two_disk_info else ""
         text_label = QLabel(text)
         text_label.setStyleSheet("height:20px; font-size:20px; font-family:黑体; background-color:white;")
 

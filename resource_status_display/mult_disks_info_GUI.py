@@ -111,7 +111,7 @@ class MultDisksInfoWidget(QWidget):
             for warning in warning_list:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                item.setSizeHint(QSize(280, 120))  # 必须设置Item大小，否则默认很小
+                item.setSizeHint(QSize(260, 120))  # 必须设置Item大小，否则默认很小
                 # 添加告警信息条目
                 warning_item = get_warning_info_item(warning)
                 warning_widget.addItem(item)
