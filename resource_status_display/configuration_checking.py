@@ -13,12 +13,13 @@ from PyQt5.QtWidgets import QMessageBox
 def check_ip(ip):
     try:
         client = socket.socket()
+        client.settimeout(2)
         client.connect((ip, 12345))
         client.send(bytes("请求数据2", encoding="utf-8"))
         data = client.recv(10240).decode()
         client.close()
     # 服务器失联 捕获异常
-    except TimeoutError:
+    except socket.timeout:
         print("连接超时，IP地址不存在")
         return 1
     except ConnectionRefusedError:
@@ -104,7 +105,7 @@ class ConfigurationInfo:
         elif data == 2:
             return "添加失败，服务器" + ip_address + "未部署代理程序。"
         elif data == 3:
-            return "添加失败，由于未知错误，IP地址连接出现问题。"
+            return "添加失败，由于网络连接错误，IP地址访问出现问题。"
         server_type = "0" if data == 5 else "1"
         self.server_names.append(server_name)
         self.server_IPs.append(ip_address)

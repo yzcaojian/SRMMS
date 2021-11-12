@@ -1,3 +1,4 @@
+import _thread
 import locale
 import re
 import time
@@ -5,7 +6,7 @@ import time
 from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplication, QMainWindow, QComboBox, \
     QPushButton, QLineEdit, QTextBrowser, QListView, QListWidget, QListWidgetItem, QMessageBox
@@ -28,6 +29,7 @@ class ConfigurationWidget(QWidget):
         self.configuration_info = configuration_info  # 用于操作同步配置文件内容和server_info内容一致
         self.server_info = self.get_server_info()  # 维护服务器IP地址、名称和架构的信息
         self.events_info = []  # 维护所有服务型信息上的操作的历史结果
+        self.timer = QTimer(self)  # 初始化一个定时器
         self.initUI()
 
     def initUI(self):
@@ -171,10 +173,11 @@ class ConfigurationWidget(QWidget):
         #  绑定刷新服务器信息展示的事件，按照逻辑必须在上一条语句后面
         button.clicked.connect(lambda: show_server_info_list(self.server_info))
         # 绑定刷新操作执行状态展示的事件
+        # button.clicked.connect(lambda: _thread.start_new_thread(update_operation_list, ()))
         button.clicked.connect(lambda: show_operation_result(self.events_info))
 
-        # server_IP_input.editingFinished.connect(lambda: set_another_edit(server_name_input))
-        # server_name_input.editingFinished.connect(lambda: set_another_edit(server_IP_input))
+        # self.timer.timeout.connect(lambda: show_operation_result(self.events_info))  # 计时结束调用刷新操作配置日志的方法
+        # self.timer.start(1000)  # 设置计时间隔并启动
 
         # 内部函数，在查询和删除的操作下输入一个框时使另一个框不可编辑
         def set_another_not_edit(another_line_edit):
@@ -192,8 +195,7 @@ class ConfigurationWidget(QWidget):
             for daily in event_info:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
-                # item.setSizeHint(QSize(400, 100))  # 必须设置Item大小，否则默认很小
-                item.setSizeHint(QSize(400, 50))
+                item.setSizeHint(QSize(400, 50)) # 必须设置Item大小，否则默认很小
                 # 添加时间条目
                 date_widget = get_execution_state_item(daily["date"], True)
                 events_list.addItem(item)
@@ -235,6 +237,7 @@ class ConfigurationWidget(QWidget):
         if not self.illegal_ip_info(server_ip):
             return ""
         if op == "增加":
+            # self.set_events_info("正在连接该服务器......")
             feedback = self.configuration_info.addServer(server_ip, server_name)
         elif op == "删除":
             delete_ip = server_ip if not server_name else configuration_info.NametoIP(server_name)
