@@ -7,7 +7,7 @@ from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
 
 from interface.in_interface import in_interface_impl
-from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRAIDDataThread
+from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRAIDDataThread, UpdateTabDataThread
 from resource_status_display.history_io_display import HistoryIO
 from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
 from resource_status_display.detailed_info_tab import DetailedInfoTab
@@ -55,6 +55,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.setTabsClosable(True)  # 设置tab页可以关闭，添加关闭按钮
         # self.setMovable(True)  # 设置可以拖动
         self.tabCloseRequested.connect(self.tabClose)  # 绑定tab页关闭事件
+        self.currentChanged.connect(self.tabChange)  # tab页改变时停止对折叠页面的刷新，减少资源消耗和降低卡顿
         self.tabBar().setTabButton(0, QTabBar.RightSide, None)  # 设置总体信息页不能被关闭
 
         # 总体信息的tab页
@@ -469,6 +470,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         whole1_layout.addWidget(splitter)
         # clearLayout(self.overall_info_tab.layout())
         self.overall_info_tab.setLayout(whole1_layout)
+        # self.Tab_list.append(self.overall_info_tab)
 
         # 定时刷新
         self.update_thread.update_data.connect(lambda: show_server_storage_list())
@@ -489,6 +491,16 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.removeTab(index)
         self.Tab_list[index - 1].update_thread.close_thread()  # 关闭线程
         self.Tab_list.pop(index - 1)
+
+    def tabChange(self):
+        print("changed.......................................................")
+        if not self.Tab_list[self.currentIndex() - 1].update_thread.isRunning():
+            self.Tab_list[self.currentIndex() - 1].update_thread = UpdateTabDataThread(self.lock)  # 新建后台线程
+            self.Tab_list[self.currentIndex() - 1].bind_thread()  # 绑定数据请求函数
+            self.Tab_list[self.currentIndex() - 1].update_thread.start()  # 新线程启动
+        for i in range(1, self.count()):
+            if i != self.currentIndex() and self.Tab_list[i - 1].update_thread.isRunning():
+                self.Tab_list[i - 1].update_thread.close_thread()  # 关闭线程
 
     def set_selected_server_ip(self, server_selected):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP

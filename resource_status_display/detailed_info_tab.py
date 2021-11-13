@@ -33,7 +33,7 @@ class DetailedInfoTab(QTabWidget):
         self.exception_dict = in_interface_impl.get_exception_dict()
         self.detailed_tab = None
         self.server_detailed_info = None
-        self.initUI()
+        self.bind_thread = self.initUI()  # 用于绑定线程和刷新图表的信号槽的函数
         self.update_thread.start()
 
     def initUI(self):
@@ -123,7 +123,7 @@ class DetailedInfoTab(QTabWidget):
         health_degree_item_layout = QHBoxLayout()
         health_degree_text_layout = QHBoxLayout()
         health_degree_title = QLabel("硬盘健康度（图例）")
-        health_degree_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        health_degree_title.setStyleSheet("font-size:20px; color:black; font-family:'黑体'")
         heath_title_layout.addWidget(health_degree_title)
         # 剩余寿命条形图，对应预测结果
         remaining_days_layout = QVBoxLayout()
@@ -132,7 +132,7 @@ class DetailedInfoTab(QTabWidget):
         remaining_days_text_layout = QHBoxLayout()
         remaining_days_title = QLabel("硬盘剩余寿命预测")
         remaining_days_title.setContentsMargins(0, 0, 0, 10)
-        remaining_days_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        remaining_days_title.setStyleSheet("font-size:20px; color:black; font-family:'黑体'")
         days_title_layout.addWidget(remaining_days_title)
 
         health_degree_layout.addLayout(heath_title_layout)
@@ -218,7 +218,7 @@ class DetailedInfoTab(QTabWidget):
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                text2 = QLabel('''<font color=black face='黑体' size=5>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
+                text2 = QLabel('''<font face='黑体' size=5>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
                 # remaining_days_item_layout.addWidget(item2)  # 没有item
                 remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
@@ -238,11 +238,11 @@ class DetailedInfoTab(QTabWidget):
         # I/O图提示信息
         tip_layout = QVBoxLayout()
         io_title = QLabel("硬盘I/O负载信息")
-        io_title.setStyleSheet("font-size:20px; font-color:black; font-family:'黑体'")
+        io_title.setStyleSheet("font-size:20px; color:black; font-family:'黑体'")
         io_title.setContentsMargins(0, 50, 0, 10)
         tip_layout.addWidget(io_title)
-        tip_label_1 = QLabel('''<font color=black face='黑体' size=3>注1：默认显示硬盘三小时内的实时和预测I/O负载信息；<font>''')
-        tip_label_2 = QLabel('''<font color=black face='黑体' size=3>注2：每个点纵坐标表示该硬盘一分钟内的IO总和。<font>''')
+        tip_label_1 = QLabel('''<font face='黑体' size=3>注1：默认显示硬盘三小时内的实时和预测I/O负载信息；<font>''')
+        tip_label_2 = QLabel('''<font face='黑体' size=3>注2：每个点纵坐标表示该硬盘一分钟内的IO总和。<font>''')
         tip_layout.addWidget(tip_label_1)
         tip_layout.addWidget(tip_label_2)
         tip_label_1.setContentsMargins(20, 0, 0, 0)
@@ -404,10 +404,15 @@ class DetailedInfoTab(QTabWidget):
         whole2_layout.addWidget(disk_detailed_info_widget)
         self.detailed_tab.setLayout(whole2_layout)
 
+        # 绑定线程每秒刷新
+        def bind_thread():
+            self.update_thread.update_data.connect(lambda: show_disks_storage_list())
+            self.update_thread.update_data.connect(lambda: set_health_state())
+            self.update_thread.update_data.connect(lambda: set_disk_io_line())
+
         # 定时刷新
-        self.update_thread.update_data.connect(lambda: show_disks_storage_list())
-        self.update_thread.update_data.connect(lambda: set_health_state())
-        self.update_thread.update_data.connect(lambda: set_disk_io_line())
+        bind_thread()
+        return bind_thread
 
     def set_selected_disk_id(self, disk_selected):
         # index 表示当前tab页在selected_disk_id列表中对应的索引
