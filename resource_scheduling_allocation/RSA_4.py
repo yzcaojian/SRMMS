@@ -19,6 +19,8 @@ from resource_status_display.log_exception_with_suggestions import Warning, Sche
 def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
     for warning_message in warning_message_queue:
         errorID, timeslot, serverName, diskID = warning_message.errorId, warning_message.timeslot, warning_message.serverName, warning_message.diskId
+        if errorID == 3:
+            continue
         serverIP = configuration_info.NametoIP(serverName)
         now_time = time.time()
         now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
@@ -29,8 +31,8 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
         # 发送分配指令 to数据通信解析模块
         _thread.start_new_thread(in_interface_impl.IN_RSA_DCA, (serverIP, scheduling.suggestion))
 
-        # 处理完所有请求,将异常消息列表清空
-        warning_message_queue.clear()
+    # 处理完所有请求,将异常消息列表清空
+    warning_message_queue.clear()
 
         # # 硬盘故障预警信息
         # if errorID == 1:

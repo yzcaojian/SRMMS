@@ -27,7 +27,7 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             time_stamp = io_data[-1]
             now_time = time.time()
             # 间隔超过1分钟  视作服务器失联
-            if now_time - time_stamp > 60:
+            if 62 >= now_time - time_stamp > 60:
                 errorID = 3
                 now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
                 warning = Warning(errorID, now_time, configuration_info.IPtoName(ip), diskID, "")
