@@ -109,6 +109,7 @@ class ConfigurationInfo:
         server_type = "0" if data == 5 else "1"
         self.server_names.append(server_name)
         self.server_IPs.append(ip_address)
+        self.server_types.append(server_type)
         self.writeFile(1, server_name + ' ' + ip_address + ' ' + server_type + "\n")
         return "已成功配置增加新的服务器" + server_name + "。"
 
