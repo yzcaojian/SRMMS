@@ -273,6 +273,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         def draw_ssd_io_line():
             if not self.selected_server_ip:
                 return
+
             # 用于设置窗口宽高度，目前是设置固定高度
             disks_io_width = str(disks_io_widget.size().width() // 2 - 40) + "px"
             disks_io_height = str(disks_io_widget.size().height() - 100) + "px"
@@ -301,13 +302,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                     boundary_gap=False))
                     .render("./resource_status_display/html/ssd_io.html"))
 
+            # 打开本地html文件
+            first_line_widget.load(QUrl("file:///./resource_status_display/html/ssd_io.html"))
+
             first_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
             first_line_widget.resize(disks_io_widget.size().width() // 2 - 20,
                                      disks_io_widget.size().height() - 80)  # 高度设置小一点可以跟贴近底部
             # first_line_widget.resize(self.size().width() / 2, self.size().height() / 2 - 40)
-            # 打开本地html文件
-            first_line_widget.load(QUrl("file:///./resource_status_display/html/ssd_io.html"))
             disks_io_left_layout.addWidget(first_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_left_layout.addWidget(left_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
@@ -580,6 +582,7 @@ class RaidInfoTabWidget(QTabWidget):
                     server_storage_table.setCellWidget(i, j, cell_widget)
 
         show_server_storage_list()
+        server_storage_table.selectRow(0)  # 设置默认选中第一行
 
         # 服务器详细信息表
         volume_title = QLabel('''<font color=black face='黑体' size=5>服务器详细信息<font>''')
