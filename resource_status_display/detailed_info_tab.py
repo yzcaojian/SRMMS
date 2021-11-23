@@ -306,13 +306,13 @@ class DetailedInfoTab(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/" + self.selected_disk_id[1] + "_io.html"))  # 各硬盘有单独的IO图
+                    .render("./resources/html/" + self.selected_disk_id[1] + "_io.html"))  # 各硬盘有单独的IO图
 
             line_widget.setContentsMargins(0, 20, 0, 0)
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.resize(disk_detailed_info_widget.size().width(), disk_detailed_info_widget.size().height() / 2 - 30)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./resource_status_display/html/" + self.selected_disk_id[1] + "_io.html"))
+            line_widget.load(QUrl("file:///./resources/html/" + self.selected_disk_id[1] + "_io.html"))
             disk_io_layout.addWidget(line_widget)
             disk_io_layout.addWidget(io_button, alignment=Qt.AlignCenter | Qt.AlignTop)
 
@@ -348,7 +348,7 @@ class DetailedInfoTab(QTabWidget):
                         type_="category",
                         axistick_opts=opts.AxisTickOpts(is_inside=True),
                         boundary_gap=False))
-                        .render("./resource_status_display/html/" + self.selected_disk_id[1] + "_io.html"))
+                        .render("./resources/html/" + self.selected_disk_id[1] + "_io.html"))
             else:
                 time_list = in_interface_impl.merge_timeline(x_data, x_predict_data)
                 y_data_ = y_data + [None] * (len(time_list) - len(y_data))
@@ -382,13 +382,13 @@ class DetailedInfoTab(QTabWidget):
                         type_="category",
                         axistick_opts=opts.AxisTickOpts(is_inside=True),
                         boundary_gap=False))
-                        .render("./resource_status_display/html/" + self.selected_disk_id[1] + "_io.html"))
+                        .render("./resources/html/" + self.selected_disk_id[1] + "_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
             line_widget.setFixedSize(self.detailed_tab.size().width() / 2 - 20,
                                      disk_detailed_info_widget.size().height() / 2 - 20)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./resource_status_display/html/" + self.selected_disk_id[1] + "_io.html"))
+            line_widget.load(QUrl("file:///./resources/html/" + self.selected_disk_id[1] + "_io.html"))
 
         draw_disk_io_line()
 

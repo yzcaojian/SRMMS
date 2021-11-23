@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="de2beb9c42684f21b7200255048bd6ae" class="chart-container" style="width:290.5px; height:310px;"></div>
+    <div id="c95b51a220a64105b7e5f840a791504d" class="chart-container" style="width:644.5px; height:330.5px;"></div>
     <script>
-        var chart_de2beb9c42684f21b7200255048bd6ae = echarts.init(
-            document.getElementById('de2beb9c42684f21b7200255048bd6ae'), 'white', {renderer: 'canvas'});
-        var option_de2beb9c42684f21b7200255048bd6ae = {
+        var chart_c95b51a220a64105b7e5f840a791504d = echarts.init(
+            document.getElementById('c95b51a220a64105b7e5f840a791504d'), 'white', {renderer: 'canvas'});
+        var option_c95b51a220a64105b7e5f840a791504d = {
     "backgroundColor": "#ffffff",
     "animation": false,
     "animationThreshold": 2000,
@@ -22,8 +22,6 @@
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
     "color": [
-        "#4d5c6e",
-        "#7eca9c",
         "#c23531",
         "#2f4554",
         "#61a0a8",
@@ -51,83 +49,54 @@
     ],
     "series": [
         {
-            "type": "bar",
-            "name": "\u5df2\u4f7f\u7528\u5bb9\u91cf",
-            "legendHoverLink": true,
-            "data": [
-                2.2,
-                11.8
-            ],
-            "showBackground": false,
-            "stack": "stack1",
-            "barWidth": "40%",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
+            "type": "line",
+            "name": "\u5b9e\u65f6I/O\u8d1f\u8f7d",
+            "connectNulls": false,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
             "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "right",
-                "margin": 8,
-                "formatter": function(x) {return Number(x.data).toFixed() + 'TB';}
-            },
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
-            }
-        },
-        {
-            "type": "bar",
-            "name": "\u5269\u4f59\u5bb9\u91cf",
-            "legendHoverLink": true,
+            "step": false,
             "data": [
-                7.8,
-                18.2
+                [
+                    "20:22",
+                    12880
+                ],
+                [
+                    "20:23",
+                    12825
+                ]
             ],
-            "showBackground": false,
-            "stack": "stack1",
-            "barWidth": "40%",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
+            "hoverAnimation": true,
             "label": {
-                "show": true,
-                "position": "right",
-                "margin": 8,
-                "formatter": function(x) {return Number(x.data).toFixed() + 'TB';}
+                "show": false,
+                "position": "top",
+                "margin": 8
             },
-            "rippleEffect": {
+            "lineStyle": {
                 "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
-            }
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "areaStyle": {
+                "opacity": 0.5
+            },
+            "itemStyle": {
+                "color": "#ce1212"
+            },
+            "zlevel": 0,
+            "z": 0
         }
     ],
     "legend": [
         {
             "data": [
-                "\u5df2\u4f7f\u7528\u5bb9\u91cf",
-                "\u5269\u4f59\u5bb9\u91cf"
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d"
             ],
             "selected": {
-                "\u5df2\u4f7f\u7528\u5bb9\u91cf": true,
-                "\u5269\u4f59\u5bb9\u91cf": true
+                "\u5b9e\u65f6I/O\u8d1f\u8f7d": true
             },
             "show": true,
             "padding": 5,
@@ -138,10 +107,10 @@
     ],
     "tooltip": {
         "show": true,
-        "trigger": "item",
+        "trigger": "axis",
         "triggerOn": "mousemove|click",
         "axisPointer": {
-            "type": "line"
+            "type": "cross"
         },
         "showContent": true,
         "alwaysShowContent": false,
@@ -156,6 +125,7 @@
     "xAxis": [
         {
             "type": "category",
+            "name": "\u65f6\u95f4",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -169,6 +139,7 @@
             "inverse": false,
             "offset": 0,
             "splitNumber": 5,
+            "boundaryGap": false,
             "minInterval": 0,
             "splitLine": {
                 "show": false,
@@ -181,14 +152,15 @@
                 }
             },
             "data": [
-                "HDD",
-                "SSD"
+                "20:22",
+                "20:23"
             ]
         }
     ],
     "yAxis": [
         {
-            "name": "\u5bb9\u91cf\n\u5355\u4f4dTB",
+            "type": "value",
+            "name": "\u6bcf\u5206\u949fIO/KB",
             "show": true,
             "scale": false,
             "nameLocation": "end",
@@ -204,7 +176,7 @@
             "splitNumber": 5,
             "minInterval": 0,
             "splitLine": {
-                "show": false,
+                "show": true,
                 "lineStyle": {
                     "show": true,
                     "width": 1,
@@ -222,7 +194,7 @@
         }
     ]
 };
-        chart_de2beb9c42684f21b7200255048bd6ae.setOption(option_de2beb9c42684f21b7200255048bd6ae);
+        chart_c95b51a220a64105b7e5f840a791504d.setOption(option_c95b51a220a64105b7e5f840a791504d);
     </script>
 </body>
 </html>
