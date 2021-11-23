@@ -166,14 +166,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                         color='#000000',
                         formatter=JsCode("function(x) {return Number(x.data.value).toFixed(2) + 'TB'"
                                          "+ ' ' + Number(x.data.percent).toFixed(2) + '%';}"))
-            ).render("./resource_status_display/html/first.html"))
+            ).render("./resources/html/first.html"))
 
             first_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                      False)  # 将滑动条隐藏，避免遮挡内容
             first_bar_widget.resize(bar_widget.size().width() // 2 - 14, bar_widget.size().height())
             # first_bar_widget.resize(self.size().width() / 3, self.size().height() / 2 - 40)
             # 打开本地html文件
-            first_bar_widget.load(QUrl("file:///./resource_status_display/html/first.html"))
+            first_bar_widget.load(QUrl("file:///./resources/html/first.html"))
 
         bar_layout.addWidget(first_bar_widget, alignment=Qt.AlignCenter)
 
@@ -201,14 +201,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                 label_opts=opts.LabelOpts(
                     position="right",
                     formatter=JsCode("function(x){return parseFloat(x.data).toFixed() + '%';}"))  # 考虑用元组更改x.data的值
-            ).render("./resource_status_display/html/second.html"))
+            ).render("./resources/html/second.html"))
 
             second_bar_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
             second_bar_widget.resize(bar_widget.size().width() // 2 - 14, bar_widget.size().height())
             # first_bar_widget.resize(self.size().width() / 3, self.size().height() / 2 - 40)
             # 打开本地html文件
-            second_bar_widget.load(QUrl("file:///./resource_status_display/html/second.html"))
+            second_bar_widget.load(QUrl("file:///./resources/html/second.html"))
 
         bar_layout.addWidget(second_bar_widget, alignment=Qt.AlignCenter)
 
@@ -300,10 +300,10 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/ssd_io.html"))
+                    .render("./resources/html/ssd_io.html"))
 
             # 打开本地html文件
-            first_line_widget.load(QUrl("file:///./resource_status_display/html/ssd_io.html"))
+            first_line_widget.load(QUrl("file:///./resources/html/ssd_io.html"))
 
             first_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                       False)  # 将滑动条隐藏，避免遮挡内容
@@ -344,7 +344,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/ssd_io.html"))
+                    .render("./resources/html/ssd_io.html"))
 
             # first_line_widget = QWebEngineView()
             first_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
@@ -352,7 +352,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             first_line_widget.resize(disks_io_widget.size().width() // 2 - 20,
                                      disks_io_widget.size().height() - 80)  # 高度设置小一点可以跟贴近底部
             # 打开本地html文件
-            first_line_widget.load(QUrl("file:///./resource_status_display/html/ssd_io.html"))
+            first_line_widget.load(QUrl("file:///./resources/html/ssd_io.html"))
 
         # 右边I/O负载图
         second_line_widget = QWebEngineView()
@@ -387,14 +387,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/hdd_io.html"))
+                    .render("./resources/html/hdd_io.html"))
 
             # second_line_widget = QWebEngineView()
             second_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars,
                                                        False)  # 将滑动条隐藏，避免遮挡内容
             second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
             # 打开本地html文件
-            second_line_widget.load(QUrl("file:///./resource_status_display/html/hdd_io.html"))
+            second_line_widget.load(QUrl("file:///./resources/html/hdd_io.html"))
             disks_io_right_layout.addWidget(second_line_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
             disks_io_right_layout.addWidget(right_button, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
@@ -428,14 +428,14 @@ class MultDisksInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/hdd_io.html"))
+                    .render("./resources/html/hdd_io.html"))
 
             # 将滑动条隐藏，避免遮挡内容
             second_line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)
             second_line_widget.resize(disks_io_widget.size().width() // 2 - 20, disks_io_widget.size().height() - 80)
             # first_line_widget.resize(self.size().width() / 2 - 20, self.size().height() / 2 - 40)
             # 打开本地html文件
-            second_line_widget.load(QUrl("file:///./resource_status_display/html/hdd_io.html"))
+            second_line_widget.load(QUrl("file:///./resources/html/hdd_io.html"))
 
         draw_ssd_io_line()
         draw_hdd_io_line()
@@ -734,11 +734,11 @@ class RaidInfoTabWidget(QTabWidget):
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
                     boundary_gap=False))
-                    .render("./resource_status_display/html/raid_server_io.html"))
+                    .render("./resources/html/raid_server_io.html"))
 
             line_widget.resize(self.size().width() - 50, server_io_widget.size().height() - 60)
             # 打开本地html文件
-            line_widget.load(QUrl("file:///./resource_status_display/html/raid_server_io.html"))
+            line_widget.load(QUrl("file:///./resources/html/raid_server_io.html"))
 
         draw_server_io_line()
 

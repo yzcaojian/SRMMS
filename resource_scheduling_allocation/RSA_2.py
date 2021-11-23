@@ -40,7 +40,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 
     with tf.Session() as sess:
         for ip in io_load_input_queue:
-            save_model_path_ip = './IO_load_prediction_model_training/model/' + ip + '/'
+            save_model_path_ip = './resources/IO_load_prediction_model_training/model/' + ip + '/'
             # 读模型操作比较耗时
             sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录

@@ -44,7 +44,7 @@ class ConfigurationInfo:
         self.server_names, self.server_IPs, self.server_types = self.readFile()
 
     def readFile(self):
-        file = open('./resource_status_display/txt/configuration.txt', 'r')
+        file = open('./resources/txt/configuration.txt', 'r')
         line = file.readline()
         server_names = []
         server_IPs = []
@@ -61,7 +61,7 @@ class ConfigurationInfo:
         return server_names, server_IPs, server_types
 
     def writeFile(self, mode, new_line):
-        file = open('./resource_status_display/txt/configuration.txt', 'a+')
+        file = open('./resources/txt/configuration.txt', 'a+')
         if mode == 1:  # 添加
             file.write(new_line)
         elif mode == 2:  # 删除

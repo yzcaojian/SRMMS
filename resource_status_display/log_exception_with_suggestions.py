@@ -34,7 +34,7 @@ class Scheduling:
         return ""
 
     def write_file(self):
-        file = open('./resource_status_display/txt/schedule.txt', 'a+')
+        file = open('./resources/txt/schedule.txt', 'a+')
         file.writelines(self.timeslot + " 系统向服务器" + self.serverName + "发送调度建议，针对\"" +
                         self.situation + "\"的情况，向服务器作出如下调度建议：" + self.suggestion + "\n")
         file.close()
@@ -70,7 +70,7 @@ class Warning:
         return content
 
     def write_file(self):
-        file = open('./resource_status_display/txt/warning.txt', 'a+')
+        file = open('./resources/txt/warning.txt', 'a+')
         file.writelines(str(self.errorId) + " " + self.warningContent + "\n")
         file.close()
 
@@ -87,7 +87,7 @@ class SchedulingList:
                                     scheduling.situation + "\"的情况，向服务器作出如下调度建议：" + scheduling.suggestion + "\n")
 
     def read_file(self):
-        file = open('./resource_status_display/txt/schedule.txt', 'r')
+        file = open('./resources/txt/schedule.txt', 'r')
         line = file.readline()
         while line:
             self.scheduling_list.append(line)
@@ -111,7 +111,7 @@ class WarningList:
 
     # 读文件初始化，开始文件为空，之后退出程序再进入程序能读入以前的告警信息
     def read_file(self):
-        file = open('./resource_status_display/txt/warning.txt', 'r')
+        file = open('./resources/txt/warning.txt', 'r')
         line = file.readline()
         while line:
             index = line.find(' ')

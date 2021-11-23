@@ -28,7 +28,7 @@ def get_ServerInfo_Item(serverInfo):
     server_image = QLabel()
     server_image.setFixedSize(30, 50)
     # 对读入图标进行调整，不能简单用resize
-    png = QPixmap('./resource_status_display/png/server.png').scaled(30, 50)
+    png = QPixmap('./resources/png/server.png').scaled(30, 50)
     server_image.setPixmap(png)
 
     # 服务器名称
@@ -84,12 +84,12 @@ def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
     if turn > 0:
         server_image = QLabel()
         server_image.setFixedSize(26, 40)
-        png = QPixmap('./resource_status_display/png/server.png').scaled(24, 38)
+        png = QPixmap('./resources/png/server.png').scaled(24, 38)
         server_image.setPixmap(png)
     else:
         server_image = QLabel()
         server_image.setFixedSize(26, 40)
-        png = QPixmap('./resource_status_display/png/no.png').scaled(24, 38)
+        png = QPixmap('./resources/png/no.png').scaled(24, 38)
         server_image.setPixmap(png)
     server_name = QLabel(server_storage_info.serverName)
     server_name.setToolTip(server_storage_info.serverName + ' ' + server_storage_info.serverIP)
@@ -131,13 +131,13 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     if turn > 0:
         disk_image = QLabel()
         disk_image.setFixedSize(40, 40)
-        png = QPixmap('./resource_status_display/png/SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap(
-            './resource_status_display/png/HDD.png').scaled(38, 38)
+        png = QPixmap('./resources/png/SSD.png').scaled(38, 38) if disk_storage_info.type == "SSD" else QPixmap(
+            './resources/png/HDD.png').scaled(38, 38)
         disk_image.setPixmap(png)
     else:
         disk_image = QLabel()
         disk_image.setFixedSize(40, 40)
-        png = QPixmap('./resource_status_display/png/no.png').scaled(38, 38)
+        png = QPixmap('./resources/png/no.png').scaled(38, 38)
         disk_image.setPixmap(png)
     disk_name = QLabel(disk_storage_info.diskID)
     disk_name.setToolTip(disk_storage_info.diskID)
@@ -180,7 +180,7 @@ def get_volume_storage_info_item(volume_storage_info):
     volume_name_widget = QWidget()
     volume_image = QLabel()
     volume_image.setFixedSize(34, 40)
-    png = QPixmap('./resource_status_display/png/volume.png').scaled(32, 38)
+    png = QPixmap('./resources/png/volume.png').scaled(32, 38)
     volume_image.setPixmap(png)
     volume_name = QLabel(volume_storage_info.logicVolumeID)
     volume_name.setToolTip(volume_storage_info.logicVolumeID)
@@ -216,8 +216,8 @@ def get_warning_info_item(exception):
     slot_image = QLabel()
     slot_image.setFixedSize(40, 40)
     # 红点对应硬盘即将故障与服务器失联两种异常，橙点对应硬盘持续高负载和即将高负载两种异常
-    png = QPixmap('./resource_status_display/png/warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else QPixmap(
-        './resource_status_display/png/warning_orange.png').scaled(40, 40)
+    png = QPixmap('./resources/png/warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else QPixmap(
+        './resources/png/warning_orange.png').scaled(40, 40)
     slot_image.setPixmap(png)
     # 异常描述=告警描述=时间+内容
     warning_level = ""

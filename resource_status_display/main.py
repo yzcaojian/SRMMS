@@ -48,7 +48,7 @@ health_degree_dict = in_interface_impl.get_health_degree_dict()
 # 存放各硬盘需要预警的硬盘位置信息
 hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction_list()
 
-save_model = ['./IO_load_prediction_model_training/model/Financial2/', 'Model']
+save_model = ['./resources/IO_load_prediction_model_training/model/Financial2/', 'Model']
 
 
 class MainWidget(QWidget):
@@ -65,7 +65,7 @@ class MainWidget(QWidget):
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
         self.setWindowTitle("存储资源监控管理系统")
         self.setObjectName('MultDisksInfoWidget')
-        self.setWindowIcon(QIcon('./resource_status_display/png/software.png'))  # 设置窗体图标
+        self.setWindowIcon(QIcon('./resources/png/software.png'))  # 设置窗体图标
         self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
 
         self.initUI()
@@ -95,7 +95,7 @@ class MainWidget(QWidget):
         title_label.setAlignment(Qt.AlignCenter)  # 文本居中
         switch_button = QPushButton()
         switch_button.setFixedSize(34, 34)
-        switch_button_icon = QIcon('./resource_status_display/png/switch.png')
+        switch_button_icon = QIcon('./resources/png/switch.png')
         switch_button.setIcon(switch_button_icon)
         switch_button.setIconSize(QSize(30, 30))
         # switch_button.setContentsMargins(0, 30, 0, 0)
