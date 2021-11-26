@@ -37,7 +37,6 @@ def get_disk_data():
     read_bytes, write_bytes = 0, 0
     for item in diskitems:
         if item.Name in data_list:
-            print(item.DiskReadBytesPerSec)
             read_bytes += round(float(item.DiskReadBytesPerSec) / 1024, 1)
             write_bytes += round(float(item.DiskWriteBytesPerSec) / 1024, 1)
     total_io = round(read_bytes + write_bytes, 1)
