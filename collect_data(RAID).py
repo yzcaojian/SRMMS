@@ -45,7 +45,7 @@ def integrate_data():
 
     read_count, write_count, read_bytes, write_bytes, read_time, write_time = psutil.disk_io_counters()
     # I/O负载单位统一为kB，保留一位小数
-    total_io = round((read_bytes + write_bytes) / 1024, 1)
+    total_io = round((read_bytes + write_bytes) / (1024 * 60), 1)
     overall_info = [total_capacity, used_capacity, occupied_rate, total_io]
 
     dic = {"overall_info": overall_info, "detailed_info": detailed_info}
@@ -54,7 +54,7 @@ def integrate_data():
 
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('localhost', port))
+s.bind(('10.10.171.99', port))
 loop_flag = True
 while loop_flag:
     s.listen(1)

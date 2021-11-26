@@ -8,7 +8,7 @@ import socket
 import json
 s = socket.socket()
 port = 12345
-s.connect(("10.17.19.240", port))
+s.connect(("localhost", port))
 print("已连接")
 
 send_data = input("输入发送内容:")
