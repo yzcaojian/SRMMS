@@ -12,7 +12,7 @@ import numpy as np
 
 def predict_disk_health_state(disk):
     # disk格式为[diskID, model, smartID, smartData]
-    degree = 0
+    degree = -1
     if disk[1] == "HDS722020ALA330":
         from hard_disk_failure_prediction.HDS722020ALA330.model_learning.model_predict import predict_1st
         from hard_disk_failure_prediction.HDS722020ALA330.model_learning. model_predict_2 import predict_2nd
@@ -58,7 +58,7 @@ class DiskHealthPredictionThread(threading.Thread):
                     disk_list[3] = disk[3][:20]
                     del disk[3][0:-19]  # 只需要保留20天的历史smart数据即可，多余进行删除
                     health_degree = predict_disk_health_state(disk_list)
-                    if health_degree == -1:  # 预测发生错误
+                    if health_degree == -1:  # 预测发生错误或者没有做实际预测
                         break
                     if ip not in self.health_degree_dict:
                         self.health_degree_dict[ip] = {}  # {ip: {disk_id: degree}, ip :{disk_id: degree}}

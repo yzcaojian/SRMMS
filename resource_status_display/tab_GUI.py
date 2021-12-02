@@ -495,7 +495,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         self.Tab_list.pop(index - 1)
 
     def tabChange(self):
-        print("changed.......................................................")
+        print("change tab page")
         if not self.Tab_list[self.currentIndex() - 1].update_thread.isRunning():
             self.Tab_list[self.currentIndex() - 1].update_thread = UpdateTabDataThread(self.lock)  # 新建后台线程
             self.Tab_list[self.currentIndex() - 1].bind_thread()  # 绑定数据请求函数

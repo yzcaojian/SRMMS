@@ -4,6 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/6/15 10:14
 from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QPushButton,\
     QTableWidget, QAbstractItemView, QHeaderView
@@ -32,6 +33,7 @@ class DetailedInfoTab(QTabWidget):
         self.update_thread = UpdateTabDataThread(lock)
         self.exception_dict = in_interface_impl.get_exception_dict()
         self.detailed_tab = None
+        # self.health_state = {}
         self.server_detailed_info = None
         self.bind_thread = self.initUI()  # 用于绑定线程和刷新图表的信号槽的函数
         self.update_thread.start()
@@ -125,6 +127,16 @@ class DetailedInfoTab(QTabWidget):
         health_degree_title = QLabel("硬盘健康度（图例）")
         health_degree_title.setStyleSheet("font-size:20px; color:black; font-family:'黑体'")
         heath_title_layout.addWidget(health_degree_title)
+
+        # 可预测硬盘的提示信息
+        tip_image = QLabel()
+        tip_image.setFixedSize(20, 20)
+        png = QPixmap('./resources/png/tips.png').scaled(18, 18)
+        tip_image.setContentsMargins(0, 0, 30, 0)
+        tip_image.setPixmap(png)
+        tip_image.setToolTip("可预测硬盘型号：\nST4000DM000\nST12000NM0007\nHDS722020ALA330\nHMS5C4040ALE640\nWD30EFRX")
+        heath_title_layout.addWidget(tip_image, alignment=Qt.AlignRight)
+
         # 剩余寿命条形图，对应预测结果
         remaining_days_layout = QVBoxLayout()
         days_title_layout = QHBoxLayout()
@@ -139,8 +151,18 @@ class DetailedInfoTab(QTabWidget):
         remaining_days_layout.addLayout(days_title_layout)
 
         def set_health_state():
-            degree = in_interface_impl.get_health_degree(self.selected_disk_id[0], self.selected_disk_id[1])
-            # degree 0表示无预测结果 1-6表示一级健康度 7-9表示二级健康度
+            # degree说明：1-6表示一级健康度，7-9表示二级健康度，0表示时间数据不够20天，-1表示型号不匹配，-2表示无法获取型号
+            degree = -2  # 无法获取硬盘型号
+            model = in_interface_impl.get_disk_model(self.selected_disk_id[0], self.selected_disk_id[1])
+            if model != "":
+                remaining_days_title.setText("硬盘剩余寿命预测（硬盘型号为：" + model + "）")
+                if model not in {"ST4000DM000", "WD30EFRX", "HMS5C4040ALE640", "HDS722020ALA330"}:
+                    degree = -1
+                else:
+                    degree = in_interface_impl.get_health_degree(self.selected_disk_id[0], self.selected_disk_id[1])
+            else:
+                remaining_days_title.setText("硬盘剩余寿命预测")
+
             clearLayout(former_item_layout)
             clearLayout(former_text_layout)
             clearLayout(remaining_days_item_layout)
@@ -165,10 +187,10 @@ class DetailedInfoTab(QTabWidget):
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
                     remaining_days_item_layout.addWidget(item2)
 
-                    # 设置布局之间比例划分
-                    # 设置第一行和第二行的长度比为3:2
-                    disk_health_state_layout.setStretch(0, 3)
-                    disk_health_state_layout.setStretch(1, 2)
+                # 设置布局之间比例划分
+                # 设置第一行和第二行的长度比为3:2
+                disk_health_state_layout.setStretch(0, 3)
+                disk_health_state_layout.setStretch(1, 2)
             elif degree >= 7:  # 二级健康度
                 color_1 = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
                 days_1 = ['<10', '<30', '<70', '<150', '<310', '>=310']
@@ -205,10 +227,10 @@ class DetailedInfoTab(QTabWidget):
                         item3.setStyleSheet("background-color:white")
                     remaining_days_item_layout.addWidget(item3)
 
-                    # 设置布局之间比例划分
-                    disk_health_state_layout.setStretch(0, 5)
-                    disk_health_state_layout.setStretch(1, 2)
-            else:  # 无法预测健康度
+                # 设置布局之间比例划分
+                disk_health_state_layout.setStretch(0, 5)
+                disk_health_state_layout.setStretch(1, 2)
+            else:  # 数据采集时间少于20天/硬盘型号不匹配/硬盘型号无法获取
                 color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
                 days = ['<10', '<30', '<70', '<150', '<310', '>=310']
                 for i in range(6):
@@ -218,8 +240,11 @@ class DetailedInfoTab(QTabWidget):
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                text2 = QLabel('''<font face='黑体' size=5>该硬盘被监控时间小于20天或者不在所预测的硬盘型号中。<font>''')
-                # remaining_days_item_layout.addWidget(item2)  # 没有item
+                text2 = QLabel('''<font face='黑体' size=5>该硬盘被监控时间小于20天。<font>''')
+                if degree == -1:
+                    text2 = QLabel('''<font face='黑体' size=5>该硬盘型号不在所预测的硬盘型号中。<font>''')
+                elif degree == -2:
+                    text2 = QLabel('''<font face='黑体' size=5>无法获取该硬盘的型号信息。<font>''')
                 remaining_days_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
 
                 # 设置布局之间比例划分
@@ -239,7 +264,7 @@ class DetailedInfoTab(QTabWidget):
         tip_layout = QVBoxLayout()
         io_title = QLabel("硬盘I/O负载信息")
         io_title.setStyleSheet("font-size:20px; color:black; font-family:'黑体'")
-        io_title.setContentsMargins(0, 50, 0, 10)
+        io_title.setContentsMargins(0, 30, 0, 10)
         tip_layout.addWidget(io_title)
         tip_label_1 = QLabel('''<font face='黑体' size=3>注1：默认显示硬盘三小时内的实时和预测I/O负载信息；<font>''')
         tip_label_2 = QLabel('''<font face='黑体' size=3>注2：每个点纵坐标表示该硬盘一分钟内的IO总和。<font>''')
@@ -317,6 +342,7 @@ class DetailedInfoTab(QTabWidget):
             disk_io_layout.addWidget(io_button, alignment=Qt.AlignCenter | Qt.AlignTop)
 
         def set_disk_io_line():
+            # io_title.setContentsMargins(0, 50, 0, 10) if former_text_layout.count() == 0 else io_title.setContentsMargins(0, 30, 0, 10)
             disk_io_width = str(self.detailed_tab.size().width() / 2 - 40) + "px"
             disk_io_height = str(disk_detailed_info_widget.size().height() / 2 - 40) + "px"
 
@@ -429,8 +455,7 @@ class DetailedInfoTab(QTabWidget):
             if not self.exception_dict[self.selected_server_ip][1]:
                 del self.exception_dict[self.selected_server_ip]
 
-        # 查看历史I/O负载信息
-
+    # 查看历史I/O负载信息
     def show_history_io_line(self, level):
         self.server_history_io = HistoryIO(self.selected_disk_id[0], self.selected_disk_id[1], level)
         self.server_history_io.show()
