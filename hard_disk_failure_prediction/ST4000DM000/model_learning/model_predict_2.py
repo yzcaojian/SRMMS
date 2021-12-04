@@ -67,8 +67,8 @@ def predict_2nd(smart_data, smart_id):
     # 根据提前准备好的训练集中最大最小值进行数据归一化
     smart_data_ = smart_data_[np.newaxis, :, :]
     smart_data_ = smart_data_.astype(np.float32)
-    smart_max = [2690, 51311, 76, 65535, 786529, 60440, 60440, 68843842616, 921249276720]
-    smart_min = [0, 0, 0, 4, 14, 0, 0, 0, 3912]
+    smart_max = [244133784, 51311, 65535, 2656, 786529, 141, 60440, 68843842616, 921249276720]
+    smart_min = [0, 0, 0, 0, 4, 14, 0, 0, 3912]
     for i in range(len(smart_max)):
         for j in range(smart_data_.shape[1]):
             if smart_data_[0][j][i] >= smart_max[i]:

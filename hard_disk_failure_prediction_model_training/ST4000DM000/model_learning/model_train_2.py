@@ -125,6 +125,7 @@ def trainGRU(initial_learning_rate):
     saver = tf.compat.v1.train.Saver(tf.compat.v1.global_variables(), max_to_keep=15)
     with tf.compat.v1.Session(config=config) as sess:
         sess.run(init)
+        true_epochs = epochs
         for epoch in range(epochs):
             preb = epoch % (len(train_data) % batch_size)  # epoch % 115
             while preb + batch_size <= len(train_data):

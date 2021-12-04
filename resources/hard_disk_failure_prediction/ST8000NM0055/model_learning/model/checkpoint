@@ -1,0 +1,2 @@
+model_checkpoint_path: "hdd_GRU_model.ckpt"
+all_model_checkpoint_paths: "hdd_GRU_model.ckpt"

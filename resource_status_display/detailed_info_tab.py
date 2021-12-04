@@ -134,7 +134,8 @@ class DetailedInfoTab(QTabWidget):
         png = QPixmap('./resources/png/tips.png').scaled(18, 18)
         tip_image.setContentsMargins(0, 0, 30, 0)
         tip_image.setPixmap(png)
-        tip_image.setToolTip("可预测硬盘型号：\nST4000DM000\nST12000NM0007\nHDS722020ALA330\nHMS5C4040ALE640\nWD30EFRX")
+        tip_image.setToolTip("可预测硬盘型号：\nST4000DM000\nST8000DM002\nST8000NM0055\nST12000NM0007\nHDS722020ALA330"
+                             "\nHGST HMS5C4040ALE640\nHGST HMS5C4040ALE640\nWDC WD30EFRX\nTOSHIBA MQ01ABF050")
         heath_title_layout.addWidget(tip_image, alignment=Qt.AlignRight)
 
         # 剩余寿命条形图，对应预测结果
@@ -151,25 +152,26 @@ class DetailedInfoTab(QTabWidget):
         remaining_days_layout.addLayout(days_title_layout)
 
         def set_health_state():
-            # degree说明：1-6表示一级健康度，7-9表示二级健康度，0表示时间数据不够20天，-1表示型号不匹配，-2表示无法获取型号
-            degree = -2  # 无法获取硬盘型号
-            model = in_interface_impl.get_disk_model(self.selected_disk_id[0], self.selected_disk_id[1])
-            if model != "":
-                remaining_days_title.setText("硬盘剩余寿命预测（硬盘型号为：" + model + "）")
-                if model not in {"ST4000DM000", "WD30EFRX", "HMS5C4040ALE640", "HDS722020ALA330"}:
-                    degree = -1
-                else:
-                    degree = in_interface_impl.get_health_degree(self.selected_disk_id[0], self.selected_disk_id[1])
-            else:
-                remaining_days_title.setText("硬盘剩余寿命预测")
-
             clearLayout(former_item_layout)
             clearLayout(former_text_layout)
             clearLayout(remaining_days_item_layout)
             clearLayout(remaining_days_text_layout)
             clearLayout(health_degree_item_layout)
             clearLayout(health_degree_text_layout)
-            # clearLayout(health_degree_layout)
+
+            # degree说明：1-6表示一级健康度，7-9表示二级健康度，0表示时间数据不够20天，-1表示型号不匹配，-2表示无法获取型号
+            degree = -2  # 无法获取硬盘型号
+            model = in_interface_impl.get_disk_model(self.selected_disk_id[0], self.selected_disk_id[1])
+            if model != "":
+                remaining_days_title.setText("硬盘剩余寿命预测（硬盘型号为：" + model + "）")
+                if model not in {"ST4000DM000", "ST8000DM002", "ST8000NM0055", "ST12000NM0007", "WD30EFRX",
+                                 "HMS5C4040ALE640", "HMS5C4040BLE640", "HDS722020ALA330", "MQ01ABF050"}:
+                    degree = -1
+                else:
+                    degree = in_interface_impl.get_health_degree(self.selected_disk_id[0], self.selected_disk_id[1])
+            else:
+                remaining_days_title.setText("硬盘剩余寿命预测")
+
             if 0 < degree < 7:  # 一级健康度
                 color = ['#cf0000', '#ff8303', '#f7ea00', '#fff9b0', '#c6ffc1', '#21bf73']
                 days = ['<10', '<30', '<70', '<150', '<310', '>=310']
