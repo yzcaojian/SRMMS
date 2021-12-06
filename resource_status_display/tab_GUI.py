@@ -155,7 +155,7 @@ class MultDisksInfoTabWidget(QTabWidget):
             bar = (Bar(init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,
                                                animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                    .add_xaxis(["HDD", "SSD"])
-                   .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#4d5c6e')
+                   .add_yaxis("剩余容量", left, stack="stack1", category_gap="20%", bar_width="40%", color='#6d7c8e')
                    .add_yaxis("已使用容量", used, stack="stack1", category_gap="20%", bar_width="40%", color='#7eca9c')
                    .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="容量\n单位TB", axistick_opts=opts.AxisTickOpts(is_inside=True)),
@@ -191,7 +191,7 @@ class MultDisksInfoTabWidget(QTabWidget):
                 init_opts=opts.InitOpts(bg_color='#ffffff', width=bar_width, height=bar_height,  # rgb(200,200,200,1)
                                         animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                    .add_xaxis(["HDD", "SSD"])
-                   .add_yaxis("", [hdd_rate, ssd_rate], category_gap="20%", bar_width="40%", color='#4d5c6e')
+                   .add_yaxis("", [hdd_rate, ssd_rate], category_gap="20%", bar_width="40%", color='#6d7c8e')
                    .set_global_opts(
                 yaxis_opts=opts.AxisOpts(name="故障率/%", axistick_opts=opts.AxisTickOpts(is_inside=True)),
                 xaxis_opts=opts.AxisOpts(name="", axistick_opts=opts.AxisTickOpts(is_inside=True)),
