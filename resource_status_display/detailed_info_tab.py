@@ -4,7 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/6/15 10:14
 from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QPushButton,\
     QTableWidget, QAbstractItemView, QHeaderView
@@ -242,7 +242,11 @@ class DetailedInfoTab(QTabWidget):
                     text1.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item1)
                     health_degree_text_layout.addWidget(text1, alignment=Qt.AlignCenter)
-                text2 = QLabel('''<font face='黑体' size=5>该硬盘被监控时间小于20天。<font>''')
+                current_days = in_interface_impl.get_current_smart_data_len(self.selected_disk_id[0], self.selected_disk_id[1])
+                text_font = QFont("黑体", 14)
+                text2 = QLabel()
+                text2.setFont(text_font)
+                text2.setText("该硬盘被监控时间为" + str(current_days) + "天内（小于20天），暂时无法进行预测。")
                 if degree == -1:
                     text2 = QLabel('''<font face='黑体' size=5>该硬盘型号不在所预测的硬盘型号中。<font>''')
                 elif degree == -2:

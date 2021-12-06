@@ -719,6 +719,14 @@ class in_interface_impl(in_interface):
                     return list[1]
         return ""
 
+    @classmethod
+    def get_current_smart_data_len(cls, ip, disk_id):
+        if ip in cls.smart_data_dict:
+            for disk in cls.smart_data_dict[ip]:
+                if disk[0] == disk_id:
+                    return len(disk[2])
+        return 0
+
     @classmethod  # 废弃
     def IN_HDFP_RSD(cls, ip, disk):
         # 将健康度信息添加到列表中
