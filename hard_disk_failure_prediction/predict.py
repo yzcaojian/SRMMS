@@ -25,15 +25,45 @@ def predict_disk_health_state(disk):
         degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
         if degree == 1:
             degree = predict_2nd(np.array(disk[3]), disk[2])
+    elif disk[1] == "HMS5C4040BLE640":
+        from hard_disk_failure_prediction.HMS5C4040BLE640.model_learning.model_predict import predict_1st
+        from hard_disk_failure_prediction.HMS5C4040BLE640.model_learning. model_predict_2 import predict_2nd
+        degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
+        if degree == 1:
+            degree = predict_2nd(np.array(disk[3]), disk[2])
     elif disk[1] == "ST4000DM000":
         from hard_disk_failure_prediction.ST4000DM000.model_learning.model_predict import predict_1st
         from hard_disk_failure_prediction.ST4000DM000.model_learning. model_predict_2 import predict_2nd
         degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
         if degree == 1:
             degree = predict_2nd(np.array(disk[3]), disk[2])
+    elif disk[1] == "ST8000DM002":
+        from hard_disk_failure_prediction.ST8000DM002.model_learning.model_predict import predict_1st
+        from hard_disk_failure_prediction.ST8000DM002.model_learning. model_predict_2 import predict_2nd
+        degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
+        if degree == 1:
+            degree = predict_2nd(np.array(disk[3]), disk[2])
+    elif disk[1] == "ST8000NM0055":
+        from hard_disk_failure_prediction.ST8000NM0055.model_learning.model_predict import predict_1st
+        from hard_disk_failure_prediction.ST8000NM0055.model_learning. model_predict_2 import predict_2nd
+        degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
+        if degree == 1:
+            degree = predict_2nd(np.array(disk[3]), disk[2])
+    elif disk[1] == "ST12000NM0007":
+        from hard_disk_failure_prediction.ST12000NM0007.model_learning.model_predict import predict_1st
+        from hard_disk_failure_prediction.ST12000NM0007.model_learning. model_predict_2 import predict_2nd
+        degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
+        if degree == 1:
+            degree = predict_2nd(np.array(disk[3]), disk[2])
     elif disk[1] == "WD30EFRX":
         from hard_disk_failure_prediction.WD30EFRX.model_learning.model_predict import predict_1st
         from hard_disk_failure_prediction.WD30EFRX.model_learning. model_predict_2 import predict_2nd
+        degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
+        if degree == 1:
+            degree = predict_2nd(np.array(disk[3]), disk[2])
+    elif disk[1] == "MQ01ABF050":
+        from hard_disk_failure_prediction.MQ01ABF050.model_learning.model_predict import predict_1st
+        from hard_disk_failure_prediction.MQ01ABF050.model_learning. model_predict_2 import predict_2nd
         degree = predict_1st(np.array(disk[3]), disk[2])  # smartData, smartID
         if degree == 1:
             degree = predict_2nd(np.array(disk[3]), disk[2])
