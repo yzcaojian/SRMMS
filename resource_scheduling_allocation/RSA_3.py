@@ -53,11 +53,16 @@ def filtering_io_data(ip, io_data, average_io_load, high_io_load_queue):
     # 如果统计数目过多 将统计个数减少到5 * 60 * 60
     if count > 5 * 60 * 60:
         count = 5 * 60 * 60
-    averageIO = (count * averageIO) + diskIO / (count + 1)
+    averageIO = (count * averageIO + diskIO) / (count + 1)
     average_io_load[ip][diskID] = [count + 1, averageIO]
 
-    # 高于平均负载的1.2倍或者高于10w视作高负载
-    if diskIO > averageIO * 1.2 or diskIO >= 100000:
+    filename = "./resources/txt/judgment_criteria_for_high_IO_load.txt"
+    with open(filename, "r", encoding='utf-8') as f:
+        data = f.read().split()
+        maximum_average_IO_times, maximum_IO_threshold = float(data[1]), float(data[3])
+
+    # 高于平均负载的maximum_average_IO_times倍或者高于maximum_IO_threshold视作高负载
+    if diskIO > averageIO * maximum_average_IO_times or diskIO >= maximum_IO_threshold:
         # 若该服务器不在此字典中
         if ip not in high_io_load_queue:
             high_io_load_queue[ip] = {}
@@ -76,8 +81,8 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
             io_data = high_io_load_queue[serverIP][diskID][-1]
             time_stamp = io_data[-1]
             now_time = time.time()
-            # 间隔超过十分钟,将该列表清空
-            if now_time - time_stamp > 600:
+            # 间隔超过两分钟,将该列表清空
+            if now_time - time_stamp > 120:
                 high_io_load_queue[serverIP][diskID].clear()
                 continue
             # 高负载队列数据超过20个,最新插入的数据的时间间隔小于一分钟,视作该硬盘持续高IO负载
@@ -93,6 +98,9 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                 warning_message_queue.append(warning)
                 # 硬盘持续高I/O告警信息 to资源状态显示模块
                 in_interface_impl.IN_RSA_RSD(warning)
+
+                # 将该列表清空
+                high_io_load_queue[serverIP][diskID].clear()
 
 
 # 硬盘故障预警

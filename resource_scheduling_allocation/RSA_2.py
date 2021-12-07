@@ -99,8 +99,14 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     io_load_output_queue[ip][disk_id].append([predict, local_time])
 
                     _, averageIO = average_io_load[ip][disk_id]
-                    # 高于平均负载的1.2倍或者高于60 * 10w视作高负载
-                    if predict > averageIO * 1.2 * 60 or predict >= 100000 * 60:
+
+                    filename = "./resources/txt/judgment_criteria_for_high_IO_load.txt"
+                    with open(filename, "r", encoding='utf-8') as f:
+                        data = f.read().split()
+                        maximum_average_IO_times, maximum_IO_threshold = float(data[1]), float(data[3])
+
+                    # 高于平均负载的maximum_IO_threshold倍或者高于60 * maximum_IO_threshold视作高负载
+                    if predict > averageIO * maximum_average_IO_times * 60 or predict >= maximum_IO_threshold * 60:
                         errorID = 2
                         warning = Warning(errorID, now_time, configuration_info.IPtoName(ip), disk_id, [local_time, predict])
                         # IO高负载预警异常消息[02, 事件发生时间, 服务器IP, 硬盘标识, 预测IO到达最大负载量]
