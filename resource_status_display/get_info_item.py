@@ -216,19 +216,19 @@ def get_warning_info_item(exception):
     slot_image = QLabel()
     slot_image.setFixedSize(40, 40)
     # 红点对应硬盘即将故障与服务器失联两种异常，橙点对应硬盘持续高负载和即将高负载两种异常
-    png = QPixmap('./resources/png/warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else QPixmap(
-        './resources/png/warning_orange.png').scaled(40, 40)
+    png = QPixmap('./resources/png/warning_red.png').scaled(40, 40) if exception[0] == 1 or exception[0] == 3 else \
+        QPixmap('./resources/png/warning_orange.png').scaled(40, 40)
     slot_image.setPixmap(png)
     # 异常描述=告警描述=时间+内容
     warning_level = ""
     if exception[0] == 1:
         warning_level = "磁盘故障告警："
     elif exception[0] == 2:
-        warning_level = "硬盘高负载高警："
+        warning_level = "硬盘高负载告警(预测，以分钟记)："
     elif exception[0] == 3:
         warning_level = "服务器失联告警："
     if exception[0] == 4:
-        warning_level = "硬盘持续高负载告警："
+        warning_level = "硬盘持续高负载告警(以秒记)："
     index = exception[1].find(' ')
     warning_time = QLabel(exception[1][:index])
     warning_time.setFont(text_font)
@@ -262,7 +262,7 @@ def get_scheduling_info_item(log):
     scheduling_time = QLabel(log[:index])
     log = log[index:]
     scheduling_time.setFont(text_font)
-    scheduling_content = QLabel(log) if len(log) < 40 else QLabel(log[:35] + "...")
+    scheduling_content = QLabel(log) if len(log) < 50 else QLabel(log[:50] + "...")
     scheduling_content.setFont(text_font)
     scheduling_content.setWordWrap(True)  # 设置文本超出限制则换行
     scheduling_content.setContentsMargins(10, 0, 10, 0)
