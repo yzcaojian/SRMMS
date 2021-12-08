@@ -134,8 +134,9 @@ class DetailedInfoTab(QTabWidget):
         png = QPixmap('./resources/png/tips.png').scaled(18, 18)
         tip_image.setContentsMargins(0, 0, 30, 0)
         tip_image.setPixmap(png)
-        tip_image.setToolTip("可预测硬盘型号：\nST4000DM000\nST8000DM002\nST8000NM0055\nST12000NM0007\nHDS722020ALA330"
-                             "\nHGST HMS5C4040ALE640\nHGST HMS5C4040ALE640\nWDC WD30EFRX\nTOSHIBA MQ01ABF050")
+        tip_image.setToolTip("可预测硬盘型号：\n希捷 ST4000DM000\n希捷 ST8000DM002\n希捷 ST8000NM0055\n希捷 ST12000NM0007\n日立 "
+                             "HDS722020ALA330\n昱科 HGST HMS5C4040ALE640\n昱科 HGST HMS5C4040ALE640\n西部数据 WDC "
+                             "WD30EFRX\n东芝 TOSHIBA MQ01ABF050")
         heath_title_layout.addWidget(tip_image, alignment=Qt.AlignRight)
 
         # 剩余寿命条形图，对应预测结果

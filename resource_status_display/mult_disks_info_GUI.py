@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal
-from PyQt5.QtGui import QIcon, QPixmap, QColor
+from PyQt5.QtGui import QIcon, QPixmap, QColor, QFont
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
 
 from resource_status_display.backward_thread import UpdateLogThread
@@ -28,10 +28,12 @@ class MultDisksInfoWidget(QWidget):
         self.tab_widget = MultDisksInfoTabWidget(lock)  # 定义一个Tab类窗口
         self.text_info_widget = QWidget()  # 定义一个日志信息显示窗口
         self.warning_list = list(reversed(warning_list.warning_list))  # 告警信息列表
-        self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
         self.scheduling_list = list(reversed(scheduling_list.scheduling_list))  # 调度分配日志信息列表
+        self.warning_list_current_len = len(self.warning_list)
+        self.scheduling_list_current_len = len(self.scheduling_list)
         self.warning_update = False
         self.scheduling_update = False
+        self.disk_failure_message = in_interface_impl.hard_disk_failure_prediction_list_
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)  # 设置窗口始终在前
         self.update_log_thread = UpdateLogThread(self.lock_log)
         self.initUI()
@@ -81,8 +83,9 @@ class MultDisksInfoWidget(QWidget):
         # warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
         # 定义内部函数事件，初始化或者是有告警信号后，从warning_list中取数据放入warning_widget中去，刷新告警信息
-        def show_warning_list(warning_list):
+        def show_warning_list(warningList):
             warning_widget.clear()  # 清空刷新前的所有项
+            # 判断是否有新产生的告警信息
             if self.warning_update:
                 item = QListWidgetItem()
                 item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
@@ -98,7 +101,8 @@ class MultDisksInfoWidget(QWidget):
                 update_click.setStyleSheet("background-color:white")
                 update_click.clicked.connect(lambda: update_warning())
 
-                update_tip = QLabel('''<font color=red face='黑体' size=3>有告警信息更新<font>''')
+                update_tip = QLabel("有" + str(len(warning_list.warning_list) - len(self.warning_list)) + "条告警信息更新")
+                update_tip.setStyleSheet("font-size:14px; color:red; font-family:'黑体'")
 
                 warning_item_layout = QHBoxLayout()
                 warning_item_layout.addWidget(update_click, alignment=Qt.AlignTop)
@@ -108,7 +112,7 @@ class MultDisksInfoWidget(QWidget):
                 warning_widget.addItem(item)
                 warning_widget.setItemWidget(item, warning_item)
 
-            for warning in warning_list:
+            for warning in warningList:
                 item = QListWidgetItem()
                 item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
                 item.setSizeHint(QSize(260, 120))  # 必须设置Item大小，否则默认很小
@@ -131,9 +135,9 @@ class MultDisksInfoWidget(QWidget):
         log_widget.itemDoubleClicked.connect(lambda: self.display_detailed_log_info(log_widget.selectedIndexes()))
 
         # 定义内部函数事件，初始化或者是有调度信号后，从scheduling_list中取数据放入log_widget中去，刷新调度分配日志信息
-        def show_scheduling_list(scheduling_list):
+        def show_scheduling_list(schedulingList):
             log_widget.clear()  # 清空刷新前的所有项
-
+            # 判断是否有新产生的日志信息
             if self.scheduling_update:
                 item = QListWidgetItem()
                 item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
@@ -149,7 +153,8 @@ class MultDisksInfoWidget(QWidget):
                 update_click.setStyleSheet("background-color:white")
                 update_click.clicked.connect(lambda: update_scheduling())
 
-                update_tip = QLabel('''<font color=red face='黑体' size=3>有日志信息更新<font>''')
+                update_tip = QLabel("有" + str(len(scheduling_list.scheduling_list) - len(self.scheduling_list)) + "条告警信息更新")
+                update_tip.setStyleSheet("font-size:14px; color:red; font-family:'黑体'")
 
                 scheduling_item_layout = QHBoxLayout()
                 scheduling_item_layout.addWidget(update_click, alignment=Qt.AlignTop)
@@ -159,7 +164,7 @@ class MultDisksInfoWidget(QWidget):
                 log_widget.addItem(item)
                 log_widget.setItemWidget(item, scheduling_item)
 
-            for scheduling in scheduling_list:
+            for scheduling in schedulingList:
                 item = QListWidgetItem()
                 # item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
                 item.setSizeHint(QSize(280, 100))  # 必须设置Item大小，否则默认很小
@@ -196,21 +201,24 @@ class MultDisksInfoWidget(QWidget):
         self.update_log_thread.start()
 
         def update_log():
-            if len(self.warning_list) != len(warning_list.warning_list):
+            if self.warning_list_current_len != len(warning_list.warning_list):
                 self.warning_update = True
                 show_warning_list(self.warning_list)
-                self.warning_list = list(reversed(warning_list.warning_list))
-            if len(self.scheduling_list) != len(scheduling_list.scheduling_list):
+                self.warning_list_current_len = len(warning_list.warning_list)
+
+            if self.scheduling_list_current_len != len(scheduling_list.scheduling_list):
                 self.scheduling_update = True
                 show_scheduling_list(self.scheduling_list)
-                self.scheduling_list = list(reversed(scheduling_list.scheduling_list))
+                self.scheduling_list_current_len = len(scheduling_list.scheduling_list)
 
         def update_warning():
             self.warning_update = False
+            self.warning_list = list(reversed(warning_list.warning_list))
             show_warning_list(self.warning_list)
 
         def update_scheduling():
             self.scheduling_update = False
+            self.scheduling_list = list(reversed(scheduling_list.scheduling_list))
             show_scheduling_list(self.scheduling_list)
 
         def pop_up_window():
@@ -245,6 +253,3 @@ class MultDisksInfoWidget(QWidget):
 
     def show_configuration_GUI(self):
         self.configuration = ConfigurationWidget(self.lock)
-
-
-
