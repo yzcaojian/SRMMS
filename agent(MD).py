@@ -174,7 +174,8 @@ def background_smart_data_collection(smart_data_dict):
             for disk_id in smart_dict:
                 # 最新的数据为前一天或者当天
                 if smart_dict[disk_id][3][-1] == time_stamp1 or smart_dict[disk_id][3][-1] == time_stamp2:
-                    smart_data_dict = smart_dict
+                    for disk_id in smart_dict:
+                        smart_data_dict[disk_id] = smart_dict[disk_id]
                 break
     # 文件不存在
     except IOError:
