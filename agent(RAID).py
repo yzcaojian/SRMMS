@@ -156,9 +156,21 @@ def integrate_data():
     return dic
 
 
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('1.1.1.1', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return ip
+
+
+ip = get_host_ip()
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('10.17.19.124', port))
+s.bind((ip, port))
 loop_flag = True
 while loop_flag:
     s.listen(1)

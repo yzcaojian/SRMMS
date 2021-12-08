@@ -371,14 +371,26 @@ def integrate_data_():  # 不带smart数据
     return dic_
 
 
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('1.1.1.1', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return ip
+
+
 smart_data_dict = {}
 
 # 后台线程收集smart数据
 _thread.start_new_thread(background_smart_data_collection, smart_data_dict)
 
+ip = get_host_ip()
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('10.17.19.124', port))
+s.bind((ip, port))
 loop_flag = True
 while loop_flag:
     s.listen(1)
