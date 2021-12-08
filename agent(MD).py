@@ -6,6 +6,8 @@
 import subprocess
 import socket
 import json
+import time
+import _thread
 
 
 # 获取硬盘总容量以及逻辑分区从属关系
@@ -151,17 +153,44 @@ def get_disk_type(disk_dict):
 
 
 # 总容量/已使用容量/占用率/io负载(kB)/故障率/运行状态/硬盘类型/smart数据
-def get_smart_data(disk_dict):
+def get_smart_data(disk_dict, smart_data_dict):
     for disk_id in disk_dict:
-        smartID_list, smartData_list = [], []
-        (status, output) = subprocess.getstatusoutput("smartctl -i /dev/" + disk_id)
-        if status == 0:
+        device_model = smart_data_dict[disk_id][0]
+        smartID_list = smart_data_dict[disk_id][1]
+        smartData_list = smart_data_dict[disk_id][2]
+        disk_dict[disk_id].append([device_model, smartID_list, smartData_list])
+
+
+def background_smart_data_collection(smart_data_dict):
+    flag = True
+    filename = "./smart_data.txt"
+    try:
+        # 读取smart数据文件执行恢复操作
+        with open(filename, "r", encoding='utf-8') as f:
+            smart_dict = json.load(f)
+            time_stamp1 = time.strftime("%Y{y}%m{m}%d{d}", time.localtime(time.time() - 60 * 60 * 24))\
+                .format(y='年', m='月', d='日')
+            time_stamp2 = time.strftime("%Y{y}%m{m}%d{d}", time.localtime(time.time())).format(y='年', m='月', d='日')
+            for disk_id in smart_dict:
+                # 最新的数据为前一天或者当天
+                if smart_dict[disk_id][3][-1] == time_stamp1 or smart_dict[disk_id][3][-1] == time_stamp2:
+                    smart_data_dict = smart_dict
+                break
+    # 文件不存在
+    except IOError:
+        print("历史smart数据文件不存在")
+
+    while flag:
+        disk_dict_, _ = get_disk_total_capacity()
+        now_time = time.time()
+        time_stamp = time.strftime("%Y{y}%m{m}%d{d}", time.localtime(now_time)).format(y='年', m='月', d='日')
+        for disk_id in disk_dict_:
+            device_model, smartID_list, smartData_list = "", [], []
+            (status, output) = subprocess.getstatusoutput("smartctl -i /dev/" + disk_id)
             list_ = output.split('\n')[4:]
             device_model = list_[1].split()[-1]
-        else:
-            return -1
-        (status, output) = subprocess.getstatusoutput("smartctl -A /dev/" + disk_id)
-        if status == 0:
+
+            (status, output) = subprocess.getstatusoutput("smartctl -A /dev/" + disk_id)
             list_ = output.split('\n')[7:-1]
             disk_list = []
             # ID# / ATTRIBUTE_NAME / FLAG / VALUE / WORST / THRESH / TYPE / UPDATED / WHEN_FAILED / RAW_VALUE
@@ -170,13 +199,34 @@ def get_smart_data(disk_dict):
             for item in range(len(disk_list)):
                 smartID_list.append(int(disk_list[item][0]))
                 smartData_list.append(int(disk_list[item][9]))
-        else:
-            return -1
-        disk_dict[disk_id].append([device_model, smartID_list, smartData_list])
-    return 0
+
+            if disk_id not in smart_data_dict:
+                smart_data_dict[disk_id] = [device_model, smartID_list, [smartData_list], [time_stamp]]
+            else:
+                # 若两个数据的时间戳相等，证明是在同一天
+                if smart_data_dict[disk_id][3][-1] != time_stamp:
+                    smart_data_dict[disk_id][2].append(smartData_list)
+                    smart_data_dict[disk_id][3].appendt(time_stamp)
+
+                    # smart数据最多只保存最新的20个,删去多余的数据
+                    if len(smart_data_dict[disk_id][2]) > 20:
+                        del smart_data_dict[disk_id][2][0]
+                        del smart_data_dict[disk_id][3][0]
+
+        # 删除可能因更换硬盘而存在的无效disk_id
+        for disk_id in smart_data_dict:
+            if disk_id not in disk_dict_:
+                del smart_data_dict[disk_id]
+
+        # 将smart数据写入文件中
+        with open(filename, "w", encoding='utf-8') as f:
+            json.dump(smart_data_dict, f)
+
+        # 每小时只收集一次数据
+        time.sleep(60 * 60)
 
 
-def integrate_data():
+def integrate_data(smart_data_dict):
     # 获取总容量
     disk_dict, part_dict = get_disk_total_capacity()
     # 获取已使用容量和占用率
@@ -188,7 +238,7 @@ def integrate_data():
     # 获得硬盘类型
     get_disk_type(disk_dict)
     # 获得smart数据
-    get_smart_data(disk_dict)
+    get_smart_data(disk_dict, smart_data_dict)
 
     total_capacity, used_capacity, hdd_counts, ssd_counts, hdd_total_capacity, ssd_total_capacity, hdd_used_capacity,\
         ssd_used_capacity, hdd_io, ssd_io = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -320,6 +370,11 @@ def integrate_data_():  # 不带smart数据
     return dic_
 
 
+smart_data_dict = {}
+
+# 后台线程收集smart数据
+_thread.start_new_thread(background_smart_data_collection, smart_data_dict)
+
 port = 12345
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('10.17.19.124', port))
@@ -331,7 +386,7 @@ while loop_flag:
 
     info = sock.recv(1024).decode().split('/')
     if info[0] == "请求数据1":  # 包含smart数据
-        dic = integrate_data()
+        dic = integrate_data(smart_data_dict)
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)

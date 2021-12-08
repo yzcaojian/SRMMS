@@ -35,11 +35,11 @@ class out_interface_impl(out_interface):
         client.connect(ip_addr)
         if ip not in cls.index_dic:
             cls.index_dic[ip] = 0
-        if cls.index_dic[ip] % (60 * 60 * 24) == 0:  # 请求数据(包含smart数据)
+        if cls.index_dic[ip] % (60 * 60) == 0:  # 请求数据(包含smart数据)
             client.send(bytes("请求数据1", encoding="utf-8"))
         else:  # 请求数据(不包含smart数据)
             client.send(bytes("请求数据2", encoding="utf-8"))
-        cls.index_dic[ip] = (cls.index_dic[ip] + 1) % (60 * 60 * 24)
+        cls.index_dic[ip] = (cls.index_dic[ip] + 1) % (60 * 60)
         data = client.recv(10240).decode()
 
         client.close()
