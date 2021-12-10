@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # train_end = int(len(data) * 0.9)
     train_end = 40
     train_begin = 0
-    pred_begin = 0
+    pred_begin = 40
     pred_end = (len(data))
 
     if smooth == 1:  # 平滑数据
@@ -69,10 +69,7 @@ if __name__ == "__main__":
     # train_lstm(data, input_size, output_size, lr, train_time, rnn_unit,
     #            weights, biases, train_end, batch_size, time_step, predict_step, kp,
     #            [save_model_path, save_model_name], train_begin)
-    tf.reset_default_graph()
-    io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step, save_model_path, 100, 300)
+    # tf.reset_default_graph()
+    io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step, save_model_path, pred_begin, pred_end)
     t1 = time.time()
     print("时间:%.4fs" % (t1 - t0))
-    # tf.reset_default_graph()
-    # io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases, time_step, predict_step,
-    #                    save_model_path, 100, 300)

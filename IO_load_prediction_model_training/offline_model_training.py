@@ -229,7 +229,7 @@ def io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases,
 
         # 预测
         maxvalue, mean, std, test_x, test_y = get_test_data(data, time_step,
-                                                            predict_step, pred_begin, pred_end)
+                                                            predict_step, pred_begin - time_step-(predict_step-1), pred_end)
         # test_y = np.array(test_y)[:, 1:input_size].tolist()  # 如果输入加上时间维度，这里就需要加上
         test_predict = []
         # print(test_x)
