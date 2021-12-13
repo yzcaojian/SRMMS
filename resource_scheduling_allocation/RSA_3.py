@@ -78,6 +78,8 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
     for serverIP in high_io_load_queue:
         for diskID in high_io_load_queue[serverIP]:
             # 取出该硬盘最新插入的数据
+            if len(high_io_load_queue[serverIP][diskID]) == 0:
+                continue
             io_data = high_io_load_queue[serverIP][diskID][-1]
             time_stamp = io_data[-1]
             now_time = time.time()
