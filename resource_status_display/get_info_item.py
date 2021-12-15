@@ -100,11 +100,13 @@ def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
     server_name_widget.setLayout(server_name_layout)
 
     # 服务器存储总容量
-    server_total_storage = QLabel(str(server_storage_info.totalCapacity) + "GB")
+    totalCapacity = round(server_storage_info.totalCapacity, 2)
+    server_total_storage = QLabel(str(totalCapacity) + "GB")
     server_total_storage.setFont(text_font)
 
     # 服务器已使用容量
-    server_occupied_storage = QLabel(str(server_storage_info.occupiedCapacity) + "GB")
+    occupiedCapacity = round(server_storage_info.occupiedCapacity, 2)
+    server_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     server_occupied_storage.setFont(text_font)
 
     # 服务器容量使用占用率
@@ -155,11 +157,13 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     disk_state.setFont(text_font)
 
     # 硬盘存储容量
-    disk_total_storage = QLabel(str(disk_storage_info.totalCapacity) + "GB")
+    totalCapacity = round(disk_storage_info.totalCapacity, 2)
+    disk_total_storage = QLabel(str(totalCapacity) + "GB")
     disk_total_storage.setFont(text_font)
 
     # 硬盘已使用容量
-    disk_occupied_storage = QLabel(str(disk_storage_info.occupiedCapacity) + "GB")
+    occupiedCapacity = round(disk_storage_info.occupiedCapacity, 2)
+    disk_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     disk_occupied_storage.setFont(text_font)
 
     # 硬盘容量使用占用率
@@ -190,11 +194,13 @@ def get_volume_storage_info_item(volume_storage_info):
     volume_name_widget.setLayout(volume_name_layout)
 
     # 逻辑盘存储容量
-    volume_total_storage = QLabel(str(volume_storage_info.totalCapacity) + "GB")
+    totalCapacity = round(volume_storage_info.totalCapacity, 2)
+    volume_total_storage = QLabel(str(totalCapacity) + "GB")
     volume_total_storage.setFont(text_font)
 
     # 逻辑盘已使用容量
-    volume_occupied_storage = QLabel(str(volume_storage_info.occupiedCapacity) + "GB")
+    occupiedCapacity = round(volume_storage_info.occupiedCapacity, 2)
+    volume_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     volume_occupied_storage.setFont(text_font)
 
     # 逻辑盘容量使用占用率
