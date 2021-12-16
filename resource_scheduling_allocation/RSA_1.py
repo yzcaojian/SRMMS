@@ -39,9 +39,14 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
     keep_prob = tf.placeholder('float')
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
     lr = 0.001
+
+    global_step = tf.Variable(0, trainable=False)
+    learning_rate = tf.compat.v1.train.exponential_decay(lr, global_step=global_step,
+                                                         decay_steps=500, decay_rate=0.9)
+
     # 损失函数
     loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
-    train_op = tf.train.AdamOptimizer(lr).minimize(loss)
+    train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
     saver = tf.train.Saver(max_to_keep=1)
 
@@ -93,13 +98,15 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                 batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
 
                 # 重复训练
-                for i in range(3000):
+                for i in range(10000):
                     for step in range(len(batch_index) - 1):
                         _, loss_, M, MM = sess.run([train_op, loss, m, mm],
                                                    feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
                                                               Y: train_y[batch_index[step]:batch_index[step + 1]],
                                                               keep_prob: 1})
                     print(i, loss_)
+                    if loss_ < 1e-4:
+                        break
                 # 将模型保存在对应的服务器文件夹中
                 saver.save(sess, save_model_path_ip + save_model_name)  # 保存模型
 

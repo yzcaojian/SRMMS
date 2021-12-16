@@ -102,9 +102,14 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
     print(np.array(train_x).shape)
     print(np.array(train_y).shape)
     pred, _, m, mm = lstm(X, weights, biases, input_size, rnn_unit, keep_prob)
+
+    global_step = tf.Variable(0, trainable=False)
+    learning_rate = tf.compat.v1.train.exponential_decay(lr, global_step=global_step,
+                                                         decay_steps=500, decay_rate=0.9)
+
     # 损失函数
     loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, output_size]) - tf.reshape(Y, [-1, output_size])))
-    train_op = tf.train.AdamOptimizer(lr).minimize(loss)
+    train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
     saver = tf.train.Saver(max_to_keep=1)
 
