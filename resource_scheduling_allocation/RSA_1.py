@@ -42,8 +42,7 @@ def online_model_training(io_load_input_queue, save_model):
     lr = 0.001
 
     global_step = tf.Variable(0, trainable=False)
-    learning_rate = tf.compat.v1.train.exponential_decay(lr, global_step=global_step,
-                                                         decay_steps=500, decay_rate=0.9)
+    learning_rate = tf.train.exponential_decay(lr, global_step=global_step, decay_steps=500, decay_rate=0.9)
 
     # 损失函数
     loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
@@ -59,7 +58,7 @@ def online_model_training(io_load_input_queue, save_model):
                 if len(io_load_input_queue[ip][disk_id]) < 300:  # 小于300不进行训练
                     continue
 
-                save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '/' + disk_id \
+                save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '_' + disk_id \
                                        + '/'
                 # 读模型操作比较耗时
                 sess.run(tf.global_variables_initializer())

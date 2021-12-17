@@ -37,6 +37,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_pat
     X = tf.placeholder(tf.float32, shape=[None, time_step, 1])
     keep_prob = tf.placeholder('float')
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
+
     saver = tf.train.Saver(max_to_keep=1)
 
     with open("./resources/txt/mean_and_std.txt", "r", encoding='utf-8') as f:
@@ -48,7 +49,7 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_pat
                 if len(io_load_input_queue[ip][disk_id]) < time_step:
                     continue
                 else:
-                    save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '/' + disk_id \
+                    save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '_' + disk_id \
                                            + '/'
                     # 读模型操作比较耗时
                     sess.run(tf.global_variables_initializer())
