@@ -50,11 +50,12 @@ def filtering_io_data(ip, io_data, average_io_load, high_io_load_queue):
     if diskID not in average_io_load[ip]:
         average_io_load[ip][diskID] = [0, 0]
     count, averageIO = average_io_load[ip][diskID]
-    # 如果统计数目过多 将统计个数减少到5 * 60 * 60
-    if count > 5 * 60 * 60:
-        count = 5 * 60 * 60
+    # 如果统计数目过多 将统计个数减少到60 * 60
+    if count > 60 * 60:
+        count = 60 * 60
     averageIO = (count * averageIO + diskIO) / (count + 1)
     average_io_load[ip][diskID] = [count + 1, averageIO]
+    print("-------------------------------", count, diskIO, averageIO)
 
     filename = "./resources/txt/judgment_criteria_for_high_IO_load.txt"
     with open(filename, "r", encoding='utf-8') as f:
@@ -87,8 +88,8 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
             if now_time - time_stamp > 120:
                 high_io_load_queue[serverIP][diskID].clear()
                 continue
-            # 高负载队列数据超过20个,最新插入的数据的时间间隔小于一分钟,视作该硬盘持续高IO负载
-            if len(high_io_load_queue[serverIP][diskID]) > 20 and now_time - time_stamp < 60:
+            # 高负载队列数据超过30个,最新插入的数据的时间间隔小于一分钟,视作该硬盘持续高IO负载
+            if len(high_io_load_queue[serverIP][diskID]) > 30 and now_time - time_stamp < 60:
                 sum = 0
                 for item in high_io_load_queue[serverIP][diskID]:
                     sum += item[0]

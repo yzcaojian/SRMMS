@@ -48,7 +48,7 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
     loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, 1]) - tf.reshape(Y, [-1, 1])))
     train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
-    saver = tf.train.Saver(max_to_keep=1)
+    saver = tf.train.Saver(max_to_keep=1, var_list=tf.trainable_variables())
 
     with tf.Session() as sess:
         for ip in io_load_input_queue:
