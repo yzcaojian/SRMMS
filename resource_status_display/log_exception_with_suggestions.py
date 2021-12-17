@@ -62,11 +62,13 @@ class Warning:
                 health = "R" + str(extra)
             content += "上标识为" + self.diskId + "的机械硬盘健康度下降为" + health + "。"
         elif self.errorId == 2:  # I/O即将高负载的情况：extra为[time, IOPeak]
-            content += "上标识为" + self.diskId + "的机械硬盘预计在" + str(extra[0]) + "出现高负载需求，" + "负载最大量将达到" + str(extra[1]) + "KB。"
+            io = round(extra[1], 2)
+            content += "上标识为" + self.diskId + "的机械硬盘预计在" + str(extra[0]) + "出现高负载需求，" + "负载最大量将达到" + str(io) + "KB。"
         elif self.errorId == 3:
             content += "由于未知原因长时间未响应，处理为失联，并尝试重新连接。"
         elif self.errorId == 4:
-            content += "上标识为" + self.diskId + "的硬盘长时间处于高负载环境下，平均I/O负载量为" + str(extra) + "KB。"
+            io = round(extra, 2)
+            content += "上标识为" + self.diskId + "的硬盘长时间处于高负载环境下，平均I/O负载量为" + str(io) + "KB。"
         return content
 
     def write_file(self):
