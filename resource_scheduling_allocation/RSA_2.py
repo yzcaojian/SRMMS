@@ -172,7 +172,7 @@ class IoLoadPredictionThread(threading.Thread):
 #
 #     while(len(io_load_input_queue["123.123.1.1"]["czw"]) > 19):
 #         start_io_load_prediction(io_load_input_queue, io_load_output_queue, [],
-#                                  '../IO_load_prediction_model_training/model/Financial2/', {}, [])
+#                                  '../IO_load_prediction_model_training/model/default_model/', {}, [])
 #     predict_list = np.array(io_load_output_queue["123.123.1.1"]["czw"])
 #
 #     # 画图表示结果

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     smooth = 1  # 为1则在时间维度上平滑数据
     train_time = 0  # 所有数据的训练轮次
     filename = './data/Financial2_minutes.csv'
-    save_model_path = './model/Financial2/'  # checkpoint存在的目录
+    save_model_path = './model/default_model/'  # checkpoint存在的目录
     save_model_name = 'Model'  # saver.save(sess, './save/MyModel') 保存模型
 
     f = open(filename)

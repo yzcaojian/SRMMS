@@ -168,12 +168,12 @@ class OnlineModelTrainingThread(threading.Thread):
 #     for i in range(2):
         # tf.reset_default_graph()
         # thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
-        #                                     ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+        #                                     ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
         # thread1.start()
         # thread1.join()
 #         # online_model_training(io_load_input_queue, Mean_and_std,
-#         #                       ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+#         #                       ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
 #         start_online_model_training(io_load_input_queue, Mean_and_std,
-#                                     ['../IO_load_prediction_model_training/model/Financial2/', 'Model'])
+#                                     ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
 
 

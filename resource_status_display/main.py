@@ -46,7 +46,7 @@ health_degree_dict = in_interface_impl.get_health_degree_dict()
 # 存放各硬盘需要预警的硬盘位置信息
 hard_disk_failure_prediction_list = in_interface_impl.get_hard_disk_failure_prediction_list()
 
-save_model = ['./resources/IO_load_prediction_model_training/model/Financial2/', 'Model']
+save_model = ['./resources/IO_load_prediction_model_training/model/default_model/', 'Model']
 
 
 class MainWidget(QWidget):
