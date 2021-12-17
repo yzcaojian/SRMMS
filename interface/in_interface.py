@@ -72,11 +72,6 @@ class in_interface:
     def get_average_io_load(cls):
         pass
 
-    # 获得训练集的平均数和标准差
-    @classmethod
-    def get_mean_and_std(cls):
-        pass
-
     # 获得硬盘详细信息字典 格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
     @classmethod
     def get_disk_detailed_info(cls):
@@ -215,7 +210,6 @@ class in_interface_impl(in_interface):
     io_load_output_queue_past = {}  # I/O负载输出队列  历史信息
     high_io_load_queue = {}  # 高负载队列
     average_io_load = {}  # 记录平均I/O负载  average_io_load[ip][diskID]:[count, averageIO]
-    mean_and_std = []  # 存放IO的平均值和标准差
     disk_detailed_info = {}  # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
     warning_message_queue = []  # 异常消息列表  [异常ID, 事件发生事件, 服务器IP, 硬盘标识,...]
 
@@ -430,10 +424,6 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_average_io_load(cls):
         return cls.average_io_load
-
-    @classmethod
-    def get_mean_and_std(cls):
-        return cls.mean_and_std
 
     @classmethod
     def get_disk_detailed_info(cls):

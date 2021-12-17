@@ -39,8 +39,6 @@ average_io_load = in_interface_impl.get_average_io_load()
 warning_message_queue = in_interface_impl.get_warning_message_queue()
 # disk_detailed_info为字典  格式为{IP:{diskID:[type, state, totalCapacity, occupiedCapacity, occupiedRate}}
 disk_detailed_info = in_interface_impl.get_disk_detailed_info()
-# 存放IO的平均值和标准差
-mean_and_std = in_interface_impl.get_mean_and_std()
 # 存放所有硬盘smart数据
 smart_dict = in_interface_impl.get_smart_data_dict()
 # 存放各硬盘预测得到的健康度结果
@@ -221,9 +219,9 @@ class TransactionProcessingThread(QThread):
 
 class PredictionTrainingThread:
 
-    online_training_thread = OnlineModelTrainingThread(io_load_input_queue_train, mean_and_std, save_model)
-    io_load_prediction_thread = IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, mean_and_std,
-                                                       save_model[0], average_io_load, warning_message_queue)
+    online_training_thread = OnlineModelTrainingThread(io_load_input_queue_train, save_model)
+    io_load_prediction_thread = IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, save_model[0],
+                                                       average_io_load, warning_message_queue)
     hard_disk_failure_prediction_thread = DiskHealthPredictionThread(smart_dict, health_degree_dict,
                                                                      hard_disk_failure_prediction_list)
 
@@ -231,12 +229,12 @@ class PredictionTrainingThread:
 def start_prediction_training_thread():
     if not PredictionTrainingThread.online_training_thread.is_alive():  # 动态训练线程结束
         PredictionTrainingThread.online_training_thread = OnlineModelTrainingThread(io_load_input_queue_train,
-                                                                                    mean_and_std, save_model)
+                                                                                    save_model)
         PredictionTrainingThread.online_training_thread.start()
     if not PredictionTrainingThread.io_load_prediction_thread.is_alive():  # 负载预测线程结束
         PredictionTrainingThread.io_load_prediction_thread = \
-            IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, mean_and_std, save_model[0],
-                                   average_io_load, warning_message_queue)
+            IoLoadPredictionThread(io_load_input_queue_predict, io_load_output_queue, save_model[0], average_io_load,
+                                   warning_message_queue)
         PredictionTrainingThread.io_load_prediction_thread.start()
     if not PredictionTrainingThread.hard_disk_failure_prediction_thread.is_alive():  # 硬盘故障预测线程结束
         PredictionTrainingThread.hard_disk_failure_prediction_thread = \

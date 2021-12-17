@@ -9,10 +9,11 @@ import numpy as np
 import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
 import threading
+import json
 
 
 # 线上模型训练
-def online_model_training(io_load_input_queue, mean_and_std, save_model):
+def online_model_training(io_load_input_queue, save_model):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
     # for ip in io_load_input_queue:
@@ -50,34 +51,37 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
+    mean_and_std_dict = {}
+
     with tf.Session() as sess:
         for ip in io_load_input_queue:
-            save_model_path_ip = './resources/IO_load_prediction_model_training/model/' + ip + '/'
-            # 读模型操作比较耗时
-            sess.run(tf.global_variables_initializer())
-            ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
-            if ckpt and ckpt.model_checkpoint_path:
-                saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-                print("对应的服务器预测模型存在,恢复该模型")
-            else:
-                ckpt = tf.train.get_checkpoint_state(save_model_path)
-                saver.restore(sess, ckpt.model_checkpoint_path)
-                print('对应的服务器预测模型不存在,恢复默认模型')
-
             for disk_id in io_load_input_queue[ip]:
                 if len(io_load_input_queue[ip][disk_id]) < 300:  # 小于300不进行训练
                     continue
+
+                save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '/' + disk_id \
+                                       + '/'
+                # 读模型操作比较耗时
+                sess.run(tf.global_variables_initializer())
+                ckpt = tf.train.get_checkpoint_state(save_model_path_disk)  # checkpoint存在的目录
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+                    print("对应硬盘的预测模型存在,恢复该模型")
+                else:
+                    ckpt = tf.train.get_checkpoint_state(save_model_path)
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    print('对应硬盘的预测模型不存在,恢复默认模型')
+
                 data_list = io_load_input_queue[ip][disk_id][:]  # 切片复制
                 io_load_input_queue[ip][disk_id].clear()  # 将列表清空
                 data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                 data_list = data_list.reshape(len(data_list), 1)
 
+                if ip not in mean_and_std_dict:
+                    mean_and_std_dict[ip] = {}
                 # 更改mean和std
                 mean, std = np.mean(data_list, axis=0), np.std(data_list, axis=0)
-                if mean_and_std:  # 不为空,清空列表
-                    mean_and_std.clear()
-                mean_and_std.append(mean)
-                mean_and_std.append(std)
+                mean_and_std_dict[ip][disk_id] = [mean, std]
 
                 # 转化为矩阵
                 mean = np.array(mean)
@@ -107,8 +111,12 @@ def online_model_training(io_load_input_queue, mean_and_std, save_model):
                     print(i, loss_)
                     if loss_ < 1e-4:
                         break
-                # 将模型保存在对应的服务器文件夹中
-                saver.save(sess, save_model_path_ip + save_model_name)  # 保存模型
+                # 将模型保存在对应的服务器的硬盘文件夹中
+                saver.save(sess, save_model_path_disk + save_model_name)  # 保存模型
+        # 说明更新了mean和std,将数据写入文件中
+        if len(mean_and_std_dict) != 0:
+            with open("./resources/txt/mean_and_std.txt", "w", encoding='utf-8') as f:
+                json.dump(mean_and_std_dict, f)
 
 
 def io_second_to_io_minute(ip, io_load_input_queue, io_load_input_queue_minute):
@@ -131,16 +139,15 @@ def io_second_to_io_minute(ip, io_load_input_queue, io_load_input_queue_minute):
 
 
 class OnlineModelTrainingThread(threading.Thread):
-    def __init__(self, io_load_input_queue, mean_and_std, save_model):
+    def __init__(self, io_load_input_queue, save_model):
         threading.Thread.__init__(self)
         self.io_load_input_queue = io_load_input_queue
-        self.mean_and_std = mean_and_std
         self.save_model = save_model
 
     def run(self):
         print("动态训练开始:")
         tf.reset_default_graph()
-        online_model_training(self.io_load_input_queue, self.mean_and_std, self.save_model)
+        online_model_training(self.io_load_input_queue, self.save_model)
         print("动态训练结束:")
 
 # if __name__ == "__main__":

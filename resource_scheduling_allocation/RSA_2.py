@@ -14,10 +14,11 @@ from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.log_exception_with_suggestions import Warning
 import matplotlib.pyplot as plt
+import json
 
 
 # I/O负载预测
-def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
+def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_path, average_io_load,
                        warning_message_queue):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
@@ -38,24 +39,27 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
     pred, _, m, mm = lstm(X, weights, biases, 1, rnn_unit, keep_prob)
     saver = tf.train.Saver(max_to_keep=1)
 
+    with open("./resources/txt/mean_and_std.txt", "r", encoding='utf-8') as f:
+        mean_and_std_dict = json.load(f)
+
     with tf.Session() as sess:
         for ip in io_load_input_queue:
-            save_model_path_ip = './resources/IO_load_prediction_model_training/model/' + ip + '/'
-            # 读模型操作比较耗时
-            sess.run(tf.global_variables_initializer())
-            ckpt = tf.train.get_checkpoint_state(save_model_path_ip)  # checkpoint存在的目录
-            if ckpt and ckpt.model_checkpoint_path:
-                saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-                print("对应的服务器预测模型存在,恢复该模型")
-            else:
-                ckpt = tf.train.get_checkpoint_state(save_model_path)
-                saver.restore(sess, ckpt.model_checkpoint_path)
-                print('对应的服务器预测模型不存在,恢复默认模型')
-
             for disk_id in io_load_input_queue[ip]:
                 if len(io_load_input_queue[ip][disk_id]) < time_step:
                     continue
                 else:
+                    save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '/' + disk_id \
+                                           + '/'
+                    # 读模型操作比较耗时
+                    sess.run(tf.global_variables_initializer())
+                    ckpt = tf.train.get_checkpoint_state(save_model_path_disk)  # checkpoint存在的目录
+                    if ckpt and ckpt.model_checkpoint_path:
+                        saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+                        print("对应硬盘的预测模型存在,恢复该模型")
+                    else:
+                        ckpt = tf.train.get_checkpoint_state(save_model_path)
+                        saver.restore(sess, ckpt.model_checkpoint_path)
+                        print('对应硬盘的预测模型不存在,恢复默认模型')
 
                     # 截取前面time_step个数据
                     data_list = io_load_input_queue[ip][disk_id][:time_step]
@@ -66,8 +70,15 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
                     data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                     data_list = data_list.reshape(len(data_list), 1)
 
-                    # 不为空
-                    mean, std = mean_and_std if mean_and_std else [[13304.76842105], [4681.6388205]]
+                    # 若对应的mean和std不存在，则使用默认值
+                    if ip not in mean_and_std_dict:
+                        mean_and_std_dict[ip] = {}
+                    if disk_id not in mean_and_std_dict[ip]:
+                        mean_and_std_dict[ip][disk_id] = []
+                    if len(mean_and_std_dict[ip][disk_id]) == 0:
+                        mean, std = [[13304.76842105], [4681.6388205]]
+                    else:
+                        mean, std = mean_and_std_dict[ip][disk_id]
 
                     # 转化为矩阵
                     mean = np.array(mean)
@@ -124,12 +135,11 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, mean_and_std, 
 
 
 class IoLoadPredictionThread(threading.Thread):
-    def __init__(self, io_load_input_queue, io_load_output_queue, mean_and_std, save_model_path, average_io_load,
+    def __init__(self, io_load_input_queue, io_load_output_queue, save_model_path, average_io_load,
                  warning_message_queue):
         threading.Thread.__init__(self)
         self.io_load_input_queue = io_load_input_queue
         self.io_load_output_queue = io_load_output_queue
-        self.mean_and_std = mean_and_std
         self.save_model_path = save_model_path
         self.average_io_load = average_io_load
         self.warning_message_queue = warning_message_queue
@@ -137,8 +147,8 @@ class IoLoadPredictionThread(threading.Thread):
     def run(self):
         print("负载预测开始:")
         tf.reset_default_graph()
-        io_load_prediction(self.io_load_input_queue, self.io_load_output_queue, self.mean_and_std,
-                           self. save_model_path, self.average_io_load, self.warning_message_queue)
+        io_load_prediction(self.io_load_input_queue, self.io_load_output_queue, self. save_model_path,
+                           self.average_io_load, self.warning_message_queue)
         print("负载预测结束:")
 
 
