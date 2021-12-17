@@ -385,7 +385,7 @@ def get_host_ip():
 smart_data_dict = {}
 
 # 后台线程收集smart数据
-_thread.start_new_thread(background_smart_data_collection, smart_data_dict)
+_thread.start_new_thread(background_smart_data_collection, (smart_data_dict,))
 
 ip = get_host_ip()
 port = 12345
