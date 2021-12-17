@@ -189,7 +189,22 @@ def background_smart_data_collection(smart_data_dict):
             device_model, smartID_list, smartData_list = "", [], []
             (status, output) = subprocess.getstatusoutput("smartctl -i /dev/" + disk_id)
             list_ = output.split('\n')[4:]
-            device_model = list_[1].split()[-1]
+
+            # Solid State Device or 7200 rpm
+            str_list = list_[7].split()[2:]
+            disk_type = str_list[0]
+
+            str_list = list_[1].split()[2:]
+            device_model = ""
+
+            # HDD
+            if disk_type != "Solid":
+                device_model = str_list[-1]
+                device_model = device_model.split('-')[0]
+            # SSD
+            else:
+                for item in str_list:
+                    device_model = device_model + ' ' + item
 
             (status, output) = subprocess.getstatusoutput("smartctl -A /dev/" + disk_id)
             list_ = output.split('\n')[7:-1]
