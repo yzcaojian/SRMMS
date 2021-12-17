@@ -55,7 +55,6 @@ def filtering_io_data(ip, io_data, average_io_load, high_io_load_queue):
         count = 60 * 60
     averageIO = (count * averageIO + diskIO) / (count + 1)
     average_io_load[ip][diskID] = [count + 1, averageIO]
-    print("-------------------------------", count, diskIO, averageIO)
 
     filename = "./resources/txt/judgment_criteria_for_high_IO_load.txt"
     with open(filename, "r", encoding='utf-8') as f:
