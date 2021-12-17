@@ -260,7 +260,7 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_update_cycle(cls, ip):
         if ip in cls.update_time:
-            return round(time.time() + 0.5 - cls.update_time[ip], 2)
+            return round(time.time() - cls.update_time[ip], 2)
         else:
             return 0
 
