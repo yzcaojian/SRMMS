@@ -242,7 +242,7 @@ def background_smart_data_collection(smart_data_dict):
         time.sleep(60 * 60)
 
 
-def integrate_data(smart_data_dict):
+def integrate_data(smart_data_dict, disk_failure_statistics):
     # 获取总容量
     disk_dict, part_dict = get_disk_total_capacity()
     # 获取已使用容量和占用率
@@ -298,7 +298,32 @@ def integrate_data(smart_data_dict):
     else:
         ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
 
-    hdd_error_rate, ssd_error_rate = 0, 0
+    # 计算两类硬盘故障率
+    # 当前硬盘数量比不少于上一次数量时
+    if ssd_counts >= disk_failure_statistics["ssd_previous"]:
+        disk_failure_statistics["ssd_total"] += ssd_counts - disk_failure_statistics["ssd_previous"]
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    # 当前硬盘数量少于上一次数量时，视为故障
+    else:
+        disk_failure_statistics["ssd_failure"] += disk_failure_statistics["ssd_previous"] - ssd_counts
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    if hdd_counts >= disk_failure_statistics["hdd_previous"]:
+        disk_failure_statistics["hdd_total"] += hdd_counts - disk_failure_statistics["hdd_previous"]
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    else:
+        disk_failure_statistics["hdd_failure"] += disk_failure_statistics["hdd_previous"] - hdd_counts
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    if disk_failure_statistics["ssd_total"] != 0 and disk_failure_statistics["hdd_total"] != 0:
+        ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+        hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+    else:
+        if disk_failure_statistics["ssd_total"] == 0:
+            ssd_failure_rate = 0
+            hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+        else:
+            ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+            hdd_failure_rate = 0
+
     # 单位为GB,保留两位小数
     total_capacity = round(total_capacity, 2)
     used_capacity = round(used_capacity, 2)
@@ -313,13 +338,13 @@ def integrate_data(smart_data_dict):
 
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
-                    hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
+                    hdd_failure_rate, ssd_failure_rate, hdd_io, ssd_io]
 
     dic = {"overall_info": overall_info, "detailed_info": detailed_info, "smart_data": smart_data}
     return dic
 
 
-def integrate_data_():  # 不带smart数据
+def integrate_data_(disk_failure_statistics):  # 不带smart数据
     # 获取总容量
     disk_dict, part_dict = get_disk_total_capacity()
     # 获取已使用容量和占用率
@@ -365,7 +390,32 @@ def integrate_data_():  # 不带smart数据
     else:
         ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
 
-    hdd_error_rate, ssd_error_rate = 0, 0
+    # 计算两类硬盘故障率
+    # 当前硬盘数量比不少于上一次数量时
+    if ssd_counts >= disk_failure_statistics["ssd_previous"]:
+        disk_failure_statistics["ssd_total"] += ssd_counts - disk_failure_statistics["ssd_previous"]
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    # 当前硬盘数量少于上一次数量时，视为故障
+    else:
+        disk_failure_statistics["ssd_failure"] += disk_failure_statistics["ssd_previous"] - ssd_counts
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    if hdd_counts >= disk_failure_statistics["hdd_previous"]:
+        disk_failure_statistics["hdd_total"] += hdd_counts - disk_failure_statistics["hdd_previous"]
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    else:
+        disk_failure_statistics["hdd_failure"] += disk_failure_statistics["hdd_previous"] - hdd_counts
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    if disk_failure_statistics["ssd_total"] != 0 and disk_failure_statistics["hdd_total"] != 0:
+        ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+        hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+    else:
+        if disk_failure_statistics["ssd_total"] == 0:
+            ssd_failure_rate = 0
+            hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+        else:
+            ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+            hdd_failure_rate = 0
+
     # 单位为GB,保留两位小数
     total_capacity = round(total_capacity, 2)
     used_capacity = round(used_capacity, 2)
@@ -380,7 +430,7 @@ def integrate_data_():  # 不带smart数据
 
     overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
                     ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
-                    hdd_error_rate, ssd_error_rate, hdd_io, ssd_io]
+                    hdd_failure_rate, ssd_failure_rate, hdd_io, ssd_io]
 
     dic_ = {"overall_info": overall_info, "detailed_info": detailed_info}
     return dic_
@@ -398,6 +448,8 @@ def get_host_ip():
 
 
 smart_data_dict = {}
+disk_failure_statistics = {"ssd_total": 0, "hdd_total": 0, "ssd_failure": 0, "hdd_failure": 0, "ssd_previous": 0,
+                           "hdd_previous": 0}
 
 # 后台线程收集smart数据
 _thread.start_new_thread(background_smart_data_collection, (smart_data_dict,))
@@ -414,12 +466,12 @@ while loop_flag:
 
     info = sock.recv(1024).decode().split('/')
     if info[0] == "请求数据1":  # 包含smart数据
-        dic = integrate_data(smart_data_dict)
+        dic = integrate_data(smart_data_dict, disk_failure_statistics)
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)
     elif info[0] == "请求数据2":  # 不包含smart数据
-        dic = integrate_data_()
+        dic = integrate_data_(disk_failure_statistics)
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)
