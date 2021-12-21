@@ -6,20 +6,18 @@
 
 import tensorflow as tf
 import numpy as np
-import pandas as pd
 from IO_load_prediction_model_training.offline_model_training import lstm
 import threading
 import json
 
 
 # 线上模型训练
-def online_model_training(io_load_input_queue, save_model):
+def online_model_training(io_load_input_queue, save_model, ip, disk_id):
     if not io_load_input_queue:  # 输入队列为空，直接返回
         return
-    # for ip in io_load_input_queue:
-    #     for disk_id in io_load_input_queue[ip]:
-    #         if len(io_load_input_queue[ip][disk_id]) % 60 != 0:  # 每小时训练一次
-    #             return
+
+    if len(io_load_input_queue[ip][disk_id]) < 300:  # 小于300不进行训练
+        return
 
     rnn_unit, batch_size, time_step, predict_step = [20, 25, 20, 20]
     save_model_path, save_model_name = save_model
@@ -50,72 +48,69 @@ def online_model_training(io_load_input_queue, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    min_and_max_dict = {}
+    with open("./resources/txt/min_and_max.txt", "r", encoding='utf-8') as f:
+        min_and_max_dict = json.load(f)
 
     with tf.Session() as sess:
-        for ip in io_load_input_queue:
-            for disk_id in io_load_input_queue[ip]:
-                if len(io_load_input_queue[ip][disk_id]) < 300:  # 小于300不进行训练
-                    continue
 
-                save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '_' + disk_id \
-                                       + '/'
-                # 读模型操作比较耗时
-                sess.run(tf.global_variables_initializer())
-                ckpt = tf.train.get_checkpoint_state(save_model_path_disk)  # checkpoint存在的目录
-                if ckpt and ckpt.model_checkpoint_path:
-                    saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
-                    print("对应硬盘的预测模型存在,恢复该模型")
-                else:
-                    ckpt = tf.train.get_checkpoint_state(save_model_path)
-                    saver.restore(sess, ckpt.model_checkpoint_path)
-                    print('对应硬盘的预测模型不存在,恢复默认模型')
+        save_model_path_disk = './resources/IO_load_prediction_model_training/model/' + ip + '_' + disk_id \
+                               + '/'
+        # 读模型操作比较耗时
+        sess.run(tf.global_variables_initializer())
+        ckpt = tf.train.get_checkpoint_state(save_model_path_disk)  # checkpoint存在的目录
+        if ckpt and ckpt.model_checkpoint_path:
+            saver.restore(sess, ckpt.model_checkpoint_path)  # 自动恢复model_checkpoint_path保存模型一般是最新
+            print("对应硬盘的预测模型存在,恢复该模型")
+        else:
+            ckpt = tf.train.get_checkpoint_state(save_model_path)
+            saver.restore(sess, ckpt.model_checkpoint_path)
+            print('对应硬盘的预测模型不存在,恢复默认模型')
 
-                data_list = io_load_input_queue[ip][disk_id][:]  # 切片复制
-                io_load_input_queue[ip][disk_id].clear()  # 将列表清空
-                data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
-                data_list = data_list.reshape(len(data_list), 1)
+        data_list = io_load_input_queue[ip][disk_id][:]  # 切片复制
+        io_load_input_queue[ip][disk_id].clear()  # 将列表清空
+        data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
+        data_list = data_list.reshape(len(data_list), 1)
 
-                if ip not in min_and_max_dict:
-                    min_and_max_dict[ip] = {}
-                # 更改min和max
-                min, max = np.min(data_list, axis=0), np.max(data_list, axis=0)
-                min_and_max_dict[ip][disk_id] = [min, max]
+        if ip not in min_and_max_dict:
+            min_and_max_dict[ip] = {}
+        # 更改min和max
+        min, max = np.min(data_list, axis=0), np.max(data_list, axis=0)
+        min_and_max_dict[ip][disk_id] = [min, max]
 
-                # 转化为矩阵
-                min = np.array(min)
-                max = np.array(max)
+        # 转化为矩阵
+        min = np.array(min)
+        max = np.array(max)
 
-                normalized_data_list = (data_list - min) / (max - min)  # 归一化
+        normalized_data_list = (data_list - min) / (max - min)  # 归一化
 
-                batch_index = []
-                train_x, train_y = [], []  # 训练集
-                print('训练集大小:', len(normalized_data_list) - time_step - (predict_step - 1))
-                for i in range(len(normalized_data_list) - time_step - (predict_step - 1)):
-                    if i % batch_size == 0:
-                        batch_index.append(i)
-                    x = normalized_data_list[i:i + time_step]
-                    y = normalized_data_list[i + time_step + (predict_step - 1)]
-                    train_x.append(x.tolist())
-                    train_y.append(y.tolist())
-                batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
+        batch_index = []
+        train_x, train_y = [], []  # 训练集
+        print('训练集大小:', len(normalized_data_list) - time_step - (predict_step - 1))
+        for i in range(len(normalized_data_list) - time_step - (predict_step - 1)):
+            if i % batch_size == 0:
+                batch_index.append(i)
+            x = normalized_data_list[i:i + time_step]
+            y = normalized_data_list[i + time_step + (predict_step - 1)]
+            train_x.append(x.tolist())
+            train_y.append(y.tolist())
+        batch_index.append((len(normalized_data_list) - time_step - (predict_step - 1)))
 
-                # 重复训练
-                for i in range(10000):
-                    for step in range(len(batch_index) - 1):
-                        _, loss_, M, MM = sess.run([train_op, loss, m, mm],
-                                                   feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
-                                                              Y: train_y[batch_index[step]:batch_index[step + 1]],
-                                                              keep_prob: 1})
-                    print(i, loss_)
-                    if loss_ < 1e-4:
-                        break
-                # 将模型保存在对应的服务器的硬盘文件夹中
-                saver.save(sess, save_model_path_disk + save_model_name)  # 保存模型
-        # 说明更新了min和max,将数据写入文件中
-        if len(min_and_max_dict) != 0:
-            with open("./resources/txt/min_and_max.txt", "w", encoding='utf-8') as f:
-                json.dump(min_and_max_dict, f)
+        # 重复训练
+        for i in range(10000):
+            for step in range(len(batch_index) - 1):
+                _, loss_, M, MM = sess.run([train_op, loss, m, mm],
+                                           feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
+                                                      Y: train_y[batch_index[step]:batch_index[step + 1]],
+                                                      keep_prob: 1})
+            print(i, loss_)
+            if loss_ < 1e-4:
+                break
+        # 将模型保存在对应的服务器的硬盘文件夹中
+        saver.save(sess, save_model_path_disk + save_model_name)  # 保存模型
+
+        # 将更新后的min和max写入文件中
+        with open("./resources/txt/min_and_max.txt", "w", encoding='utf-8') as f:
+            json.dump(min_and_max_dict, f)
 
 
 def io_second_to_io_minute(ip, io_load_input_queue, io_load_input_queue_minute):
@@ -145,8 +140,10 @@ class OnlineModelTrainingThread(threading.Thread):
 
     def run(self):
         print("动态训练开始:")
-        tf.reset_default_graph()
-        online_model_training(self.io_load_input_queue, self.save_model)
+        for ip in self.io_load_input_queue:
+            for disk_id in self.io_load_input_queue[ip]:
+                tf.reset_default_graph()
+                online_model_training(self.io_load_input_queue, self.save_model, ip, disk_id)
         print("动态训练结束:")
 
 
