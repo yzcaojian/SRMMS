@@ -195,7 +195,8 @@ class in_interface_impl(in_interface):
     two_disk_info_dict = {}  # 两类硬盘总体信息
     two_disk_io_dict = {}  # 两类硬盘实时I/O负载信息
     two_disk_io_dict_past = {}  # 两类硬盘历史I/O负载信息
-    update_time = {}  # 服务器上次刷新数据时间
+    request_time = {}  # 服务器准备请求数据的时间
+    update_time = {}  # 服务器请求到数据的时间
 
     # 存放详细信息 供资源状态显示模块使用
     detailed_info_dict = {}
@@ -259,8 +260,11 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_update_cycle(cls, ip):
-        if ip in cls.update_time:
-            return round(time.time() - cls.update_time[ip], 2)
+        if ip in cls.update_time and ip in cls.request_time:
+            if cls.update_time[ip] > cls.request_time[ip]:
+                return round((time.time() - cls.request_time[ip] - 0.5) + cls.update_time[ip] - cls.request_time[ip], 2)
+            else:
+                return round(time.time() - cls.update_time[ip], 2)
         else:
             return 0
 

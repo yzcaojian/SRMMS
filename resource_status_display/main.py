@@ -173,6 +173,7 @@ class RequestResourceThread(QThread):
             print("请求资源获得锁")
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
+                in_interface_impl.request_time[ip] = time.time()
                 _thread.start_new_thread(analyse_data, (ip, threadLock_resource))
             print("请求资源结束:")
             # 释放锁

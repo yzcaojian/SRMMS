@@ -35,7 +35,7 @@ if __name__ == "__main__":
     train_end = 40
     train_begin = 0
     pred_begin = 40
-    pred_end = (len(data))
+    pred_end = len(data)
 
     if smooth == 1:  # 平滑数据
         newdata = data

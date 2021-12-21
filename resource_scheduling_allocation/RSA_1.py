@@ -50,7 +50,7 @@ def online_model_training(io_load_input_queue, save_model):
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    mean_and_std_dict = {}
+    min_and_max_dict = {}
 
     with tf.Session() as sess:
         for ip in io_load_input_queue:
@@ -76,17 +76,17 @@ def online_model_training(io_load_input_queue, save_model):
                 data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                 data_list = data_list.reshape(len(data_list), 1)
 
-                if ip not in mean_and_std_dict:
-                    mean_and_std_dict[ip] = {}
-                # 更改mean和std
-                mean, std = np.mean(data_list, axis=0), np.std(data_list, axis=0)
-                mean_and_std_dict[ip][disk_id] = [mean, std]
+                if ip not in min_and_max_dict:
+                    min_and_max_dict[ip] = {}
+                # 更改min和max
+                min, max = np.min(data_list, axis=0), np.max(data_list, axis=0)
+                min_and_max_dict[ip][disk_id] = [min, max]
 
                 # 转化为矩阵
-                mean = np.array(mean)
-                std = np.array(std)
+                min = np.array(min)
+                max = np.array(max)
 
-                normalized_data_list = (data_list - mean) / std  # 标准化
+                normalized_data_list = (data_list - min) / (max - min)  # 归一化
 
                 batch_index = []
                 train_x, train_y = [], []  # 训练集
@@ -112,10 +112,10 @@ def online_model_training(io_load_input_queue, save_model):
                         break
                 # 将模型保存在对应的服务器的硬盘文件夹中
                 saver.save(sess, save_model_path_disk + save_model_name)  # 保存模型
-        # 说明更新了mean和std,将数据写入文件中
-        if len(mean_and_std_dict) != 0:
-            with open("./resources/txt/mean_and_std.txt", "w", encoding='utf-8') as f:
-                json.dump(mean_and_std_dict, f)
+        # 说明更新了min和max,将数据写入文件中
+        if len(min_and_max_dict) != 0:
+            with open("./resources/txt/min_and_max.txt", "w", encoding='utf-8') as f:
+                json.dump(min_and_max_dict, f)
 
 
 def io_second_to_io_minute(ip, io_load_input_queue, io_load_input_queue_minute):
@@ -149,31 +149,5 @@ class OnlineModelTrainingThread(threading.Thread):
         online_model_training(self.io_load_input_queue, self.save_model)
         print("动态训练结束:")
 
-# if __name__ == "__main__":
-#     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
-#     df = pd.read_csv(f)  # 读入数据
-#     data = df.values
-#     data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
-#     data = data.reshape(len(data), 1)
-#     newdata = data
-#     for i in range(2, len(data) - 2):
-#         for j in range(0, 1):
-#             newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
-#     data = newdata
-#     data_list = data[:int(len(data) * 0.9)]
-#     io_load_input_queue = {"123.123.1.1": {"czw": []}}
-#
-#     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
-#     Mean_and_std = [[13304.76842105], [4681.6388205]]
-#     for i in range(2):
-        # tf.reset_default_graph()
-        # thread1 = OnlineModelTrainingThread(io_load_input_queue, Mean_and_std,
-        #                                     ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
-        # thread1.start()
-        # thread1.join()
-#         # online_model_training(io_load_input_queue, Mean_and_std,
-#         #                       ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
-#         start_online_model_training(io_load_input_queue, Mean_and_std,
-#                                     ['../IO_load_prediction_model_training/model/default_model/', 'Model'])
 
 

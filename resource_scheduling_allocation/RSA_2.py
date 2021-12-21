@@ -40,8 +40,8 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_pat
 
     saver = tf.train.Saver(max_to_keep=1)
 
-    with open("./resources/txt/mean_and_std.txt", "r", encoding='utf-8') as f:
-        mean_and_std_dict = json.load(f)
+    with open("./resources/txt/min_and_max.txt", "r", encoding='utf-8') as f:
+        min_and_max_dict = json.load(f)
 
     with tf.Session() as sess:
         for ip in io_load_input_queue:
@@ -71,28 +71,28 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_pat
                     data_list = np.array(data_list)[:, 0]  # 第二维是时间戳，这里取第一维
                     data_list = data_list.reshape(len(data_list), 1)
 
-                    # 若对应的mean和std不存在，则使用默认值
-                    if ip not in mean_and_std_dict:
-                        mean_and_std_dict[ip] = {}
-                    if disk_id not in mean_and_std_dict[ip]:
-                        mean_and_std_dict[ip][disk_id] = []
-                    if len(mean_and_std_dict[ip][disk_id]) == 0:
-                        mean, std = [[13304.76842105], [4681.6388205]]
+                    # 若对应的min和max不存在，则使用默认值
+                    if ip not in min_and_max_dict:
+                        min_and_max_dict[ip] = {}
+                    if disk_id not in min_and_max_dict[ip]:
+                        min_and_max_dict[ip][disk_id] = []
+                    if len(min_and_max_dict[ip][disk_id]) == 0:
+                        min, max = [[2341], [33254]]
                     else:
-                        mean, std = mean_and_std_dict[ip][disk_id]
+                        min, max = min_and_max_dict[ip][disk_id]
 
                     # 转化为矩阵
-                    mean = np.array(mean)
-                    std = np.array(std)
+                    min = np.array(min)
+                    max = np.array(max)
 
                     # 预测
-                    normalized_data_list = (data_list - mean) / std  # 标准化
-                    # maxvalue = np.max(data_list, axis=0)
+                    normalized_data_list = (data_list - min) / (max - min)  # 归一化
+
                     prob = sess.run(pred, feed_dict={X: [normalized_data_list], keep_prob: 1})
                     # prob是一个1X1的矩阵 取第一个元素
                     predict = prob.reshape((-1))[0]
                     # 将预测值还原 取整数
-                    predict = int(predict * std[0] + mean[0])
+                    predict = int(predict * (max[0] - min[0]) + min[0])
                     if predict < 0:
                         predict = 0
 
@@ -152,49 +152,3 @@ class IoLoadPredictionThread(threading.Thread):
                            self.average_io_load, self.warning_message_queue)
         print("负载预测结束:")
 
-
-# if __name__ == "__main__":
-#     f = open('../IO_load_prediction_model_training/data/Financial2_minutes.csv')
-#     df = pd.read_csv(f)  # 读入数据
-#     data = df.values
-#     data = data[:][:, 1]  # 第一维为时间数据，这里取第二维
-#     data = data.reshape(len(data), 1)
-#     newdata = data
-#     for i in range(2, len(data) - 2):
-#         for j in range(0, 1):
-#             newdata[i][j] = (data[i - 2][j] + data[i - 1][j] + data[i][j] + data[i + 1][j] + data[i + 2][j]) / 5
-#     data = newdata
-#     data_list = data[100:300]
-#     io_load_input_queue = {"123.123.1.1": {"czw": []}}
-#     io_load_output_queue = {}
-#
-#     io_load_input_queue["123.123.1.1"]["czw"] = data_list.tolist()
-#
-#     while(len(io_load_input_queue["123.123.1.1"]["czw"]) > 19):
-#         start_io_load_prediction(io_load_input_queue, io_load_output_queue, [],
-#                                  '../IO_load_prediction_model_training/model/default_model/', {}, [])
-#     predict_list = np.array(io_load_output_queue["123.123.1.1"]["czw"])
-#
-#     # 画图表示结果
-#     fig = plt.figure()
-#     ax1 = fig.add_subplot(1, 1, 1)
-#     ax1.set_xlabel('time/min')
-#     ax1.set_ylabel('the amount of data/KB')
-#     ax1.set_title('I/O load prediction')
-#     x = list(range(len(data)))
-#     X = list(range(100, 100 + len(predict_list)))
-#     output_size = 1
-#     y = [[] for i in range(output_size)]
-#     Y = [[] for i in range(output_size)]
-#     for i in range(output_size):
-#         y[i] = data[:, i]
-#         Y[i] = predict_list[:, i]
-#     ax1.plot(x, y[0], color='r', label='real')
-#     ax1.plot(X, Y[0], color='b', label='predict')
-#     plt.legend()
-#     plt.show()
-
-
-# now_time = time.time()
-# now_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
-# print(now_time)

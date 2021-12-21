@@ -17,7 +17,12 @@ import pickle
 def get_train_data(data, batch_size, time_step, train_end, predict_step, train_begin=0):
     batch_index = []
     data_train = data[train_begin:train_end]
-    normalized_train_data = (data_train-np.mean(data_train, axis=0)) / np.std(data_train, axis=0)  # 标准化
+    # normalized_train_data = (data_train-np.mean(data_train, axis=0)) / np.std(data_train, axis=0)  # 标准化
+
+    min_value = np.min(data, axis=0)
+    max_value = np.max(data, axis=0)
+    normalized_train_data = (data_train - min_value) / (max_value - min_value)
+
     # maxvalue = np.max(data_train, axis=0)
     # normalized_train_data = data_train / maxvalue
 
@@ -42,12 +47,15 @@ def get_test_data(data, time_step, predict_step, test_begin, test_end=-1):
     else:
         data_test = data[test_begin:test_end]
 
-    mean = np.mean(data, axis=0)
-    std = np.std(data, axis=0)
-    normalized_test_data = (data_test-mean) / std  # 标准化
-    maxvalue = np.max(data_test, axis=0)
+    # mean = np.mean(data, axis=0)
+    # std = np.std(data, axis=0)
+    # normalized_test_data = (data_test-mean) / std  # 标准化
 
-    print("mean:", mean, "std:", std)
+    min_value = np.min(data, axis=0)
+    max_value = np.max(data, axis=0)
+    normalized_test_data = (data_test - min_value) / (max_value - min_value)
+
+    # print("mean:", mean, "std:", std)
     # normalized_test_data = data_test / maxvalue
     # size=(len(normalized_test_data)+time_step-1)//time_step
     test_x, test_y = [], []
@@ -61,8 +69,8 @@ def get_test_data(data, time_step, predict_step, test_begin, test_end=-1):
     # print(np.array(test_x))
     print('get_test_data y', np.array(test_y).shape)
     # print(np.array(test_y))
-    # 返回值: 最大值、平均值、标准差、测试值X、测试值Y
-    return maxvalue, mean, std, test_x, test_y
+    # 返回值: 最小值、最大值、测试值X、测试值Y
+    return min_value, max_value, test_x, test_y
 
 
 # ——————————————————定义网络——————————————————
@@ -102,14 +110,9 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
     print(np.array(train_x).shape)
     print(np.array(train_y).shape)
     pred, _, m, mm = lstm(X, weights, biases, input_size, rnn_unit, keep_prob)
-
-    global_step = tf.Variable(0, trainable=False)
-    learning_rate = tf.compat.v1.train.exponential_decay(lr, global_step=global_step,
-                                                         decay_steps=500, decay_rate=0.9)
-
     # 损失函数
     loss = tf.reduce_mean(tf.square(tf.reshape(pred, [-1, output_size]) - tf.reshape(Y, [-1, output_size])))
-    train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+    train_op = tf.train.AdamOptimizer(lr).minimize(loss)
 
     saver = tf.train.Saver(max_to_keep=1)
 
@@ -137,7 +140,7 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
         saver.save(sess, save_model_path + save_model_name)  # 保存模型
 
         # 预测
-        maxvalue, mean, std, test_x, test_y = get_test_data(data, time_step, predict_step, train_end - time_step-(predict_step-1))
+        min_value, max_value, test_x, test_y = get_test_data(data, time_step, predict_step, train_end - time_step-(predict_step-1))
         # test_y = np.array(test_y)[:, 1:input_size].tolist()  # 如果输入加上时间维度，这里就需要加上
         test_predict = []
         for step in range(len(test_x)):
@@ -152,11 +155,8 @@ def train_lstm(data, input_size, output_size, lr, train_time, rnn_unit, weights,
         print('test_y:', np.array(test_y).shape)
         test_y = np.array(test_y)
         for i in range(output_size):
-            test_y[:, i] = test_y[:, i] * std[i] + mean[i]
-            test_predict[:, i] = test_predict[:, i] * std[i] + mean[i]
-        # for i in range(output_size):
-        #     test_y[:, i] = test_y[:, i] * maxvalue[i]
-        #     test_predict[:, i] = test_predict[:, i] * maxvalue[i]
+            test_y[:, i] = test_y[:, i] * (max_value[i] - min_value[i]) + min_value[i]
+            test_predict[:, i] = test_predict[:, i] * (max_value[i] - min_value[i]) + min_value[i]
 
         for item in test_predict:
             if item[0] < 0:
@@ -233,7 +233,7 @@ def io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases,
             print('No Model')
 
         # 预测
-        maxvalue, mean, std, test_x, test_y = get_test_data(data, time_step,
+        min_value, max_value, test_x, test_y = get_test_data(data, time_step,
                                                             predict_step, pred_begin - time_step-(predict_step-1), pred_end)
         # test_y = np.array(test_y)[:, 1:input_size].tolist()  # 如果输入加上时间维度，这里就需要加上
         test_predict = []
@@ -252,11 +252,8 @@ def io_load_prediction(data, input_size, output_size, rnn_unit, weights, biases,
 
         test_y = np.array(test_y)
         for i in range(output_size):
-            test_y[:, i] = test_y[:, i] * std[i] + mean[i]
-            test_predict[:, i] = test_predict[:, i] * std[i] + mean[i]
-        # for i in range(output_size):
-        #     test_y[:, i] = test_y[:, i] * maxvalue[i]
-        #     test_predict[:, i] = test_predict[:, i] * maxvalue[i]
+            test_y[:, i] = test_y[:, i] * (max_value[i] - min_value[i]) + min_value[i]
+            test_predict[:, i] = test_predict[:, i] * (max_value[i] - min_value[i]) + min_value[i]
 
         for item in test_predict:
             if item[0] < 0:
