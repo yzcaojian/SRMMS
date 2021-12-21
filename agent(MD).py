@@ -409,7 +409,10 @@ def integrate_data_(disk_failure_statistics):  # 不带smart数据
         ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
         hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
     else:
-        if disk_failure_statistics["ssd_total"] == 0:
+        if disk_failure_statistics["ssd_total"] == 0 and disk_failure_statistics["hdd_total"] == 0:
+            ssd_failure_rate = 0
+            hdd_failure_rate = 0
+        elif disk_failure_statistics["ssd_total"] == 0:
             ssd_failure_rate = 0
             hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
         else:
