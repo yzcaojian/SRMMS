@@ -213,7 +213,7 @@ class DetailedInfoTab(QTabWidget):
                         text2 = QLabel()
                     else:
                         item2.setStyleSheet("background-color:%s" % color_2[i - 3])
-                        text2 = QLabel('R1-' + str(i + 7) + '(' + days_2[i - 3] + '天)')
+                        text2 = QLabel('R1-' + str(i - 2) + '(' + days_2[i - 3] + '天)')
                     text2.setStyleSheet("font-size:20px; font-family:'黑体'")
                     health_degree_item_layout.addWidget(item2)
                     health_degree_text_layout.addWidget(text2, alignment=Qt.AlignCenter)
