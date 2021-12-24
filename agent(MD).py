@@ -247,14 +247,16 @@ def background_io_load_data_collection(io_load_data_second, io_load_data_minute)
     while flag:
         # 获取硬盘字典
         disk_dict_, _ = get_disk_total_capacity()
+        # 获取已使用容量和占用率
+        get_disk_used_capacity(disk_dict_, _)
         # 获取硬盘I/O负载数据
         get_disk_io(disk_dict_)
 
         for disk_id in disk_dict_:
             if disk_id not in io_load_data_second:
                 io_load_data_second[disk_id] = []
-            # disk_dict_[disk_id]里面包含了硬盘总容量和硬盘I/O负载两个数据
-            io_load_data_second[disk_id].append(disk_dict_[disk_id][1])
+            # disk_dict_[disk_id]: 总容量 / 已使用容量 / 占用率 / io负载(kB)
+            io_load_data_second[disk_id].append(disk_dict_[disk_id][3])
             # 数据已经够了60个
             if len(io_load_data_second[disk_id]) >= 60:
                 # 求和处理
