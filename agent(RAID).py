@@ -178,7 +178,7 @@ while loop_flag:
     print("连接已经建立")
 
     info = sock.recv(1024).decode().split('/')
-    if info[0] == "请求数据1" or info[0] == "请求数据2":  # 包含smart数据
+    if info[0] == "请求数据1" or info[0] == "请求数据2" or info[0] == "请求数据3":
         dic = integrate_data()
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")

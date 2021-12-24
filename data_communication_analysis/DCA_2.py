@@ -16,6 +16,9 @@ def send_data(ip, dict_data):  # 多硬盘架构
     if "smart_data" in dict_data:
         smart_data = dict_data["smart_data"]
         in_interface_impl.IN_DCA_HDFP(ip, smart_data)
+    if "io_load_data" in dict_data:
+        io_load_data = dict_data["io_load_data"]
+        in_interface_impl.set_io_load_input_queue_train(ip, io_load_data)
 
 
 def send_data_RSD(ip, server_info, detailed_info, two_disk_info=None):

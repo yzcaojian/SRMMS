@@ -242,7 +242,156 @@ def background_smart_data_collection(smart_data_dict):
         time.sleep(60 * 60)
 
 
-def integrate_data(smart_data_dict, disk_failure_statistics):
+def background_io_load_data_collection(io_load_data_second, io_load_data_minute):
+    flag = True
+    while flag:
+        # 获取硬盘字典
+        disk_dict_, _ = get_disk_total_capacity()
+        # 获取硬盘I/O负载数据
+        get_disk_io(disk_dict_)
+
+        for disk_id in disk_dict_:
+            if disk_id not in io_load_data_second:
+                io_load_data_second[disk_id] = []
+            # disk_dict_[disk_id]里面包含了硬盘总容量和硬盘I/O负载两个数据
+            io_load_data_second[disk_id].append(disk_dict_[disk_id][1])
+            # 数据已经够了60个
+            if len(io_load_data_second[disk_id]) >= 60:
+                # 求和处理
+                total_io = 0
+                for disk_io in io_load_data_second[disk_id]:
+                    total_io += disk_io
+                # 求和完毕后清空处理
+                io_load_data_second[disk_id].clear()
+                if disk_id not in io_load_data_minute:
+                    io_load_data_minute[disk_id] = []
+                io_load_data_minute[disk_id].append(round(total_io, 1))
+                # 每分钟的I/O负载数据最多存600个(10小时)
+                if len(io_load_data_minute[disk_id]) >= 600:
+                    del io_load_data_minute[disk_id][0]
+
+        # 删除可能因更换硬盘而存在的无效disk_id
+        for disk_id in io_load_data_second:
+            if disk_id not in disk_dict_:
+                del io_load_data_second[disk_id]
+        for disk_id in io_load_data_minute:
+            if disk_id not in disk_dict_:
+                del io_load_data_minute[disk_id]
+
+        # 每秒收集一次数据
+        time.sleep(1)
+
+
+def integrate_data_1(smart_data_dict, disk_failure_statistics, io_load_data_minute):
+    # 获取总容量
+    disk_dict, part_dict = get_disk_total_capacity()
+    # 获取已使用容量和占用率
+    get_disk_used_capacity(disk_dict, part_dict)
+    # 获得io负载
+    get_disk_io(disk_dict)
+    # 获得故障率和运行状态
+    get_disk_running_status(disk_dict)
+    # 获得硬盘类型
+    get_disk_type(disk_dict)
+    # 获得smart数据
+    get_smart_data(disk_dict, smart_data_dict)
+
+    total_capacity, used_capacity, hdd_counts, ssd_counts, hdd_total_capacity, ssd_total_capacity, hdd_used_capacity,\
+        ssd_used_capacity, hdd_io, ssd_io = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    detailed_info = []
+    smart_data = []
+    # 总容量 / 已使用容量 / 占用率 / io负载(kB)  / 运行状态 / 硬盘类型 / smart数据
+    for disk_id in disk_dict:
+        total_capacity += disk_dict[disk_id][0]
+        used_capacity += disk_dict[disk_id][1]
+        if disk_dict[disk_id][5] == "HDD":
+            hdd_counts += 1
+            hdd_total_capacity += disk_dict[disk_id][0]
+            hdd_used_capacity += disk_dict[disk_id][1]
+            hdd_io += disk_dict[disk_id][3]
+        else:
+            ssd_counts += 1
+            ssd_total_capacity += disk_dict[disk_id][0]
+            ssd_used_capacity += disk_dict[disk_id][1]
+            ssd_io += disk_dict[disk_id][3]
+
+        detailed_info.append([disk_id, disk_dict[disk_id][5], disk_dict[disk_id][4], disk_dict[disk_id][0],
+                              disk_dict[disk_id][1], disk_dict[disk_id][2], disk_dict[disk_id][3]])
+
+        # smart数据
+        device_model = disk_dict[disk_id][6][0]
+        smartID_list = disk_dict[disk_id][6][1]
+        smartData_list = disk_dict[disk_id][6][2]
+
+        smart_data.append([disk_id, device_model, smartID_list, smartData_list])
+
+    # 总体占用率
+    occupied_rate = str(round(used_capacity / total_capacity * 100, 2)) + '%'
+    # hdd占用率
+    if hdd_counts == 0:
+        hdd_occupied_rate = 0
+    else:
+        hdd_occupied_rate = str(round(hdd_used_capacity / hdd_total_capacity * 100, 2)) + '%'
+    # ssd占用率
+    if ssd_counts == 0:
+        ssd_occupied_rate = 0
+    else:
+        ssd_occupied_rate = str(round(ssd_used_capacity / ssd_total_capacity * 100, 2)) + '%'
+
+    # 计算两类硬盘故障率
+    # 当前硬盘数量比不少于上一次数量时
+    if ssd_counts >= disk_failure_statistics["ssd_previous"]:
+        disk_failure_statistics["ssd_total"] += ssd_counts - disk_failure_statistics["ssd_previous"]
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    # 当前硬盘数量少于上一次数量时，视为故障
+    else:
+        disk_failure_statistics["ssd_failure"] += disk_failure_statistics["ssd_previous"] - ssd_counts
+        disk_failure_statistics["ssd_previous"] = ssd_counts
+    if hdd_counts >= disk_failure_statistics["hdd_previous"]:
+        disk_failure_statistics["hdd_total"] += hdd_counts - disk_failure_statistics["hdd_previous"]
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    else:
+        disk_failure_statistics["hdd_failure"] += disk_failure_statistics["hdd_previous"] - hdd_counts
+        disk_failure_statistics["hdd_previous"] = hdd_counts
+    if disk_failure_statistics["ssd_total"] != 0 and disk_failure_statistics["hdd_total"] != 0:
+        ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+        hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+    else:
+        if disk_failure_statistics["ssd_total"] == 0:
+            ssd_failure_rate = 0
+            hdd_failure_rate = disk_failure_statistics["hdd_failure"] / disk_failure_statistics["hdd_total"]
+        else:
+            ssd_failure_rate = disk_failure_statistics["ssd_failure"] / disk_failure_statistics["ssd_total"]
+            hdd_failure_rate = 0
+
+    # 单位为GB,保留两位小数
+    total_capacity = round(total_capacity, 2)
+    used_capacity = round(used_capacity, 2)
+    hdd_total_capacity = round(hdd_total_capacity, 2)
+    ssd_total_capacity = round(ssd_total_capacity, 2)
+    hdd_used_capacity = round(hdd_used_capacity, 2)
+    ssd_used_capacity = round(ssd_used_capacity, 2)
+
+    # I/O负载数据保留一位小数
+    hdd_io = round(hdd_io, 1)
+    ssd_io = round(ssd_io, 1)
+
+    overall_info = [total_capacity, used_capacity, occupied_rate, hdd_counts, ssd_counts, hdd_total_capacity,
+                    ssd_total_capacity, hdd_used_capacity, ssd_used_capacity, hdd_occupied_rate, ssd_occupied_rate,
+                    hdd_failure_rate, ssd_failure_rate, hdd_io, ssd_io]
+
+    for disk_id in io_load_data_minute:
+        # 存储的I/O负载数据大于300个(5小时)
+        if len(io_load_data_minute[disk_id]) >= 300:
+            dic = {"overall_info": overall_info, "detailed_info": detailed_info, "smart_data": smart_data,
+                   "io_load_data": io_load_data_minute}
+            return dic
+        else:
+            dic = {"overall_info": overall_info, "detailed_info": detailed_info, "smart_data": smart_data}
+            return dic
+
+
+def integrate_data_2(smart_data_dict, disk_failure_statistics):
     # 获取总容量
     disk_dict, part_dict = get_disk_total_capacity()
     # 获取已使用容量和占用率
@@ -344,7 +493,7 @@ def integrate_data(smart_data_dict, disk_failure_statistics):
     return dic
 
 
-def integrate_data_(disk_failure_statistics):  # 不带smart数据
+def integrate_data_3(disk_failure_statistics):  # 不带smart数据
     # 获取总容量
     disk_dict, part_dict = get_disk_total_capacity()
     # 获取已使用容量和占用率
@@ -451,11 +600,15 @@ def get_host_ip():
 
 
 smart_data_dict = {}
+io_load_data_second = {}
+io_load_data_minute = {}
 disk_failure_statistics = {"ssd_total": 0, "hdd_total": 0, "ssd_failure": 0, "hdd_failure": 0, "ssd_previous": 0,
                            "hdd_previous": 0}
 
 # 后台线程收集smart数据
 _thread.start_new_thread(background_smart_data_collection, (smart_data_dict,))
+# 后台线程收集I/O负载数据
+_thread.start_new_thread(background_io_load_data_collection, (io_load_data_second, io_load_data_minute))
 
 ip = get_host_ip()
 port = 12345
@@ -468,13 +621,18 @@ while loop_flag:
     print("连接已经建立")
 
     info = sock.recv(1024).decode().split('/')
-    if info[0] == "请求数据1":  # 包含smart数据
-        dic = integrate_data(smart_data_dict, disk_failure_statistics)
+    if info[0] == "请求数据1":  # 包含smart数据和训练用的I/O负载数据
+        dic = integrate_data_1(smart_data_dict, disk_failure_statistics, io_load_data_minute)
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)
-    elif info[0] == "请求数据2":  # 不包含smart数据
-        dic = integrate_data_(disk_failure_statistics)
+    elif info[0] == "请求数据2":  # 仅包含smart数据
+        dic = integrate_data_2(smart_data_dict, disk_failure_statistics)
+        string = json.dumps(dic)
+        byte = bytes(string, encoding="utf-8")
+        sock.send(byte)
+    elif info[0] == "请求数据3":  # 不包含smart数据
+        dic = integrate_data_3(disk_failure_statistics)
         string = json.dumps(dic)
         byte = bytes(string, encoding="utf-8")
         sock.send(byte)
@@ -483,7 +641,6 @@ while loop_flag:
         file = open('./instructions.txt', 'a+')
         file.writelines(instructions + "\n")
         file.close()
-
     sock.close()
     print("连接已经断开")
 s.close()

@@ -35,12 +35,20 @@ class out_interface_impl(out_interface):
         client.connect(ip_addr)
         if ip not in cls.index_dic:
             cls.index_dic[ip] = 0
-        if cls.index_dic[ip] % (60 * 60) == 0:  # 请求数据(包含smart数据)
+        if cls.index_dic[ip] % (60 * 60 * 2) == 0:  # 请求数据(包含smart数据和训练用的I/O负载数据)
             client.send(bytes("请求数据1", encoding="utf-8"))
-        else:  # 请求数据(不包含smart数据)
+        elif cls.index_dic[ip] % (60 * 60) == 0:  # 请求数据(仅包含smart数据)
             client.send(bytes("请求数据2", encoding="utf-8"))
-        cls.index_dic[ip] = (cls.index_dic[ip] + 1) % (60 * 60)
-        data = client.recv(10240).decode()
+        else:  # 请求数据(不包含smart数据)
+            client.send(bytes("请求数据3", encoding="utf-8"))
+        cls.index_dic[ip] = (cls.index_dic[ip] + 1) % (60 * 60 * 2)
+        data = ""
+        while True:
+            data_stream = client.recv(1024).decode()
+            # 数据接收完毕,退出循环
+            if not data_stream:
+                break
+            data += data_stream
 
         client.close()
 

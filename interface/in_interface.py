@@ -52,6 +52,11 @@ class in_interface:
     def get_io_load_input_queue_predict(cls):
         pass
 
+    # 接收服务器处传来的供训练用的I/O负载数据
+    @classmethod
+    def set_io_load_input_queue_train(cls, ip, io_load_data):
+        pass
+
     # 获得IO负载输入队列 for train
     @classmethod
     def get_io_load_input_queue_train(cls):
@@ -206,7 +211,7 @@ class in_interface_impl(in_interface):
     io_load_input_queue_display = {}  # 前端绘图用
     io_load_input_queue_display_past = {}  # 前端绘图用  历史信息
     io_load_input_queue_predict = {}  # 预测用 单位为分钟
-    io_load_input_queue_train = {}  # 训练用 单位为分钟
+    io_load_input_queue_train = {}  # 训练用 单位为分钟 直接从服务器处获取
     io_load_output_queue = {}  # I/O负载输出队列
     io_load_output_queue_past = {}  # I/O负载输出队列  历史信息
     high_io_load_queue = {}  # 高负载队列
@@ -254,7 +259,6 @@ class in_interface_impl(in_interface):
         # 将以秒为单位的I/O负载数据转化为以分钟为单位的I/O数据
         io_second_to_io_minute(ip, cls.io_load_input_queue, cls.io_load_input_queue_display)
         io_second_to_io_minute(ip, cls.io_load_input_queue, cls.io_load_input_queue_predict)
-        io_second_to_io_minute(ip, cls.io_load_input_queue, cls.io_load_input_queue_train)
         # 检查数据超载
         cls.check_for_data_overload_1(ip)
 
@@ -412,6 +416,10 @@ class in_interface_impl(in_interface):
     @classmethod
     def get_io_load_input_queue_predict(cls):
         return cls.io_load_input_queue_predict
+
+    @classmethod
+    def set_io_load_input_queue_train(cls, ip, io_load_data):
+        cls.io_load_input_queue_train[ip] = io_load_data
 
     @classmethod
     def get_io_load_input_queue_train(cls):
