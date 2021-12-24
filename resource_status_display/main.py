@@ -253,7 +253,7 @@ threadLock_resource = QMutex()
 def start():
     # 预先请求一次数据
     for ip in configuration_info.server_IPs:
-        analyse_data(ip, threadLock_resource)
+        _thread.start_new_thread(analyse_data, (ip, threadLock_resource))
     # 先运行三个线程
     PredictionTrainingThread.online_training_thread.start()
     PredictionTrainingThread.io_load_prediction_thread.start()
