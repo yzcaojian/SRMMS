@@ -15,8 +15,8 @@ def check_ip(ip):
         client = socket.socket()
         client.settimeout(2)
         client.connect((ip, 12345))
-        client.send(bytes("请求数据2", encoding="utf-8"))
-        data = client.recv(10240).decode()
+        client.send(bytes("请求数据3", encoding="utf-8"))
+        data = client.recv(1024).decode()
         client.close()
     # 服务器失联 捕获异常
     except socket.timeout:
