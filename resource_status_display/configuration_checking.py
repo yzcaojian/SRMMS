@@ -149,6 +149,8 @@ class ConfigurationInfo:
                     if not self.IsNameExist(new_name):
                         temp = self.server_names[i]
                         self.server_names[i] = new_name
+                        from interface.in_interface import in_interface_impl
+                        in_interface_impl.change_server_name_by_ip(ip_address, new_name)
                         self.writeFile(3, '')
                         break
                     else:

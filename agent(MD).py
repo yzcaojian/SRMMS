@@ -608,7 +608,7 @@ def background_broadcast_ip():
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     flag = True
     while flag:
-        data = "SRMMS" + "_" + get_host_ip() + "_多硬盘架构"
+        data = "SRMMS" + "_" + get_host_ip() + "_1"
         byte = bytes(data, encoding="utf-8")
         s.sendto(byte, dest)
         time.sleep(5)
