@@ -232,8 +232,9 @@ class in_interface_impl(in_interface):
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
 
-    # 存放通过广播接收到的服务器IP的时间戳
+    # 存放通过广播接收到的服务器IP的时间戳和架构类型
     server_ip_dict = {}
+    server_type_dict = {}
 
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
@@ -789,9 +790,7 @@ class in_interface_impl(in_interface):
         return time_list
 
     @classmethod
-    def delete_server(cls, ip, lock):
-        # 删除前先申请锁
-        lock.lock()
+    def delete_server(cls, ip):
         if ip in cls.server_info_dict:
             del cls.server_info_dict[ip]
         if ip in cls.RAID_io_info_dict:
@@ -834,8 +833,6 @@ class in_interface_impl(in_interface):
             del cls.exception_dict[ip]
         if ip in cls.update_time:
             del cls.update_time[ip]
-        # 释放锁
-        lock.unlock()
 
     @classmethod
     def get_two_disk_io_show_time(cls):
@@ -922,25 +919,31 @@ class in_interface_impl(in_interface):
         lock.unlock()
 
     @classmethod
-    def background_get_ip(cls):
+    def background_get_ip(cls, flag, threadLock_drawing, threadLock_transaction):
         import socket
 
         port = 1234
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         s.bind(('', port))
-        flag = True
         while flag:
             msg, addr = s.recvfrom(1024)
             msg = msg.decode('utf-8').split('_')
             if msg[0] == "SRMMS":
+                # 获取锁
+                threadLock_drawing.lock()
+                threadLock_transaction.lock()
                 server_ip = msg[1]
                 cls.server_ip_dict[server_ip] = time.time()
+                cls.server_type_dict[server_ip] = msg[2]
+                # 释放锁
+                threadLock_transaction.unlock()
+                threadLock_drawing.unlock()
 
         s.close()
 
     @classmethod
-    def check_server_ip_dict(cls, lock):
+    def check_server_ip_dict(cls):
         now_time = time.time()
         delete_server_ip = []
         for ip in cls.server_ip_dict:
@@ -951,8 +954,8 @@ class in_interface_impl(in_interface):
         # 删除该服务器IP及其所有相关数据
         for ip in delete_server_ip:
             del cls.server_ip_dict[ip]
-            cls.delete_server(ip, lock)
+            cls.delete_server(ip)
 
     @classmethod
     def get_server_ip_dict(cls):
-        return cls.server_ip_dict
+        return list(cls.server_ip_dict.keys()), list(cls.server_type_dict.values())

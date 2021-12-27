@@ -161,6 +161,15 @@ class MainWindow(QMainWindow):
         self.main_ui = MainWidget()
 
 
+class ProbeIPThread(QThread):
+    def __init__(self):
+        super(ProbeIPThread, self).__init__()
+
+    def run(self):
+        # 后台线程进行ip自发现
+        in_interface_impl.background_get_ip(MainWidget.running, threadLock_drawing, threadLock_transaction)
+
+
 class RequestResourceThread(QThread):
     def __init__(self):
         super(RequestResourceThread, self).__init__()
@@ -171,6 +180,11 @@ class RequestResourceThread(QThread):
             threadLock_drawing.lock()
             threadLock_transaction.lock()
             print("请求资源获得锁")
+
+            in_interface_impl.check_server_ip_dict()
+            configuration_info.server_IPs, configuration_info.server_types = in_interface_impl.get_server_ip_dict()
+            configuration_info.server_names = configuration_info.server_IPs.copy()
+
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:
                 in_interface_impl.request_time[ip] = time.time()
@@ -251,14 +265,18 @@ threadLock_resource = QMutex()
 
 
 def start():
-    # 预先请求一次数据
-    for ip in configuration_info.server_IPs:
-        _thread.start_new_thread(analyse_data, (ip, threadLock_resource))
-    # 先运行三个线程
+    app = QApplication(sys.argv)
+    main = MainWindow()
+
+    # IP自发现
+    check_ip_thread = ProbeIPThread()
+    check_ip_thread.start()
+    # # 预先请求一次数据
+    # for ip in configuration_info.server_IPs:
+    #     _thread.start_new_thread(analyse_data, (ip, threadLock_resource))
+    # 运行三个线程
     PredictionTrainingThread.online_training_thread.start()
     PredictionTrainingThread.io_load_prediction_thread.start()
     PredictionTrainingThread.hard_disk_failure_prediction_thread.start()
 
-    app = QApplication(sys.argv)
-    main = MainWindow()
     sys.exit(app.exec_())  # 循环等待界面退出
