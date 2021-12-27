@@ -232,7 +232,7 @@ class in_interface_impl(in_interface):
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
 
-    # 存放通过广播接收到的服务器IP的时间戳
+    # 存放通过广播接收到的服务器的IP、名称、架构类型和时间戳
     server_ip_dict = {}
 
     @classmethod
