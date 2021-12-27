@@ -75,6 +75,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
         server_storage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 设置禁止编辑
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
+        server_storage_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # 设置表根据内容调整列宽
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.doubleClicked.connect(  # 双击新增详细信息界面
             lambda: self.add_detailed_tab(
@@ -548,6 +549,7 @@ class RaidInfoTabWidget(QTabWidget):
         server_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
         server_storage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 设置禁止编辑
         server_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
+        server_storage_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # 设置表根据内容调整列宽
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
         server_storage_table.clicked.connect(lambda: show_volume_storage_list())
@@ -599,6 +601,7 @@ class RaidInfoTabWidget(QTabWidget):
         volume_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
         volume_storage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 设置禁止编辑
         volume_storage_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表宽度自适应性扩展
+        volume_storage_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # 设置表根据内容调整列宽
         # volume_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
         volume_storage_table_layout = QVBoxLayout()

@@ -3,7 +3,7 @@ import _thread
 import time
 
 from PyQt5.QtCore import Qt, QSize, QMutex, QThread
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
     QMessageBox
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
@@ -64,7 +64,12 @@ class MainWidget(QWidget):
         self.setWindowTitle("存储资源监控管理系统")
         self.setObjectName('MultDisksInfoWidget')
         self.setWindowIcon(QIcon('./resources/png/software.png'))  # 设置窗体图标
-        self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
+        # self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
+        palette = QPalette()
+        pix = QPixmap("./resources/png/background.png")
+        pix = pix.scaled(self.width(), self.height())
+        palette.setBrush(QPalette.Background, QBrush(pix))
+        self.setPalette(palette)
 
         self.initUI()
         # 全局布局
@@ -88,7 +93,7 @@ class MainWidget(QWidget):
         title_widget = QWidget()
         title_layout = QVBoxLayout()
 
-        title_label = QLabel('''<font color=black face='黑体' size=8>存储资源监控管理系统<font>''')
+        title_label = QLabel('''<font color=white face='黑体' size=8>存储资源监控管理系统<font>''')
         # title_label.setContentsMargins(0, 16, 0, 0)
         title_label.setAlignment(Qt.AlignCenter)  # 文本居中
         switch_button = QPushButton()
@@ -97,8 +102,8 @@ class MainWidget(QWidget):
         switch_button.setIcon(switch_button_icon)
         switch_button.setIconSize(QSize(30, 30))
         # switch_button.setContentsMargins(0, 30, 0, 0)
-        switch_button.setStyleSheet("QPushButton{background-color:#cccccc; border: none} "
-                                    "QPushButton:pressed{background-color:#aaaaaa}")
+        switch_button.setStyleSheet("QPushButton{background-color: rgb(6, 47, 99, 0); border: none} "
+                                    "QPushButton:pressed{background-color: rgb(6, 47, 99, 0)}")
         # 将文本和切换按钮共同居中
         # title = QHBoxLayout()
         # title_w = QWidget()
@@ -108,7 +113,7 @@ class MainWidget(QWidget):
         # title_layout.addWidget(title_w, alignment=Qt.AlignCenter)
         # title_widget.setLayout(title_layout)
 
-        self.title_branch = QLabel('''<font color=black face='黑体' size=6>（多硬盘架构）<font>''')
+        self.title_branch = QLabel('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
 
         # 切换按钮与架构文字信息布局
         branch = QHBoxLayout()
@@ -128,7 +133,7 @@ class MainWidget(QWidget):
 
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
-            self.title_branch.setText('''<font color=black face='黑体' size=6>（RAID架构）<font>''')
+            self.title_branch.setText('''<font color=white face='黑体' size=6>（RAID架构）<font>''')
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
                 item.update_thread.close_thread()
@@ -138,7 +143,7 @@ class MainWidget(QWidget):
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
-            self.title_branch.setText('''<font color=black face='黑体' size=6>（多硬盘架构）<font>''')
+            self.title_branch.setText('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
             self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None
