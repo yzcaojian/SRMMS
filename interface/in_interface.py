@@ -232,6 +232,9 @@ class in_interface_impl(in_interface):
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
 
+    # 存放通过广播接收到的服务器IP的时间戳
+    server_ip_dict = {}
+
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
         from resource_scheduling_allocation.RSA_1 import io_second_to_io_minute
@@ -917,3 +920,39 @@ class in_interface_impl(in_interface):
         cls.RAID_io_max_amount = int(minute * 60)
         # 释放锁
         lock.unlock()
+
+    @classmethod
+    def background_get_ip(cls):
+        import socket
+
+        port = 1234
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        s.bind(('', port))
+        flag = True
+        while flag:
+            msg, addr = s.recvfrom(1024)
+            msg = msg.decode('utf-8').split('_')
+            if msg[0] == "SRMMS":
+                server_ip = msg[1]
+                cls.server_ip_dict[server_ip] = time.time()
+
+        s.close()
+
+    @classmethod
+    def check_server_ip_dict(cls, lock):
+        now_time = time.time()
+        delete_server_ip = []
+        for ip in cls.server_ip_dict:
+            # 断开连接超过10分钟,删除该服务器IP
+            if (now_time - cls.server_ip_dict[ip]) > 60 * 10:
+                # 将该IP加入待删除列表
+                delete_server_ip.append(ip)
+        # 删除该服务器IP及其所有相关数据
+        for ip in delete_server_ip:
+            del cls.server_ip_dict[ip]
+            cls.delete_server(ip, lock)
+
+    @classmethod
+    def get_server_ip_dict(cls):
+        return cls.server_ip_dict

@@ -601,12 +601,28 @@ def get_host_ip():
     return ip
 
 
+def background_broadcast_ip():
+    port = 1234
+    dest = ('<broadcast>', port)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    flag = True
+    while flag:
+        data = "SRMMS" + "_" + get_host_ip()
+        byte = bytes(data, encoding="utf-8")
+        s.sendto(byte, dest)
+        time.sleep(5)
+    s.close()
+
+
 smart_data_dict = {}
 io_load_data_second = {}
 io_load_data_minute = {}
 disk_failure_statistics = {"ssd_total": 0, "hdd_total": 0, "ssd_failure": 0, "hdd_failure": 0, "ssd_previous": 0,
                            "hdd_previous": 0}
 
+# 后台线程发送服务器的IP地址
+_thread.start_new_thread(background_broadcast_ip, ())
 # 后台线程收集smart数据
 _thread.start_new_thread(background_smart_data_collection, (smart_data_dict,))
 # 后台线程收集I/O负载数据

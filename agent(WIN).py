@@ -2,6 +2,8 @@ import wmi
 import json
 import socket
 import win32com.client as client
+import time
+import _thread
 
 
 def get_disk_data():
@@ -58,6 +60,23 @@ def get_host_ip():
 
     return ip
 
+
+def background_broadcast_ip():
+    port = 1234
+    dest = ('<broadcast>', port)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    flag = True
+    while flag:
+        data = "SRMMS" + "_" + get_host_ip()
+        byte = bytes(data, encoding="utf-8")
+        s.sendto(byte, dest)
+        time.sleep(5)
+    s.close()
+
+
+# 后台线程发送服务器的IP地址
+_thread.start_new_thread(background_broadcast_ip, ())
 
 ip = get_host_ip()
 port = 12345
