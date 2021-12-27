@@ -232,9 +232,8 @@ class in_interface_impl(in_interface):
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
 
-    # 存放通过广播接收到的服务器IP的时间戳和架构类型
+    # 存放通过广播接收到的服务器IP的时间戳
     server_ip_dict = {}
-    server_type_dict = {}
 
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
