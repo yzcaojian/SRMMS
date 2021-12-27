@@ -46,7 +46,7 @@ def get_ServerInfo_Item(serverInfo):
     server_IP_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
 
     # 服务器架构类型
-    server_type_widget = QLabel("多硬盘架构") if server_type == "1" else QLabel( "RAID架构")
+    server_type_widget = QLabel("多硬盘架构") if server_type == "1" else QLabel("RAID架构")
     server_type_widget.setStyleSheet("font-size:20px; font-family:'黑体'")
 
     single_server_layout.addWidget(server_image)

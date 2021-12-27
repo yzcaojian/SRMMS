@@ -187,8 +187,8 @@ class RequestResourceThread(QThread):
             print("请求资源获得锁")
 
             in_interface_impl.check_server_ip_dict()
-            configuration_info.server_IPs, configuration_info.server_types = in_interface_impl.get_server_ip_dict()
-            configuration_info.server_names = configuration_info.server_IPs.copy()
+            configuration_info.server_IPs, configuration_info.server_names, configuration_info.server_types = \
+                in_interface_impl.get_server_ip_dict()
 
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:

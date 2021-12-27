@@ -232,9 +232,8 @@ class in_interface_impl(in_interface):
     # 关于图标闪烁的两种需求下的预警方式
     exception_dict = {}
 
-    # 存放通过广播接收到的服务器IP的时间戳和架构类型
+    # 存放通过广播接收到的服务器的IP、名称、架构类型和时间戳
     server_ip_dict = {}
-    server_type_dict = {}
 
     @classmethod
     def IN_DCA_RSA(cls, ip, detailed_info_list):
@@ -934,8 +933,16 @@ class in_interface_impl(in_interface):
                 threadLock_drawing.lock()
                 threadLock_transaction.lock()
                 server_ip = msg[1]
-                cls.server_ip_dict[server_ip] = time.time()
-                cls.server_type_dict[server_ip] = msg[2]
+                server_name = server_ip
+                server_type = msg[2]
+                now_time = time.time()
+                if server_ip not in cls.server_ip_dict:
+                    cls.server_ip_dict[server_ip] = []
+                    cls.server_ip_dict[server_ip].append(server_name)
+                    cls.server_ip_dict[server_ip].append(server_type)
+                    cls.server_ip_dict[server_ip].append(now_time)
+                else:
+                    cls.server_ip_dict[server_ip][2] = now_time
                 # 释放锁
                 threadLock_transaction.unlock()
                 threadLock_drawing.unlock()
@@ -948,7 +955,7 @@ class in_interface_impl(in_interface):
         delete_server_ip = []
         for ip in cls.server_ip_dict:
             # 断开连接超过10分钟,删除该服务器IP
-            if (now_time - cls.server_ip_dict[ip]) > 60 * 10:
+            if (now_time - cls.server_ip_dict[ip][2]) > 60 * 10:
                 # 将该IP加入待删除列表
                 delete_server_ip.append(ip)
         # 删除该服务器IP及其所有相关数据
@@ -958,4 +965,16 @@ class in_interface_impl(in_interface):
 
     @classmethod
     def get_server_ip_dict(cls):
-        return list(cls.server_ip_dict.keys()), list(cls.server_type_dict.values())
+        server_ip_list = []
+        server_name_list = []
+        server_type_list = []
+        for ip in cls.server_ip_dict:
+            server_ip_list.append(ip)
+            server_name_list.append(cls.server_ip_dict[ip][0])
+            server_type_list.append(cls.server_ip_dict[ip][1])
+        return server_ip_list, server_name_list, server_type_list
+
+    @classmethod
+    def change_server_name_by_ip(cls, ip, server_name):
+        if ip in cls.server_ip_dict:
+            cls.server_ip_dict[ip][0] = server_name
