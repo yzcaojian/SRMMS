@@ -196,21 +196,25 @@ s.bind((ip, port))
 loop_flag = True
 while loop_flag:
     s.listen(1)
-    sock, addr = s.accept()
-    print("连接已经建立")
+    try:
+        sock, addr = s.accept()
+        print("连接已经建立")
 
-    info = sock.recv(1024).decode().split('/')
-    if info[0] == "请求数据1" or info[0] == "请求数据2" or info[0] == "请求数据3":
-        dic = integrate_data()
-        string = json.dumps(dic)
-        byte = bytes(string, encoding="utf-8")
-        sock.send(byte)
-    # elif info[0] == "接收指令":
-    #     instructions = info[1]
-    #     file = open('./instructions.txt', 'a+')
-    #     file.writelines(instructions + "\n")
-    #     file.close()
+        info = sock.recv(1024).decode().split('/')
+        if info[0] == "请求数据1" or info[0] == "请求数据2" or info[0] == "请求数据3":
+            dic = integrate_data()
+            string = json.dumps(dic)
+            byte = bytes(string, encoding="utf-8")
+            sock.send(byte)
+        # elif info[0] == "接收指令":
+        #     instructions = info[1]
+        #     file = open('./instructions.txt', 'a+')
+        #     file.writelines(instructions + "\n")
+        #     file.close()
 
-    sock.close()
-    print("连接已经断开")
+        sock.close()
+        print("连接已经断开")
+    except ConnectionResetError:
+        print("远程主机强迫关闭了一个现有的连接,连接已经断开")
+        continue
 s.close()

@@ -638,30 +638,34 @@ s.bind((ip, port))
 loop_flag = True
 while loop_flag:
     s.listen(1)
-    sock, addr = s.accept()
-    print("连接已经建立")
+    try:
+        sock, addr = s.accept()
+        print("连接已经建立")
 
-    info = sock.recv(1024).decode().split('/')
-    if info[0] == "请求数据1":  # 包含smart数据和训练用的I/O负载数据
-        dic = integrate_data_1(smart_data_dict, disk_failure_statistics, io_load_data_minute)
-        string = json.dumps(dic)
-        byte = bytes(string, encoding="utf-8")
-        sock.send(byte)
-    elif info[0] == "请求数据2":  # 仅包含smart数据
-        dic = integrate_data_2(smart_data_dict, disk_failure_statistics)
-        string = json.dumps(dic)
-        byte = bytes(string, encoding="utf-8")
-        sock.send(byte)
-    elif info[0] == "请求数据3":  # 不包含smart数据
-        dic = integrate_data_3(disk_failure_statistics)
-        string = json.dumps(dic)
-        byte = bytes(string, encoding="utf-8")
-        sock.send(byte)
-    elif info[0] == "接收指令":
-        instructions = info[1]
-        file = open('./instructions.txt', 'a+')
-        file.writelines(instructions + "\n")
-        file.close()
-    sock.close()
-    print("连接已经断开")
+        info = sock.recv(1024).decode().split('/')
+        if info[0] == "请求数据1":  # 包含smart数据和训练用的I/O负载数据
+            dic = integrate_data_1(smart_data_dict, disk_failure_statistics, io_load_data_minute)
+            string = json.dumps(dic)
+            byte = bytes(string, encoding="utf-8")
+            sock.send(byte)
+        elif info[0] == "请求数据2":  # 仅包含smart数据
+            dic = integrate_data_2(smart_data_dict, disk_failure_statistics)
+            string = json.dumps(dic)
+            byte = bytes(string, encoding="utf-8")
+            sock.send(byte)
+        elif info[0] == "请求数据3":  # 不包含smart数据
+            dic = integrate_data_3(disk_failure_statistics)
+            string = json.dumps(dic)
+            byte = bytes(string, encoding="utf-8")
+            sock.send(byte)
+        elif info[0] == "接收指令":
+            instructions = info[1]
+            file = open('./instructions.txt', 'a+')
+            file.writelines(instructions + "\n")
+            file.close()
+        sock.close()
+        print("连接已经断开")
+    except ConnectionResetError:
+        print("远程主机强迫关闭了一个现有的连接,连接已经断开")
+        continue
 s.close()
