@@ -110,6 +110,8 @@ class ConfigurationInfo:
         self.server_names.append(server_name)
         self.server_IPs.append(ip_address)
         self.server_types.append(server_type)
+        from interface.in_interface import in_interface_impl
+        in_interface_impl.set_server_ip_dict(ip_address, server_name, server_type)
         self.writeFile(1, server_name + ' ' + ip_address + ' ' + server_type + "\n")
         return "已成功配置增加新的服务器" + server_name + "。"
 

@@ -964,6 +964,15 @@ class in_interface_impl(in_interface):
             cls.delete_server(ip)
 
     @classmethod
+    def set_server_ip_dict(cls, server_ip, server_name, server_type):
+        now_time = time.time()
+        if server_ip not in cls.server_ip_dict:
+            cls.server_ip_dict[server_ip] = []
+            cls.server_ip_dict[server_ip].append(server_name)
+            cls.server_ip_dict[server_ip].append(server_type)
+            cls.server_ip_dict[server_ip].append(now_time)
+
+    @classmethod
     def get_server_ip_dict(cls):
         server_ip_list = []
         server_name_list = []
@@ -978,3 +987,18 @@ class in_interface_impl(in_interface):
     def change_server_name_by_ip(cls, ip, server_name):
         if ip in cls.server_ip_dict:
             cls.server_ip_dict[ip][0] = server_name
+
+    @classmethod
+    def get_RAID_server_full_capacity(cls):
+        total_capacity = 0
+        total_used = 0
+        for ip in cls.server_info_dict:
+            if len(cls.server_info_dict[ip]) == 4:
+                total_capacity += cls.server_info_dict[ip][0]
+                total_used += cls.server_info_dict[ip][1]
+        if total_capacity == 0:
+            occupied_rate = "0%"
+        else:
+            occupied_rate = str(round(total_used / total_capacity * 100, 2)) + '%'
+
+        return total_capacity, total_used, occupied_rate

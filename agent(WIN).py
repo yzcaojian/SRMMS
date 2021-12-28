@@ -55,6 +55,8 @@ def get_host_ip():
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('1.1.1.1', 80))
         ip = s.getsockname()[0]
+    except OSError:
+        return get_host_ip()
     finally:
         s.close()
 
@@ -75,6 +77,7 @@ def background_broadcast_ip():
     s.close()
 
 
+time.sleep(10)
 # 后台线程发送服务器的IP地址
 _thread.start_new_thread(background_broadcast_ip, ())
 
