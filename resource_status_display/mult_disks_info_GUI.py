@@ -1,6 +1,7 @@
-from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal
-from PyQt5.QtGui import QIcon, QPixmap, QColor, QFont
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, QMessageBox
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon, QPixmap, QColor
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget, QListWidgetItem, \
+    QMessageBox
 
 from resource_status_display.backward_thread import UpdateLogThread
 from resource_status_display.configuration_GUI import ConfigurationWidget
@@ -54,7 +55,7 @@ class MultDisksInfoWidget(QWidget):
         update_button_icon.addPixmap(QPixmap('./resources/png/update.png'), QIcon.Normal, QIcon.Off)
         update_button.setIcon(update_button_icon)
         update_button.setIconSize(QSize(25, 25))
-        update_button.setStyleSheet("background-color:#cccccc")
+        update_button.setStyleSheet("background-color: rgb(0, 0, 0, 0)")
         # 绑定事件
         update_button.clicked.connect(lambda: self.update_())
         # 配置按钮
@@ -65,7 +66,7 @@ class MultDisksInfoWidget(QWidget):
         configuration_button_icon.addPixmap(QPixmap('./resources/png/configuration.png'), QIcon.Normal, QIcon.Off)
         configuration_button.setIcon(configuration_button_icon)
         configuration_button.setIconSize(QSize(25, 25))
-        configuration_button.setStyleSheet("background-color:#cccccc")
+        configuration_button.setStyleSheet("background-color: rgb(0, 0, 0, 0)")
         # 绑定事件
         configuration_button.clicked.connect(lambda: self.show_configuration_GUI())
         # 按钮布局添加按钮部件
@@ -74,12 +75,13 @@ class MultDisksInfoWidget(QWidget):
         button_widget.setLayout(button_layout)
 
         # 告警信息
-        warning_label = QLabel('''<font color=black face='黑体' size=5>告警信息<font>''')
-        warning_label.setAlignment(Qt.AlignCenter)  # 设置文本居中。下面的text-align:center实际上不起作用
-        warning_label.setStyleSheet("height:40px; background-color:white; border-width:2px; text-align:center;"
-                                    "border-style:solid; border-color:black; border-radius:20px")
+        warning_label = QLabel('''<font color=#def6fe face='黑体' size=5>告警信息<font>''')
+        warning_label.setStyleSheet("height:40px;")
         # 告警信息， 以list呈现
         warning_widget = QListWidget()
+        warning_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
+                                     "QListWidget::item:hover{background-color: #839B97}")
+
         # warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
         # 定义内部函数事件，初始化或者是有告警信号后，从warning_list中取数据放入warning_widget中去，刷新告警信息
@@ -89,7 +91,7 @@ class MultDisksInfoWidget(QWidget):
             if self.warning_update:
                 item = QListWidgetItem()
                 item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
-                item.setBackground(QColor(218, 255, 225, 155))
+                # item.setBackground(QColor(218, 255, 225, 155))
 
                 update_click = QPushButton()
                 update_click.setToolTip('刷新')
@@ -114,7 +116,7 @@ class MultDisksInfoWidget(QWidget):
 
             for warning in warningList:
                 item = QListWidgetItem()
-                item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
+                # item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
                 item.setSizeHint(QSize(260, 120))  # 必须设置Item大小，否则默认很小
                 # 添加告警信息条目
                 warning_item = get_warning_info_item(warning)
@@ -124,13 +126,14 @@ class MultDisksInfoWidget(QWidget):
         show_warning_list(self.warning_list)
 
         # 日志信息
-        log_label = QLabel('''<font color=black face='黑体' size=5>日志信息<font>''')
-        log_label.setAlignment(Qt.AlignCenter)
-        log_label.setStyleSheet("height:40px; background-color:white; border-width:2px; text-align:center;"
-                                "border-style:solid; border-color:black; border-radius:20px")
+        log_label = QLabel('''<font color=#def6fe face='黑体' size=5>日志信息<font>''')
+        log_label.setStyleSheet("height:40px;")
         # 日志信息，以list呈现
         log_widget = QListWidget()
+        log_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
+                                 "QListWidget::item:hover{background-color: #839B97}")
         # log_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
+        log_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将水平的滑动条隐藏，避免遮挡内容
         # 定位当前选中的item行，双击显示详细信息
         log_widget.itemDoubleClicked.connect(lambda: self.display_detailed_log_info(log_widget.selectedIndexes()))
 
@@ -141,7 +144,7 @@ class MultDisksInfoWidget(QWidget):
             if self.scheduling_update:
                 item = QListWidgetItem()
                 item.setSizeHint(QSize(280, 50))  # 必须设置Item大小，否则默认很小
-                item.setBackground(QColor(218, 255, 225, 155))
+                # item.setBackground(QColor(218, 255, 225, 155))
 
                 update_click = QPushButton()
                 update_click.setToolTip('刷新')
@@ -150,10 +153,11 @@ class MultDisksInfoWidget(QWidget):
                 update_icon.addPixmap(QPixmap('./resources/png/update.png'))
                 update_click.setIcon(update_button_icon)
                 update_click.setIconSize(QSize(25, 25))
-                update_click.setStyleSheet("background-color:white")
+                update_click.setStyleSheet("background-color:rbg(0, 0, 0, 0)")
                 update_click.clicked.connect(lambda: update_scheduling())
 
-                update_tip = QLabel("有" + str(len(scheduling_list.scheduling_list) - len(self.scheduling_list)) + "条告警信息更新")
+                update_tip = QLabel(
+                    "有" + str(len(scheduling_list.scheduling_list) - len(self.scheduling_list)) + "条告警信息更新")
                 update_tip.setStyleSheet("font-size:14px; color:red; font-family:'黑体'")
 
                 scheduling_item_layout = QHBoxLayout()
@@ -184,14 +188,14 @@ class MultDisksInfoWidget(QWidget):
         text_info_layout.setContentsMargins(0, 0, 0, 0)  # 设置内部窗体上下左右空隙为0，和tab页对齐
         self.text_info_widget.setLayout(text_info_layout)
         self.text_info_widget.setFixedWidth(300)  # 设置了固定长度300
-        print("size", self.size())
+        # print("size", self.size())
 
         # tab页与按钮和告警日志信息的布局
         self.whole_layout.setContentsMargins(10, 0, 10, 10)
-        self.tab_widget.setStyleSheet("QTabWidget:pane{border: 2px solid black; top: -2px; background:#ffffff}\
+        self.tab_widget.setStyleSheet("QTabWidget:pane{border: 1px solid black; top: -2px; background-color: white}\
                         QTabBar::tab{height:34px; width:250px; margin-right:1px; font-size:20px; border-radius: 4px;}\
-                        QTabBar::tab:selected{border:2px solid black; border-bottom-color:white; bottom:-2px; border-bottom-width: 4px; background:#ffffff}\
-                        QTabBar::tab:!selected{background:#cccccc; border:2px solid black; bottom: -2px}")
+                        QTabBar::tab:selected{border:2px solid #7efaff; border-bottom-color:#7efaff; bottom:-2px; border-bottom-width: 4px; background:#0c1949; color:white}\
+                        QTabBar::tab:!selected{background:#0c1949; color:white}")  # border:2px solid #5089C6
         self.whole_layout.addWidget(self.tab_widget)
         self.whole_layout.addWidget(self.text_info_widget)
         self.setLayout(self.whole_layout)
@@ -230,7 +234,8 @@ class MultDisksInfoWidget(QWidget):
                 del self.disk_failure_message[0:1]
                 liftime = [10, 30, 70, 150, 310, 360, 2, 5, 10]
                 QMessageBox.warning(self, "警告", "服务器" + server_ip + "上机械硬盘" + disk_id + "预计健康度为R" +
-                                    str(health_state) + "，剩余寿命在" + str(liftime[health_state - 1]) + "天以下", QMessageBox.Ok)
+                                    str(health_state) + "，剩余寿命在" + str(liftime[health_state - 1]) + "天以下",
+                                    QMessageBox.Ok)
 
     def display_detailed_log_info(self, index):
         QMessageBox.information(self, "全部", self.scheduling_list[index[0].row()])

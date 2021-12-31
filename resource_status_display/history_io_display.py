@@ -102,13 +102,13 @@ class HistoryIO(QWidget):
             # 可以稍加判断选择的时间范围不合理问题
 
             # 根据屏幕大小来确定I/O负载图的比例
-            io_width = str(self.size().width() - 20) + "px"
-            io_height = str(self.size().height() - 130) + "px"
+            io_width = str(self.size().width() - 40) + "px"
+            io_height = str(self.size().height() - 120) + "px"
 
             if not y_data:
                 y_data, x_data = [0], ["12:00"]
 
-            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
+            line = (Line(init_opts=opts.InitOpts(bg_color='#0c1949', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                     .add_xaxis(xaxis_data=x_data)
                     .add_yaxis(
@@ -116,23 +116,34 @@ class HistoryIO(QWidget):
                 y_axis=y_data,
                 areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                itemstyle_opts=opts.ItemStyleOpts(color='#FF4C29'))
                     .set_global_opts(
+                legend_opts=opts.LegendOpts(textstyle_opts=opts.TextStyleOpts(color='white')),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
                     name="IOPS/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
-                    splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    splitline_opts=opts.SplitLineOpts(is_show=True),
+                    name_textstyle_opts=opts.TextStyleOpts(color='white', ),
+                    axislabel_opts=opts.LabelOpts(color='auto'),
+                    axisline_opts=opts.AxisLineOpts(
+                        linestyle_opts=opts.LineStyleOpts(is_show=True, color='#6166B3', )
+                    )),
                 xaxis_opts=opts.AxisOpts(
                     name="时间",
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
-                    boundary_gap=False))
+                    boundary_gap=False,
+                    name_textstyle_opts=opts.TextStyleOpts(color='white', ),
+                    axislabel_opts=opts.LabelOpts(color='auto'),
+                    axisline_opts=opts.AxisLineOpts(
+                        linestyle_opts=opts.LineStyleOpts(is_show=True, color='#6166B3', )
+                    )))
                     .render("./resources/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width(), self.size().height() - 90)
+            line_widget.resize(self.size().width() - 20, self.size().height() - 90)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./resources/html/history_server_io.html"))
 
@@ -142,8 +153,8 @@ class HistoryIO(QWidget):
             # 可以稍加判断选择的时间范围不合理问题
 
             # 根据屏幕大小来确定I/O负载图的比例
-            io_width = str(self.size().width() - 20) + "px"
-            io_height = str(self.size().height() - 130) + "px"
+            io_width = str(self.size().width() - 40) + "px"
+            io_height = str(self.size().height() - 120) + "px"
 
             y_data, x_data = in_interface_impl.get_io_load_input_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
             y_predict_data, _ = in_interface_impl.get_io_load_output_queue_display_past(self.server_ip, self.disk_id, self.time_start, self.time_end)
@@ -154,7 +165,7 @@ class HistoryIO(QWidget):
             else:
                 y_predict_data_ = y_predict_data
 
-            line = (Line(init_opts=opts.InitOpts(bg_color='#ffffff', width=io_width, height=io_height,
+            line = (Line(init_opts=opts.InitOpts(bg_color='#0c1949', width=io_width, height=io_height,
                                                  animation_opts=opts.AnimationOpts(animation=False)))  # 设置宽高度，去掉加载动画
                     .add_xaxis(xaxis_data=x_data)
                     .add_yaxis(
@@ -162,29 +173,40 @@ class HistoryIO(QWidget):
                 y_axis=y_data,
                 areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color='#ce1212'))
+                itemstyle_opts=opts.ItemStyleOpts(color='#FF4C29'))
                     .add_yaxis(
                 series_name="预测I/O负载",
                 y_axis=y_predict_data_,
                 areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
                 label_opts=opts.LabelOpts(is_show=False),
-                itemstyle_opts=opts.ItemStyleOpts(color='#19d3da'))
+                itemstyle_opts=opts.ItemStyleOpts(color='#2940D3'))
                     .set_global_opts(
-                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                legend_opts=opts.LegendOpts(textstyle_opts=opts.TextStyleOpts(color='white')),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross", background_color="rgb(12, 25, 73)",),
                 yaxis_opts=opts.AxisOpts(
                     name="每分钟IO/KB",
                     type_="value",
                     axistick_opts=opts.AxisTickOpts(is_show=True, is_inside=True),
-                    splitline_opts=opts.SplitLineOpts(is_show=True)),
+                    splitline_opts=opts.SplitLineOpts(is_show=True),
+                    name_textstyle_opts=opts.TextStyleOpts(color='white', ),
+                    axislabel_opts=opts.LabelOpts(color='auto'),
+                    axisline_opts=opts.AxisLineOpts(
+                        linestyle_opts=opts.LineStyleOpts(is_show=True, color='#6166B3', )
+                    )),
                 xaxis_opts=opts.AxisOpts(
                     name="时间",
                     type_="category",
                     axistick_opts=opts.AxisTickOpts(is_inside=True),
-                    boundary_gap=False))
+                    boundary_gap=False,
+                    name_textstyle_opts=opts.TextStyleOpts(color='white', ),
+                    axislabel_opts=opts.LabelOpts(color='auto'),
+                    axisline_opts=opts.AxisLineOpts(
+                        linestyle_opts=opts.LineStyleOpts(is_show=True, color='#6166B3', )
+                    )))
                     .render("./resources/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width(), self.size().height() - 90)
+            line_widget.resize(self.size().width() - 20, self.size().height() - 90)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./resources/html/history_server_io.html"))
 

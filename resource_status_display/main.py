@@ -55,7 +55,6 @@ class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.title_widget = QWidget()  # 标题
         self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)  # 多硬盘架构下监控界面
         self.raid_info_widget = None  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
@@ -72,13 +71,17 @@ class MainWidget(QWidget):
         self.setPalette(palette)
 
         self.initUI()
-        # 全局布局
-        # whole_layout = QVBoxLayout()
-        self.whole_layout.setContentsMargins(0, 0, 0, 10)
-        self.whole_layout.addWidget(self.title_widget)
-        self.whole_layout.addWidget(self.mult_disks_info_widget)
-        self.setLayout(self.whole_layout)
-        self.show()
+
+        # temp = QWidget()
+        # temp_layout = QHBoxLayout()
+        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test1<font>'''))
+        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test2<font>'''))
+        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test3<font>'''))
+        # temp.setLayout(temp_layout)
+        # temp.setFixedHeight(100)
+        # # temp.setWindowFlags(Qt.FramelessWindowHint)
+        # temp.setAttribute(Qt.WA_TranslucentBackground)
+        # self.whole_layout.addWidget(temp)
 
         # 后台线程请求资源
         self.data_request_thread = RequestResourceThread()
@@ -91,7 +94,7 @@ class MainWidget(QWidget):
     def initUI(self):
         # 标题
         title_widget = QWidget()
-        title_layout = QVBoxLayout()
+        title_layout = QHBoxLayout()
 
         title_label = QLabel('''<font color=white face='黑体' size=8>存储资源监控管理系统<font>''')
         # title_label.setContentsMargins(0, 16, 0, 0)
@@ -104,14 +107,6 @@ class MainWidget(QWidget):
         # switch_button.setContentsMargins(0, 30, 0, 0)
         switch_button.setStyleSheet("QPushButton{background-color: rgb(6, 47, 99, 0); border: none} "
                                     "QPushButton:pressed{background-color: rgb(6, 47, 99, 0)}")
-        # 将文本和切换按钮共同居中
-        # title = QHBoxLayout()
-        # title_w = QWidget()
-        # title.addWidget(title_label, alignment=Qt.AlignRight)
-        # title.addWidget(switch_button, alignment=Qt.AlignLeft)
-        # title_w.setLayout(title)
-        # title_layout.addWidget(title_w, alignment=Qt.AlignCenter)
-        # title_widget.setLayout(title_layout)
 
         self.title_branch = QLabel('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
 
@@ -122,14 +117,21 @@ class MainWidget(QWidget):
         branch.addWidget(switch_button, alignment=Qt.AlignLeft | Qt.AlignTop)
         branch_widget.setLayout(branch)
 
-        title_layout.addWidget(title_label, alignment=Qt.AlignCenter | Qt.AlignTop)
-        title_layout.addWidget(branch_widget, alignment=Qt.AlignCenter | Qt.AlignTop)
+        title_layout.addWidget(title_label, alignment=Qt.AlignRight | Qt.AlignVCenter)
+        title_layout.addWidget(branch_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
         title_widget.setLayout(title_layout)
-        title_widget.setFixedHeight(120)
+        # title_widget.setFixedHeight(80)
 
         switch_button.clicked.connect(lambda: self.switch_UI())
 
-        self.title_widget = title_widget
+        # 全局布局
+        self.whole_layout = QVBoxLayout()
+        self.whole_layout.setContentsMargins(0, 0, 0, 10)
+        self.whole_layout.addWidget(title_widget)
+        self.whole_layout.addWidget(self.mult_disks_info_widget)
+
+        self.setLayout(self.whole_layout)
+        self.show()
 
     def switch_UI(self):
         if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
@@ -141,6 +143,7 @@ class MainWidget(QWidget):
             self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
             self.raid_info_widget = RAIDInfoWidget(threadLock_drawing)
+            # self.raid_info_widget.setAttribute(Qt.WA_TranslucentBackground)
             self.whole_layout.addWidget(self.raid_info_widget)
         else:
             self.title_branch.setText('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
@@ -187,8 +190,8 @@ class RequestResourceThread(QThread):
             print("请求资源获得锁")
 
             in_interface_impl.check_server_ip_dict()
-            configuration_info.server_IPs, configuration_info.server_names, configuration_info.server_types = \
-                in_interface_impl.get_server_ip_dict()
+            # configuration_info.server_IPs, configuration_info.server_names, configuration_info.server_types = \
+            #     in_interface_impl.get_server_ip_dict()
 
             print("请求资源开始:")
             for ip in configuration_info.server_IPs:

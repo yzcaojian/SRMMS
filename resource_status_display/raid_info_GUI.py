@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QPalette, QBrush
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton
 from resource_status_display.configuration_GUI import ConfigurationWidget
 from resource_status_display.tab_GUI import RaidInfoTabWidget
@@ -36,7 +36,7 @@ class RAIDInfoWidget(QWidget):
         update_button_icon.addPixmap(QPixmap('./resources/png/update.png'), QIcon.Normal, QIcon.Off)
         update_button.setIcon(update_button_icon)
         update_button.setIconSize(QSize(25, 25))
-        update_button.setStyleSheet("background-color:#cccccc")
+        update_button.setStyleSheet("background-color:rgb(0, 0, 0, 0)")
         # 绑定事件
         update_button.clicked.connect(lambda: self.update_(self.lock))
         # 配置按钮
@@ -47,7 +47,7 @@ class RAIDInfoWidget(QWidget):
         configuration_button_icon.addPixmap(QPixmap('./resources/png/configuration.png'), QIcon.Normal, QIcon.Off)
         configuration_button.setIcon(configuration_button_icon)
         configuration_button.setIconSize(QSize(25, 25))
-        configuration_button.setStyleSheet("background-color:#cccccc")
+        configuration_button.setStyleSheet("background-color:rgb(0, 0, 0, 0)")
         # 绑定事件
         configuration_button.clicked.connect(lambda: self.show_configuration_GUI())
         # 按钮布局添加按钮部件
@@ -59,6 +59,7 @@ class RAIDInfoWidget(QWidget):
         self.whole_layout.addWidget(self.button_widget)
         self.whole_layout.addWidget(self.tab_widget)
         self.setLayout(self.whole_layout)
+        self.setWindowOpacity(0.1)
 
     def update_(self, lock):
         self.tab_widget.setParent(None)

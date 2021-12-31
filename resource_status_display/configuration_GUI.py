@@ -1,4 +1,3 @@
-import _thread
 import locale
 import re
 import time
@@ -7,9 +6,9 @@ from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
 from PyQt5.QtCore import Qt, QSize, QTimer
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QApplication, QMainWindow, QComboBox, \
-    QPushButton, QLineEdit, QTextBrowser, QListView, QListWidget, QListWidgetItem, QMessageBox
+from PyQt5.QtGui import QIcon, QPalette, QPixmap, QBrush
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QLineEdit, QListView, \
+    QListWidget, QListWidgetItem, QMessageBox
 
 """
 -*- coding: utf-8 -*- 
@@ -29,7 +28,6 @@ class ConfigurationWidget(QWidget):
         self.configuration_info = configuration_info  # 用于操作同步配置文件内容和server_info内容一致
         self.server_info = self.get_server_info()  # 维护服务器IP地址、名称和架构的信息
         self.events_info = []  # 维护所有服务型信息上的操作的历史结果
-        self.timer = QTimer(self)  # 初始化一个定时器
         self.initUI()
 
     def initUI(self):
@@ -38,8 +36,13 @@ class ConfigurationWidget(QWidget):
         self.setWindowTitle("系统配置")
         self.setObjectName('ConfigurationWidget')
         self.setWindowIcon(QIcon('./resources/png/configuration.png'))  # 设置窗体图标
-        # self.setStyleSheet('#ConfigurationWidget{border-image:url(zuanshi.png);}')  # 设置背景图
-        self.setStyleSheet("#ConfigurationWidget{background-color:#cccccc}")  # 设置背景颜色
+
+        palette = QPalette()
+        pix = QPixmap("./resources/png/background.png")
+        pix = pix.scaled(self.width(), self.height())
+        palette.setBrush(QPalette.Background, QBrush(pix))
+        self.setPalette(palette)
+
         # 新建的窗口始终位于当前屏幕的最前面
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)
         # 父类窗口不能点击
@@ -49,7 +52,7 @@ class ConfigurationWidget(QWidget):
         whole_layout = QVBoxLayout(self)
 
         # 最顶端的文字：系统配置
-        upper_title = QLabel('''<font color=black face='黑体' size=8>系 统 配 置<font>''')
+        upper_title = QLabel('''<font color=white face='黑体' size=8>系 统 配 置<font>''')
         upper_title.setAlignment(Qt.AlignCenter)  # 文本居中
 
         # 显示已经连入的存储服务器部分
@@ -57,13 +60,12 @@ class ConfigurationWidget(QWidget):
         middle_layout = QVBoxLayout()
         # 内部标题
         middle_title_layout = QVBoxLayout()
-        middle_title = QLabel('''<font color=black face='黑体' size=4>正在监控的存储服务器信息<font>''')
+        middle_title = QLabel('''<font color=white face='黑体' size=4>正在监控的存储服务器信息<font>''')
         middle_title.setAlignment(Qt.AlignLeft)  # 文本左对齐
         middle_title_layout.addWidget(middle_title)
 
-        # 内部为一个listWidget，每行呈现两个server-info
+        # 内部为一个listWidget，每行呈现server-info
         server_list = QListWidget()
-        # server_list.setStyleSheet('{text-align:left; display:compact}')
 
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):
@@ -150,13 +152,13 @@ class ConfigurationWidget(QWidget):
 
         # 输入部分的布局
         input_layout = QVBoxLayout()
-        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=4>服务器IP地址<font>'''), alignment=Qt.AlignBottom)
+        input_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>服务器IP地址<font>'''), alignment=Qt.AlignBottom)
         server_IP_input = QLineEdit()
         server_IP_input.setPlaceholderText('请输入服务器IP地址')
         server_IP_input.setFixedSize(300, 30)
         server_IP_input.setStyleSheet("height:30px")
         input_layout.addWidget(server_IP_input)
-        input_layout.addWidget(QLabel('''<font color=black face='黑体' size=4>服务器名称<font>'''), alignment=Qt.AlignBottom)
+        input_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>服务器名称<font>'''), alignment=Qt.AlignBottom)
         server_name_input = QLineEdit()
         server_name_input.setPlaceholderText('请输入服务器名称')
         server_name_input.setFixedSize(300, 30)
@@ -176,9 +178,6 @@ class ConfigurationWidget(QWidget):
         # button.clicked.connect(lambda: _thread.start_new_thread(update_operation_list, ()))
         button.clicked.connect(lambda: show_operation_result(self.events_info))
 
-        # self.timer.timeout.connect(lambda: show_operation_result(self.events_info))  # 计时结束调用刷新操作配置日志的方法
-        # self.timer.start(1000)  # 设置计时间隔并启动
-
         # 内部函数，在查询和删除的操作下输入一个框时使另一个框不可编辑
         def set_another_not_edit(another_line_edit):
             if self.edit_state == 1:
@@ -187,7 +186,7 @@ class ConfigurationWidget(QWidget):
         # 系统配置日志信息，内部为一个listWidget，列表呈现执行状态
         events_list = QListWidget()
 
-        log_widget = QLabel('''<font color=black face='黑体' size=4>系统配置日志信息<font>''')
+        log_widget = QLabel('''<font color=white face='黑体' size=4>系统配置日志信息<font>''')
 
         # 定义内部函数事件，初始化或者是按钮提交后，从events_info中取数据放入events_list中去，刷新服务器显示信息
         def show_operation_result(event_info):

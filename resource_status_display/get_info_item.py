@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QToolTip
 
 """
 -*- coding: utf-8 -*- 
@@ -75,7 +75,7 @@ def get_execution_state_item(line, IsDate=False):
 
 # 获取总体信息表的表格item, server_storage_info是ServerInfo的对象
 def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
-    # 设置默认字体为宋体，大小设为14，并且加粗(划掉)
+    # 设置默认字体为黑体，大小设为14，并且加粗(划掉)
     text_font = QFont("黑体", 14)  # , QFont.Bold)
 
     # 服务器名称
@@ -92,8 +92,9 @@ def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
         png = QPixmap('./resources/png/no.png').scaled(24, 38)
         server_image.setPixmap(png)
     server_name = QLabel(server_storage_info.serverName)
-    server_name.setToolTip(server_storage_info.serverName + ' ' + server_storage_info.serverIP)
+    server_name.setToolTip('名称:' + server_storage_info.serverName + ' IP:' + server_storage_info.serverIP)
     server_name.setFont(text_font)
+    server_name.setStyleSheet("color:rgb(249, 164, 84)")
 
     server_name_layout.addWidget(server_image)
     server_name_layout.addWidget(server_name, alignment=Qt.AlignLeft)
@@ -103,21 +104,24 @@ def get_server_storage_info_item(server_storage_info, update_cycle, turn=1):
     totalCapacity = round(server_storage_info.totalCapacity, 2)
     server_total_storage = QLabel(str(totalCapacity) + "GB")
     server_total_storage.setFont(text_font)
+    server_total_storage.setStyleSheet("color:white")
 
     # 服务器已使用容量
     occupiedCapacity = round(server_storage_info.occupiedCapacity, 2)
     server_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     server_occupied_storage.setFont(text_font)
+    server_occupied_storage.setStyleSheet("color:white")
 
     # 服务器容量使用占用率
     server_storage_occupied_rate = QLabel(server_storage_info.occupiedRate)
     server_storage_occupied_rate.setFont(text_font)
+    server_storage_occupied_rate.setStyleSheet("color:white")
 
     # 连接状态
     connected_state = QLabel()
     connected_state.setText(str(update_cycle) + "s")
-    connected_state.setStyleSheet("color:green; font-family:'黑体'; font-size:24px") if update_cycle < 2 else \
-        connected_state.setStyleSheet("color:red; font-family:'黑体'; font-size:24px")
+    connected_state.setStyleSheet("color:rgb(66, 217, 187); font-family:'黑体'; font-size:24px") if update_cycle < 2 else \
+        connected_state.setStyleSheet("color:rgb(246, 97, 114); font-family:'黑体'; font-size:24px")
 
     return [server_name_widget, server_total_storage, server_occupied_storage, server_storage_occupied_rate, connected_state]
 
@@ -142,6 +146,7 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
         png = QPixmap('./resources/png/no.png').scaled(38, 38)
         disk_image.setPixmap(png)
     disk_name = QLabel(disk_storage_info.diskID)
+    disk_name.setStyleSheet("color:rgb(249, 164, 84)")
     disk_name.setToolTip(disk_storage_info.diskID)
     disk_name.setFont(text_font)
     disk_name_layout.addWidget(disk_image)
@@ -151,24 +156,29 @@ def get_disk_storage_info_item(disk_storage_info, turn=1):
     # 硬盘类型
     disk_type = QLabel(disk_storage_info.type)
     disk_type.setFont(text_font)
+    disk_type.setStyleSheet("color:white")
 
     # 硬盘状态
     disk_state = QLabel(disk_storage_info.state)
     disk_state.setFont(text_font)
+    disk_state.setStyleSheet("color:white")
 
     # 硬盘存储容量
     totalCapacity = round(disk_storage_info.totalCapacity, 2)
     disk_total_storage = QLabel(str(totalCapacity) + "GB")
     disk_total_storage.setFont(text_font)
+    disk_total_storage.setStyleSheet("color:white")
 
     # 硬盘已使用容量
     occupiedCapacity = round(disk_storage_info.occupiedCapacity, 2)
     disk_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     disk_occupied_storage.setFont(text_font)
+    disk_occupied_storage.setStyleSheet("color:white")
 
     # 硬盘容量使用占用率
     disk_storage_occupied_rate = QLabel(disk_storage_info.occupiedRate)
     disk_storage_occupied_rate.setFont(text_font)
+    disk_storage_occupied_rate.setStyleSheet("color:white")
 
     return [disk_name_widget, disk_type, disk_state, disk_total_storage, disk_occupied_storage,
             disk_storage_occupied_rate]
@@ -187,8 +197,10 @@ def get_volume_storage_info_item(volume_storage_info):
     png = QPixmap('./resources/png/volume.png').scaled(32, 38)
     volume_image.setPixmap(png)
     volume_name = QLabel(volume_storage_info.logicVolumeID)
-    volume_name.setToolTip(volume_storage_info.logicVolumeID)
+    # volume_name.setToolTip(volume_storage_info.logicVolumeID)
     volume_name.setFont(text_font)
+    volume_name.setStyleSheet("color:white")
+
     volume_name_layout.addWidget(volume_image)
     volume_name_layout.addWidget(volume_name, alignment=Qt.AlignLeft)
     volume_name_widget.setLayout(volume_name_layout)
@@ -197,21 +209,20 @@ def get_volume_storage_info_item(volume_storage_info):
     totalCapacity = round(volume_storage_info.totalCapacity, 2)
     volume_total_storage = QLabel(str(totalCapacity) + "GB")
     volume_total_storage.setFont(text_font)
+    volume_total_storage.setStyleSheet("color:white")
 
     # 逻辑盘已使用容量
     occupiedCapacity = round(volume_storage_info.occupiedCapacity, 2)
     volume_occupied_storage = QLabel(str(occupiedCapacity) + "GB")
     volume_occupied_storage.setFont(text_font)
+    volume_occupied_storage.setStyleSheet("color:white")
 
     # 逻辑盘容量使用占用率
     volume_storage_occupied_rate = QLabel(volume_storage_info.occupiedRate)
     volume_storage_occupied_rate.setFont(text_font)
+    volume_storage_occupied_rate.setStyleSheet("color:white")
 
-    # 连接状态， QLabel('''<font color=red>异常<font>''')
-    connected_state = QLabel('''<font color=\'#00ff50\'>正常<font>''')
-    connected_state.setFont(text_font)
-
-    return [volume_name_widget, volume_total_storage, volume_occupied_storage, volume_storage_occupied_rate, connected_state]
+    return [volume_name_widget, volume_total_storage, volume_occupied_storage, volume_storage_occupied_rate]
 
 
 # exception来自告警信息类Warning，内部字段
@@ -237,8 +248,10 @@ def get_warning_info_item(exception):
         warning_level = "硬盘持续高负载告警(以秒记)："
     index = exception[1].find(' ')
     warning_time = QLabel(exception[1][:index])
+    warning_time.setStyleSheet("color:white")
     warning_time.setFont(text_font)
     warning_content = QLabel(warning_level + exception[1][index + 1:])
+    warning_content.setStyleSheet("color:white")
     warning_content.setFont(text_font)
     warning_content.setWordWrap(True)  # 设置文本超出限制则换行
     # 告警时间与内容布局
@@ -266,12 +279,15 @@ def get_scheduling_info_item(log):
     # 调度时间与内容
     index = log.find(' ')
     scheduling_time = QLabel(log[:index])
+    scheduling_time.setStyleSheet("color:white")
     log = log[index:]
     scheduling_time.setFont(text_font)
     scheduling_content = QLabel(log) if len(log) < 50 else QLabel(log[:50] + "...")
     scheduling_content.setFont(text_font)
     scheduling_content.setWordWrap(True)  # 设置文本超出限制则换行
-    scheduling_content.setContentsMargins(10, 0, 10, 0)
+    scheduling_content.setContentsMargins(5, 0, 5, 0)
+    scheduling_content.setStyleSheet("color:white")
+
     # 调度时间与内容布局
     scheduling_layout = QVBoxLayout()
     scheduling_layout.addWidget(scheduling_time)
