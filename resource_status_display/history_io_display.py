@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QUrl, QTime, Qt
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QColor
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
 from PyQt5.QtWidgets import QPushButton, QTimeEdit, QHBoxLayout, QVBoxLayout, QWidget, QLabel
 from pyecharts.charts import Line
@@ -91,6 +91,7 @@ class HistoryIO(QWidget):
 
         # I/O负载图
         line_widget = QWebEngineView()
+        line_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         def draw_server_io_line():
             # 根据当前服务器IP地址和选择的起始时间来查看I/O负载信息
@@ -143,7 +144,7 @@ class HistoryIO(QWidget):
                     .render("./resources/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width() - 20, self.size().height() - 90)
+            line_widget.resize(self.size().width() - 20, self.size().height() - 100)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./resources/html/history_server_io.html"))
 
@@ -206,7 +207,7 @@ class HistoryIO(QWidget):
                     .render("./resources/html/history_server_io.html"))
 
             line_widget.settings().setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, False)  # 将滑动条隐藏，避免遮挡内容
-            line_widget.resize(self.size().width() - 20, self.size().height() - 90)
+            line_widget.resize(self.size().width() - 20, self.size().height() - 100)
             # 打开本地html文件
             line_widget.load(QUrl("file:///./resources/html/history_server_io.html"))
 

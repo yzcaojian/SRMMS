@@ -1,4 +1,5 @@
 from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QColor
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
     QSplitter, QTableWidget, QAbstractItemView, QHeaderView, QComboBox
@@ -135,7 +136,10 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # HDD和SSD容量信息表
         first_bar_widget = QWebEngineView()
+        # 加载网页的时候周边会出现空白，需要用以下语句设置空白部分的颜色
+        first_bar_widget.page().setBackgroundColor(QColor(12, 25, 73))
         second_bar_widget = QWebEngineView()
+        second_bar_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         def draw_two_disk_storage_bar():
             two_disk_list = in_interface_impl.get_two_disk_info(self.selected_server_ip)
@@ -290,6 +294,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # 左边I/O负载图
         first_line_widget = QWebEngineView()
+        first_line_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         def draw_ssd_io_line():
             if not self.selected_server_ip:
@@ -401,6 +406,7 @@ class MultDisksInfoTabWidget(QTabWidget):
 
         # 右边I/O负载图
         second_line_widget = QWebEngineView()
+        second_line_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         def draw_hdd_io_line():
             if not self.selected_server_ip:
@@ -738,6 +744,7 @@ class RaidInfoTabWidget(QTabWidget):
         server_io_layout = QVBoxLayout()
         server_io_layout.addWidget(tip_widget, alignment=Qt.AlignLeft)
         line_widget = QWebEngineView()
+        line_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         def draw_server_io_line():
             if not self.selected_server_ip:

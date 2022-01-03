@@ -4,7 +4,7 @@
 # @Author: Chen Zhongwei
 # @Time: 2021/6/15 10:14
 from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtGui import QPixmap, QFont, QColor
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QPushButton, \
     QTableWidget, QAbstractItemView, QHeaderView
@@ -292,6 +292,7 @@ class DetailedInfoTab(QTabWidget):
         disk_io_layout = QVBoxLayout()
         disk_io_layout.addLayout(tip_layout)
         line_widget = QWebEngineView()
+        line_widget.page().setBackgroundColor(QColor(12, 25, 73))
 
         # 历史信息的按钮
         io_button = QPushButton("查看历史信息")
