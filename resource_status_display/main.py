@@ -2,10 +2,10 @@ import sys
 import _thread
 import time
 
-from PyQt5.QtCore import Qt, QSize, QMutex, QThread
-from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
+from PyQt5.QtCore import Qt, QSize, QMutex, QThread, QRect, QPoint
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
-    QMessageBox
+    QMessageBox, QSizePolicy
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
 from resource_status_display.configuration_checking import configuration_info
@@ -59,29 +59,26 @@ class MainWidget(QWidget):
         self.raid_info_widget = None  # RAID架构下监控界面
         self.whole_layout = QVBoxLayout()
 
+        # # 窗口标题栏设置相关参数
+        self.restorePos = None
+        self.restoreSize = None
+        self.startMovePos = None
+
         self.setGeometry(100, 100, 1700, 900)  # 坐标，宽高
-        self.setWindowTitle("存储资源监控管理系统")
-        self.setObjectName('MultDisksInfoWidget')
+        self._padding = 5  # 设置边界宽度为5
+        self.setObjectName('detailedInfoWidget')
+        self.setWindowFlags(Qt.FramelessWindowHint)  # 隐藏主窗口标题栏
+        # self.setWindowTitle("存储资源监控管理系统")
         self.setWindowIcon(QIcon('./resources/png/software.png'))  # 设置窗体图标
-        # self.setStyleSheet("#MultDisksInfoWidget{background-color:#cccccc}")  # 设置背景颜色
-        palette = QPalette()
-        pix = QPixmap("./resources/png/background.png")
-        pix = pix.scaled(self.width(), self.height())
-        palette.setBrush(QPalette.Background, QBrush(pix))
-        self.setPalette(palette)
+        # self.setStyleSheet("#detailedInfoWidget{background-color:#0c1949}")  # 设置背景颜色
+        # 背景图片设置
+        # palette = QPalette()
+        # pix = QPixmap("./resources/png/background.png")
+        # pix = pix.scaled(self.width(), self.height())
+        # palette.setBrush(QPalette.Background, QBrush(pix))
+        # self.setPalette(palette)
 
         self.initUI()
-
-        # temp = QWidget()
-        # temp_layout = QHBoxLayout()
-        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test1<font>'''))
-        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test2<font>'''))
-        # temp_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>test3<font>'''))
-        # temp.setLayout(temp_layout)
-        # temp.setFixedHeight(100)
-        # # temp.setWindowFlags(Qt.FramelessWindowHint)
-        # temp.setAttribute(Qt.WA_TranslucentBackground)
-        # self.whole_layout.addWidget(temp)
 
         # 后台线程请求资源
         self.data_request_thread = RequestResourceThread()
@@ -92,8 +89,78 @@ class MainWidget(QWidget):
         self.transaction_thread.start()
 
     def initUI(self):
+        # 设置鼠标跟踪判断扳机默认值
+        self._move_drag = False
+        self._corner_drag = False
+        self._bottom_drag = False
+        self._right_drag = False
+
+        # 按钮高度
+        BUTTON_HEIGHT = 20
+        # 按钮宽度
+        BUTTON_WIDTH = 20
+        # 标题栏高度
+        TITLE_HEIGHT = 20
+
+        # 自定义标题栏
+        navigator_widget = QWidget()
+        navigator_widget.setObjectName("navigator")
+        navigator_widget.setFixedHeight(BUTTON_HEIGHT + 10)
+        navigator_layout = QHBoxLayout()
+
+        buttonIcon = QPushButton()
+        buttonIcon.setObjectName("ButtonIcon")
+        buttonIcon.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        # navigatorContent = QLabel("存储资源监控管理系统")
+        # navigatorContent.setFixedHeight(TITLE_HEIGHT)
+        # navigatorContent.setObjectName("title")
+        self.buttonMin = QPushButton()
+        self.buttonMin.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))
+        self.buttonMin.setObjectName("ButtonMin")
+        self.buttonMin.clicked.connect(self.ButtonMinSlot)
+        self.buttonMin.setContentsMargins(0, 0, 30, 0)
+        self.buttonMax = QPushButton()
+        self.buttonMax.setFixedSize(QSize(BUTTON_WIDTH - 2, BUTTON_HEIGHT - 2))
+        self.buttonMax.setObjectName("ButtonMax")
+        self.buttonMax.clicked.connect(self.ButtonMaxSlot)
+        self.buttonRestore = QPushButton()
+        self.buttonRestore.setFixedSize(QSize(BUTTON_WIDTH - 2, BUTTON_HEIGHT - 2))
+        self.buttonRestore.setObjectName("ButtonRestore")
+        self.buttonRestore.clicked.connect(self.ButtonRestoreSlot)
+        self.buttonRestore.setVisible(False)
+        self.buttonClose = QPushButton()
+        self.buttonClose.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))
+        self.buttonClose.setObjectName("ButtonClose")
+        self.buttonClose.clicked.connect(self.ButtonCloseSlot)
+        self.setStyleSheet("#detailedInfoWidget{background-color:#0c1949}"
+                           # "QLabel#title{color: white}"
+                           "QPushButton#ButtonIcon{border-image:url(./resources/png/software.png)}"
+                           "QPushButton#ButtonMin{border-image:url(./resources/png/min.png)}"
+                           "QPushButton#ButtonMin:hover{background-color: gray}"
+                           "QPushButton#ButtonMax{border-image:url(./resources/png/max.png)}"
+                           "QPushButton#ButtonMax:hover{background-color: gray}"
+                           "QPushButton#ButtonRestore{border-image:url(./resources/png/restore.png)}"
+                           "QPushButton#ButtonRestore:hover{background-color: gray}"
+                           "QPushButton#ButtonClose{border-image:url(./resources/png/close.png)}"
+                           "QPushButton#ButtonClose:hover{background-color: red}")
+        # 占位窗口
+        placeholder_1 = QWidget()
+        placeholder_2 = QWidget()
+        placeholder_1.setFixedWidth(20)
+        placeholder_2.setFixedWidth(20)
+        navigator_layout.addWidget(buttonIcon)
+        navigator_layout.addWidget(QWidget())
+        navigator_layout.addWidget(self.buttonMin)
+        navigator_layout.addWidget(placeholder_1)
+        navigator_layout.addWidget(self.buttonMax)
+        navigator_layout.addWidget(self.buttonRestore)
+        navigator_layout.addWidget(placeholder_2)
+        navigator_layout.addWidget(self.buttonClose)
+        navigator_widget.setLayout(navigator_layout)
+
         # 标题
         title_widget = QWidget()
+        title_widget.setObjectName("title")
         title_layout = QHBoxLayout()
 
         title_label = QLabel('''<font color=white face='黑体' size=8>存储资源监控管理系统<font>''')
@@ -105,8 +172,8 @@ class MainWidget(QWidget):
         switch_button.setIcon(switch_button_icon)
         switch_button.setIconSize(QSize(30, 30))
         # switch_button.setContentsMargins(0, 30, 0, 0)
-        switch_button.setStyleSheet("QPushButton{background-color: rgb(6, 47, 99, 0); border: none} "
-                                    "QPushButton:pressed{background-color: rgb(6, 47, 99, 0)}")
+        switch_button.setStyleSheet("QPushButton{background-color: transparent; border: none} "
+                                    "QPushButton:pressed{background-color: transparent}")
 
         self.title_branch = QLabel('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
 
@@ -120,13 +187,15 @@ class MainWidget(QWidget):
         title_layout.addWidget(title_label, alignment=Qt.AlignRight | Qt.AlignVCenter)
         title_layout.addWidget(branch_widget, alignment=Qt.AlignLeft | Qt.AlignTop)
         title_widget.setLayout(title_layout)
+        title_widget.setStyleSheet("#title{border: 1px solid #0c1949; border-top-color: #7efaff}")
         # title_widget.setFixedHeight(80)
 
         switch_button.clicked.connect(lambda: self.switch_UI())
 
         # 全局布局
         self.whole_layout = QVBoxLayout()
-        self.whole_layout.setContentsMargins(0, 0, 0, 10)
+        self.whole_layout.setContentsMargins(0, 0, 0, 0)
+        self.whole_layout.addWidget(navigator_widget)
         self.whole_layout.addWidget(title_widget)
         self.whole_layout.addWidget(self.mult_disks_info_widget)
 
@@ -134,7 +203,7 @@ class MainWidget(QWidget):
         self.show()
 
     def switch_UI(self):
-        if self.whole_layout.itemAt(1).widget() == self.mult_disks_info_widget:
+        if self.whole_layout.itemAt(2).widget() == self.mult_disks_info_widget:
             self.title_branch.setText('''<font color=white face='黑体' size=6>（RAID架构）<font>''')
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
             for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
@@ -153,14 +222,56 @@ class MainWidget(QWidget):
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)
             self.whole_layout.addWidget(self.mult_disks_info_widget)
 
-    def closeEvent(self, event):
+    # def closeEvent(self, event):
+    #     reply = QMessageBox.question(self, '提醒', '你确认要退出程序吗？', QMessageBox.Yes, QMessageBox.No)
+    #     if reply == QMessageBox.Yes:
+    #         MainWidget.running = False
+    #         event.accept()
+    #         sys.exit(0)
+    #     else:
+    #         event.ignore()
+    def ButtonMaxSlot(self):
+        self.showMaximized()
+        self.buttonMax.setVisible(False)
+        self.buttonRestore.setVisible(True)
+
+    def ButtonMinSlot(self):
+        self.showMinimized()
+
+    def ButtonRestoreSlot(self):
+        if self.isMaximized():
+            self.showNormal()
+            self.buttonMax.setVisible(True)
+            self.buttonRestore.setVisible(False)
+        else:
+            self.showMaximized()
+            self.buttonMax.setVisible(False)
+            self.buttonRestore.setVisible(True)
+
+    def ButtonCloseSlot(self):
         reply = QMessageBox.question(self, '提醒', '你确认要退出程序吗？', QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             MainWidget.running = False
-            event.accept()
+            self.close()
             sys.exit(0)
-        else:
-            event.ignore()
+
+    def mouseDoubleClickEvent(self, event):
+        self.ButtonRestoreSlot()
+
+    def mousePressEvent(self, event):
+        self.isPressed = True
+        self.startMovePos = event.globalPos()
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if self.isPressed:
+            movePoint = QMouseEvent.globalPos() - self.startMovePos
+            widgetPos = self.pos()
+            self.startMovePos = QMouseEvent.globalPos()
+            self.move(widgetPos.x() + movePoint.x(), widgetPos.y() + movePoint.y())
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.isPressed = False
+
 
 
 class MainWindow(QMainWindow):
