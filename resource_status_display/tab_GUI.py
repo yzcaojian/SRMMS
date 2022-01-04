@@ -38,7 +38,7 @@ class MultDisksInfoTabWidget(QTabWidget):
     def __init__(self, lock):
         super().__init__()
         self.overall_info_tab = QWidget()  # 定义一个不能关闭的Tab页，表示总体信息显示页，后续可以添加可关闭的详细信息显示页
-        # self.selected_disk_id = []  # 选中的硬盘ID，每个tab页对应一个列表元素[server_ip, disk_id]，默认是每个服务器第一个
+        self.server_history_io = None  # IO历史信息查看界面
         self.Tab_list = []
         self.lock = lock
         self.exception_dict = in_interface_impl.get_exception_dict()  # 异常信号收集
@@ -607,14 +607,18 @@ class MultDisksInfoTabWidget(QTabWidget):
 
     # 查看历史I/O负载信息
     def show_history_io_line(self, level):
-        self.server_history_io = HistoryIO(self.selected_server_ip, "", level)
-        self.server_history_io.show()
+        if not self.server_history_io:
+            self.server_history_io = HistoryIO(self.selected_server_ip, "", level)
+            self.server_history_io.show()
+        else:
+            self.server_history_io.raise_()
 
 
 class RaidInfoTabWidget(QTabWidget):
     def __init__(self, lock):
         super().__init__()
         self.overall_info_tab = QWidget()
+        self.server_history_io = None  # IO历史信息查看界面
         self.server_overall_info = in_interface_impl.get_server_overall_info(1)  # 服务器总体信息列表
         # 选中的服务器IP地址，默认是第一个
         self.selected_server_ip = "" if len(self.server_overall_info) == 0 else self.server_overall_info[0].serverIP
@@ -914,5 +918,8 @@ class RaidInfoTabWidget(QTabWidget):
         self.selected_server_ip = self.server_overall_info[server_selected[0].topRow() - 1].serverIP  # 获取到选中的serverIP
 
     def show_history_io_line(self):
-        self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
-        self.server_history_io.show()
+        if not self.server_history_io:
+            self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
+            self.server_history_io.show()
+        else:
+            self.server_history_io.raise_()

@@ -100,7 +100,7 @@ class MultDisksInfoWidget(QWidget):
                 update_icon.addPixmap(QPixmap('./resources/png/update.png'))
                 update_click.setIcon(update_button_icon)
                 update_click.setIconSize(QSize(25, 25))
-                update_click.setStyleSheet("background-color:white")
+                update_click.setStyleSheet("background-color:transparent")
                 update_click.clicked.connect(lambda: update_warning())
 
                 update_tip = QLabel("有" + str(len(warning_list.warning_list) - len(self.warning_list)) + "条告警信息更新")
@@ -153,7 +153,7 @@ class MultDisksInfoWidget(QWidget):
                 update_icon.addPixmap(QPixmap('./resources/png/update.png'))
                 update_click.setIcon(update_button_icon)
                 update_click.setIconSize(QSize(26, 26))
-                update_click.setStyleSheet("background-color:rbg(0, 0, 0, 0)")
+                update_click.setStyleSheet("background-color: transparent")
                 update_click.clicked.connect(lambda: update_scheduling())
 
                 update_tip = QLabel(
@@ -257,4 +257,7 @@ class MultDisksInfoWidget(QWidget):
         self.initUI()
 
     def show_configuration_GUI(self):
-        self.configuration = ConfigurationWidget(self.lock)
+        if not self.configuration:
+            self.configuration = ConfigurationWidget(self.lock)
+        else:
+            self.configuration.raise_()

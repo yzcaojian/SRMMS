@@ -206,8 +206,14 @@ class MainWidget(QWidget):
         if self.whole_layout.itemAt(2).widget() == self.mult_disks_info_widget:
             self.title_branch.setText('''<font color=white face='黑体' size=6>（RAID架构）<font>''')
             self.mult_disks_info_widget.setParent(None)  # 清除多硬盘监控界面
+            if self.mult_disks_info_widget.configuration:
+                self.mult_disks_info_widget.configuration.close()  # 清除多硬盘架构打开的配置界面
+            if self.mult_disks_info_widget.tab_widget.server_history_io:
+                self.mult_disks_info_widget.tab_widget.server_history_io.close()  # 清除多硬盘架构主界面打开的io历史信息图
             for item in self.mult_disks_info_widget.tab_widget.Tab_list:  # 关闭tab页线程
                 item.update_thread.close_thread()
+                if item.disk_history_io:
+                    item.disk_history_io.close()  # 清除每个tab页打开的io历史信息图
             self.mult_disks_info_widget.update_log_thread.close_thread()
             self.mult_disks_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.mult_disks_info_widget = None
@@ -217,6 +223,10 @@ class MainWidget(QWidget):
         else:
             self.title_branch.setText('''<font color=white face='黑体' size=6>（多硬盘架构）<font>''')
             self.raid_info_widget.setParent(None)  # 清除RAID监控界面
+            if self.raid_info_widget.configuration:
+                self.raid_info_widget.configuration.close()  # 清除RAID架构打开的配置界面
+            if self.raid_info_widget.tab_widget.server_history_io:
+                self.raid_info_widget.tab_widget.server_history_io.close()  # 清除RAID架构界面打开的io历史信息图
             self.raid_info_widget.tab_widget.update_thread.close_thread()  # 关闭总体信息线程
             self.raid_info_widget = None
             self.mult_disks_info_widget = MultDisksInfoWidget(threadLock_drawing, threadLock_log)

@@ -33,7 +33,7 @@ class DetailedInfoTab(QTabWidget):
         self.update_thread = UpdateTabDataThread(lock)
         self.exception_dict = in_interface_impl.get_exception_dict()
         self.detailed_tab = None
-        # self.health_state = {}
+        self.disk_history_io = None  # IO历史信息查看
         self.server_detailed_info = None
         self.bind_thread = self.initUI()  # 用于绑定线程和刷新图表的信号槽的函数
         self.update_thread.start()
@@ -509,5 +509,8 @@ class DetailedInfoTab(QTabWidget):
 
     # 查看历史I/O负载信息
     def show_history_io_line(self, level):
-        self.server_history_io = HistoryIO(self.selected_disk_id[0], self.selected_disk_id[1], level)
-        self.server_history_io.show()
+        if not self.disk_history_io:
+            self.disk_history_io = HistoryIO(self.selected_disk_id[0], self.selected_disk_id[1], level)
+            self.disk_history_io.show()
+        else:
+            self.disk_history_io.raise_()

@@ -70,7 +70,10 @@ class RAIDInfoWidget(QWidget):
         self.initUI()
 
     def show_configuration_GUI(self):
-        self.configuration = ConfigurationWidget(self.lock)
+        if not self.configuration:
+            self.configuration = ConfigurationWidget(self.lock)
+        else:
+            self.configuration.raise_()
 
 
 
