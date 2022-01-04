@@ -62,7 +62,7 @@ class ConfigurationWidget(QWidget):
 
         # 内部为一个listWidget，每行呈现server-info
         server_list = QListWidget()
-        server_list.setStyleSheet("QListWidget{background-color:#0c1949;}")
+        server_list.setStyleSheet("QListWidget{background-color:transparent;}")
 
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):

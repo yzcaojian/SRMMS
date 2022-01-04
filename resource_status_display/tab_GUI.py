@@ -82,7 +82,7 @@ class MultDisksInfoTabWidget(QTabWidget):
         # server_storage_table.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         server_storage_table.doubleClicked.connect(  # 双击新增详细信息界面
             lambda: self.add_detailed_tab(
-                self.server_overall_info[server_storage_table.selectedRanges()[0].topRow()].serverIP, self.lock))
+                self.server_overall_info[server_storage_table.selectedRanges()[0].topRow() - 1].serverIP, self.lock))
         # 单击对当前页面进行刷新，图表绘制函数重新执行
         server_storage_table.clicked.connect(lambda: self.set_selected_server_ip(server_storage_table.selectedRanges()))
         server_storage_table.clicked.connect(lambda: draw_two_disk_storage_bar())
