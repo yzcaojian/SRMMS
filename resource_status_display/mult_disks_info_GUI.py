@@ -80,7 +80,7 @@ class MultDisksInfoWidget(QWidget):
         # 告警信息， 以list呈现
         warning_widget = QListWidget()
         warning_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
-                                     "QListWidget::item:hover{background-color: #839B97}")
+                                     "QListWidget::item:hover{background-color: #406882}")
 
         # warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
@@ -131,7 +131,7 @@ class MultDisksInfoWidget(QWidget):
         # 日志信息，以list呈现
         log_widget = QListWidget()
         log_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
-                                 "QListWidget::item:hover{background-color: #839B97}")
+                                 "QListWidget::item:hover{background-color: #406882}")
         # log_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         log_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将水平的滑动条隐藏，避免遮挡内容
         # 定位当前选中的item行，双击显示详细信息
@@ -152,7 +152,7 @@ class MultDisksInfoWidget(QWidget):
                 update_icon = QIcon()
                 update_icon.addPixmap(QPixmap('./resources/png/update.png'))
                 update_click.setIcon(update_button_icon)
-                update_click.setIconSize(QSize(25, 25))
+                update_click.setIconSize(QSize(26, 26))
                 update_click.setStyleSheet("background-color:rbg(0, 0, 0, 0)")
                 update_click.clicked.connect(lambda: update_scheduling())
 

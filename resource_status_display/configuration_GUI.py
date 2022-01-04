@@ -6,7 +6,7 @@ from interface.in_interface import in_interface_impl
 from resource_status_display.configuration_checking import configuration_info
 from resource_status_display.get_info_item import get_ServerInfo_Item, get_execution_state_item
 from PyQt5.QtCore import Qt, QSize, QTimer
-from PyQt5.QtGui import QIcon, QPalette, QPixmap, QBrush
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QLineEdit, QListView, \
     QListWidget, QListWidgetItem, QMessageBox
 
@@ -37,11 +37,7 @@ class ConfigurationWidget(QWidget):
         self.setObjectName('ConfigurationWidget')
         self.setWindowIcon(QIcon('./resources/png/configuration.png'))  # 设置窗体图标
 
-        palette = QPalette()
-        pix = QPixmap("./resources/png/background.png")
-        pix = pix.scaled(self.width(), self.height())
-        palette.setBrush(QPalette.Background, QBrush(pix))
-        self.setPalette(palette)
+        self.setStyleSheet("#ConfigurationWidget{background-color:#0c1949}")  # 设置背景颜色
 
         # 新建的窗口始终位于当前屏幕的最前面
         # self.setWindowFlags(Qt.WindowStaysOnTopHint)
@@ -66,6 +62,7 @@ class ConfigurationWidget(QWidget):
 
         # 内部为一个listWidget，每行呈现server-info
         server_list = QListWidget()
+        server_list.setStyleSheet("QListWidget{background-color:#0c1949;}")
 
         # 定义内部函数事件，初始化或者是按钮提交后，从server_info中取数据放入server_list中去，刷新服务器显示信息
         def show_server_info_list(server_info):
@@ -73,18 +70,18 @@ class ConfigurationWidget(QWidget):
 
             # 标头
             server_name = QLabel("服务器名称")
-            server_name.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            server_name.setStyleSheet("font-size:20px; font-family:'黑体'; color:white")
             server_IP = QLabel("IP地址")
-            server_IP.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            server_IP.setStyleSheet("font-size:20px; font-family:'黑体'; color:white")
             server_type = QLabel("类型")
-            server_type.setStyleSheet("font-size:20px; font-family:'黑体'; background-color:#eeeeee")
+            server_type.setStyleSheet("font-size:20px; font-family:'黑体'; color:white")
             head_layout = QHBoxLayout()
             head_layout.addWidget(server_name, alignment=Qt.AlignCenter)
             head_layout.addWidget(server_IP, alignment=Qt.AlignCenter)
             head_layout.addWidget(server_type, alignment=Qt.AlignCenter)
             head_widget = QWidget()
             head_widget.setLayout(head_layout)
-            head_widget.setStyleSheet("background-color:#eeeeee")
+            head_widget.setStyleSheet("background-color:#007580")
             header_item = QListWidgetItem()
             header_item.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
             header_item.setSizeHint(QSize(200, 50))
@@ -156,13 +153,13 @@ class ConfigurationWidget(QWidget):
         server_IP_input = QLineEdit()
         server_IP_input.setPlaceholderText('请输入服务器IP地址')
         server_IP_input.setFixedSize(300, 30)
-        server_IP_input.setStyleSheet("height:30px")
+        server_IP_input.setStyleSheet("height:30px; background-color: #cccccc")
         input_layout.addWidget(server_IP_input)
         input_layout.addWidget(QLabel('''<font color=white face='黑体' size=4>服务器名称<font>'''), alignment=Qt.AlignBottom)
         server_name_input = QLineEdit()
         server_name_input.setPlaceholderText('请输入服务器名称')
         server_name_input.setFixedSize(300, 30)
-        server_name_input.setStyleSheet("height:30px")
+        server_name_input.setStyleSheet("height:30px; background-color: #cccccc")
         input_layout.addWidget(server_name_input)
         input_widget = QWidget()
         input_widget.setLayout(input_layout)
@@ -185,6 +182,7 @@ class ConfigurationWidget(QWidget):
 
         # 系统配置日志信息，内部为一个listWidget，列表呈现执行状态
         events_list = QListWidget()
+        events_list.setStyleSheet("QListWidget{background-color:#0c1949;}")
 
         log_widget = QLabel('''<font color=white face='黑体' size=4>系统配置日志信息<font>''')
 
@@ -203,10 +201,10 @@ class ConfigurationWidget(QWidget):
                     item_t = QListWidgetItem()
                     item_t.setFlags(Qt.NoItemFlags)  # 设置条目不可选中不可编辑
                     item_t.setSizeHint(QSize(400, 40))
-                    # 添加时间条目
-                    date_widget = get_execution_state_item(event)
+                    # 添加事件条目
+                    event_widget = get_execution_state_item(event)
                     events_list.addItem(item_t)
-                    events_list.setItemWidget(item_t, date_widget)
+                    events_list.setItemWidget(item_t, event_widget)
 
         show_operation_result(self.events_info)
 
