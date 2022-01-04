@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QToolTip
+from PyQt5.QtGui import QImage, QPixmap, QFont, QIcon
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QToolTip, QTableWidgetItem
 
 """
 -*- coding: utf-8 -*- 
@@ -71,6 +71,46 @@ def get_execution_state_item(line, IsDate=False):
         line_label.setStyleSheet("height:20px; font-size:16px; font-family:'黑体'; text-indent:4px")
 
     return line_label
+
+
+def get_all_server_info_item(servers_storage_info):
+    text_font = QFont("黑体", 14)
+
+    cell_widget = QTableWidgetItem()
+    cell_widget.setFont(text_font)
+    cell_widget.setTextAlignment(Qt.AlignCenter)
+    cell_widget.setText("test")
+
+    # 服务器名称
+    server_name = QTableWidgetItem()
+    server_name.setFont(text_font)
+    server_name.setTextAlignment(Qt.AlignCenter)
+    server_name.setText("合计")
+
+    # 所有服务器总体容量
+    totalCapacity = round(servers_storage_info[0], 2)
+    server_total_storage = QTableWidgetItem()
+    server_total_storage.setFont(text_font)
+    server_total_storage.setTextAlignment(Qt.AlignCenter)
+    server_total_storage.setText(str(totalCapacity) + "GB")
+
+    # 所有服务器已使用容量
+    occupiedCapacity = round(servers_storage_info[1], 2)
+    server_occupied_storage = QTableWidgetItem()
+    server_occupied_storage.setFont(text_font)
+    server_occupied_storage.setTextAlignment(Qt.AlignCenter)
+    server_occupied_storage.setText(str(occupiedCapacity) + "GB")
+
+    # 所有服务器容量使用占用率
+    server_storage_occupied_rate = QTableWidgetItem()
+    server_storage_occupied_rate.setFont(text_font)
+    server_storage_occupied_rate.setTextAlignment(Qt.AlignCenter)
+    server_storage_occupied_rate.setText(servers_storage_info[2])
+
+    # 连接状态
+    connected_state = QTableWidgetItem()
+
+    return server_name, server_total_storage, server_occupied_storage, server_storage_occupied_rate, connected_state
 
 
 # 获取总体信息表的表格item, server_storage_info是ServerInfo的对象

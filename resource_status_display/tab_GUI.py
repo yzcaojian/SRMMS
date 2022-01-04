@@ -1,8 +1,8 @@
 from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QIcon, QFont
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QTabBar, QLabel, QPushButton, \
-    QSplitter, QTableWidget, QAbstractItemView, QHeaderView, QComboBox
+    QSplitter, QTableWidget, QAbstractItemView, QHeaderView, QComboBox, QTableWidgetItem
 from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts import options as opts
@@ -10,7 +10,8 @@ from pyecharts import options as opts
 from interface.in_interface import in_interface_impl
 from resource_status_display.backward_thread import UpdateMDDataThread, UpdateRAIDDataThread, UpdateTabDataThread
 from resource_status_display.history_io_display import HistoryIO
-from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item
+from resource_status_display.get_info_item import get_server_storage_info_item, get_volume_storage_info_item, \
+    get_all_server_info_item
 from resource_status_display.detailed_info_tab import DetailedInfoTab
 from resource_status_display.configuration_checking import configuration_info
 
@@ -70,8 +71,8 @@ class MultDisksInfoTabWidget(QTabWidget):
         server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '数据延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:#007580; font:14pt SimHei; color:white}")  # 设置表头样式
-        server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #1687A7}"  # 设置行选中样式
-                                           "QTableWidget{color:white; background-color:rgb(12, 25, 73);}")
+        server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #406882}"  # 设置行选中样式
+                                           "QTableWidget{color:white; background-color:#0c1949;}")
         server_storage_table.horizontalHeader().setHighlightSections(False)  # 设置表头不会因为点击表格而变色
         server_storage_table.verticalHeader().setVisible(False)  # 设置隐藏列表号
         server_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
@@ -103,9 +104,26 @@ class MultDisksInfoTabWidget(QTabWidget):
             global line
             self.server_overall_info = in_interface_impl.get_server_overall_info(0)
             server_storage_info_list = self.server_overall_info
-            server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
+            server_storage_table.setRowCount(len(self.server_overall_info) + 1)  # 设置表格行数
+
+            # 第一行 为服务器总体信息
+            all_server_info = in_interface_impl.get_MD_server_full_capacity()
+            servers_storage_info = get_all_server_info_item(all_server_info)
+            server_storage_table.setRowHeight(0, 60)
+            # for i in range(5):
+            #     cell_widget = QWidget()
+            #     cell_layout = QHBoxLayout()
+            #     cell_layout.setContentsMargins(0, 0, 0, 0)
+            #     cell_layout.addWidget(servers_storage_info[i], alignment=Qt.AlignCenter)
+            #     cell_widget.setLayout(cell_layout)
+            #     server_storage_table.setCellWidget(0, i, cell_widget)
+            for i, item in enumerate(servers_storage_info):
+                server_storage_table.setItem(0, i, item)
+                item.setFlags(item.flags() & ~Qt.ItemIsEnabled & ~Qt.ItemIsSelectable)
+
+            # 剩下行 为每个服务器单独的信息
             for i, single_server_info in enumerate(server_storage_info_list):
-                server_storage_table.setRowHeight(i, 60)
+                server_storage_table.setRowHeight(i + 1, 60)
                 update_cycle = in_interface_impl.get_update_cycle(single_server_info.serverIP)
                 # 添加单元格信息
                 if single_server_info.serverIP not in self.exception_dict:
@@ -118,17 +136,17 @@ class MultDisksInfoTabWidget(QTabWidget):
 
                 for j, cell in enumerate(line):
                     if j == 0:
-                        server_storage_table.setCellWidget(i, j, cell)
+                        server_storage_table.setCellWidget(i + 1, j, cell)
                         continue
                     cell_widget = QWidget()
                     cell_layout = QHBoxLayout()
                     cell_layout.setContentsMargins(0, 0, 0, 0)
                     cell_layout.addWidget(cell, alignment=Qt.AlignCenter)
                     cell_widget.setLayout(cell_layout)
-                    server_storage_table.setCellWidget(i, j, cell_widget)
+                    server_storage_table.setCellWidget(i + 1, j, cell_widget)
 
         show_server_storage_list()
-        server_storage_table.selectRow(0)  # 设置默认选中第一行
+        server_storage_table.selectRow(1)  # 设置默认选中第一行
 
         # 两类硬盘容量与故障率柱状图
         bar_layout = QHBoxLayout()
@@ -583,8 +601,9 @@ class MultDisksInfoTabWidget(QTabWidget):
                 self.Tab_list[i - 1].update_thread.close_thread()  # 关闭线程
 
     def set_selected_server_ip(self, server_selected):
-        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
-        # print("selected:", self.selected_server_ip)
+        if len(server_selected) == 0:
+            return
+        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow() - 1].serverIP  # 获取到选中的serverIP
 
     # 查看历史I/O负载信息
     def show_history_io_line(self, level):
@@ -614,8 +633,8 @@ class RaidInfoTabWidget(QTabWidget):
         server_storage_table.setHorizontalHeaderLabels(['服务器名称', '存储总容量', '已使用容量', '存储占用率', '数据延迟'])  # 设置表头
         server_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:#007580; font:14pt SimHei; color:white}")  # 设置表头样式
-        server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #1687A7}"  # 设置行选中样式
-                                           "QTableWidget{color:white; background-color:rgb(12, 25, 73);}")  # gridline-color: #7efaff
+        server_storage_table.setStyleSheet("QTableView::item:selected{background-color: #406882}"  # 设置行选中样式
+                                           "QTableWidget{color:white; background-color: #0c1949;}")  # gridline-color: #7efaff
         server_storage_table.horizontalHeader().setHighlightSections(False)  # 设置表头不会因为点击表格而变色
         server_storage_table.verticalHeader().setVisible(False)  # 设置隐藏列表号
         server_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
@@ -639,25 +658,42 @@ class RaidInfoTabWidget(QTabWidget):
                     0].serverIP
             self.server_overall_info = in_interface_impl.get_server_overall_info(1)
             server_storage_info_list = self.server_overall_info
-            server_storage_table.setRowCount(len(self.server_overall_info))  # 设置表格行数
+            server_storage_table.setRowCount(len(self.server_overall_info) + 1)  # 设置表格行数
+
+            # 第一行 为所有服务器总体信息
+            all_server_info = in_interface_impl.get_RAID_server_full_capacity()
+            servers_storage_info = get_all_server_info_item(all_server_info)
+            server_storage_table.setRowHeight(0, 60)
+            # for i in range(5):
+            #     cell_widget = QWidget()
+            #     cell_layout = QHBoxLayout()
+            #     cell_layout.setContentsMargins(0, 0, 0, 0)
+            #     cell_layout.addWidget(servers_storage_info[i], alignment=Qt.AlignCenter)
+            #     cell_widget.setLayout(cell_layout)
+            #     server_storage_table.setCellWidget(0, i, cell_widget)
+            for i, item in enumerate(servers_storage_info):
+                server_storage_table.setItem(0, i, item)
+                item.setFlags(item.flags() & ~Qt.ItemIsEnabled & ~Qt.ItemIsSelectable)
+
+            # 剩下行 为每个服务器单独的信息
             for i, single_server_info in enumerate(server_storage_info_list):
-                server_storage_table.setRowHeight(i, 60)
+                server_storage_table.setRowHeight(i + 1, 60)
                 update_cycle = in_interface_impl.get_update_cycle(single_server_info.serverIP)
                 # 添加单元格信息
                 line = get_server_storage_info_item(single_server_info, update_cycle)
                 for j, cell in enumerate(line):
                     if j == 0:
-                        server_storage_table.setCellWidget(i, j, cell)
+                        server_storage_table.setCellWidget(i + 1, j, cell)
                         continue
                     cell_widget = QWidget()
                     cell_layout = QHBoxLayout()
                     cell_layout.setContentsMargins(0, 0, 0, 0)
                     cell_layout.addWidget(cell, alignment=Qt.AlignCenter)
                     cell_widget.setLayout(cell_layout)
-                    server_storage_table.setCellWidget(i, j, cell_widget)
+                    server_storage_table.setCellWidget(i + 1, j, cell_widget)
 
         show_server_storage_list()
-        server_storage_table.selectRow(0)  # 设置默认选中第一行
+        server_storage_table.selectRow(1)  # 设置默认选中第一行
 
         # 服务器详细信息表
         volume_title = QLabel('''<font color=#def6fe weight=bold face='黑体' size=5>服务器详细信息<font>''')
@@ -667,8 +703,8 @@ class RaidInfoTabWidget(QTabWidget):
         volume_storage_table.setHorizontalHeaderLabels(['逻辑卷标识', '存储总容量', '已使用容量', '存储占用率'])  # 设置表头
         volume_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:#007580; font:14pt SimHei; color:white;}")  # 设置表头样式
-        volume_storage_table.setStyleSheet("QTableView::item:selected{background-color: rgb(12, 25, 73)}"  # 设置行选中样式
-                                           "QTableWidget{color:white; background-color:rgb(12, 25, 73);}")  # gridline-color: #7efaff
+        volume_storage_table.setStyleSheet("QTableView::item:selected{background-color: #406882}"  # 设置行选中样式
+                                           "QTableWidget{color:white; background-color:#0c1949;}")  # gridline-color: #7efaff
         volume_storage_table.horizontalHeader().setHighlightSections(False)  # 设置表头不会因为点击表格而变色
         volume_storage_table.verticalHeader().setVisible(False)  # 设置隐藏列表号
         volume_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格
@@ -873,7 +909,9 @@ class RaidInfoTabWidget(QTabWidget):
         self.update_thread.start()
 
     def set_selected_server_ip(self, server_selected):
-        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow()].serverIP  # 获取到选中的serverIP
+        if len(server_selected) == 0:
+            return
+        self.selected_server_ip = self.server_overall_info[server_selected[0].topRow() - 1].serverIP  # 获取到选中的serverIP
 
     def show_history_io_line(self):
         self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)

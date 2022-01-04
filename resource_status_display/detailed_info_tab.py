@@ -54,8 +54,8 @@ class DetailedInfoTab(QTabWidget):
         disk_storage_table.setHorizontalHeaderLabels(['硬盘标识', '硬盘类型', '状态', '存储总容量', '已使用容量', '存储占用率'])  # 设置表头
         disk_storage_table.horizontalHeader().setStyleSheet(
             "QHeaderView::section{background-color:#007580; font:12pt SimHei; color:white}")  # 设置表头样式
-        disk_storage_table.setStyleSheet("QTableWidget{color:white; background-color:rgb(12, 25, 73);}"
-                                         "QTableView::item:selected{background: #1687A7}")  # 设置行选中样式
+        disk_storage_table.setStyleSheet("QTableWidget{color:white; background-color: #0c1949;}"
+                                         "QTableView::item:selected{background: #406882}")  # 设置行选中样式
         disk_storage_table.horizontalHeader().setHighlightSections(False)  # 设置表头不会因为点击表格而变色
         disk_storage_table.verticalHeader().setVisible(False)  # 设置隐藏列表号
         disk_storage_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置选中单位为行，而不是单元格

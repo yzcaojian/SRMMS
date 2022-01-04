@@ -1002,3 +1002,18 @@ class in_interface_impl(in_interface):
             occupied_rate = str(round(total_used / total_capacity * 100, 2)) + '%'
 
         return total_capacity, total_used, occupied_rate
+
+    @classmethod
+    def get_MD_server_full_capacity(cls):
+        total_capacity = 0
+        total_used = 0
+        for ip in cls.server_info_dict:
+            if len(cls.server_info_dict[ip]) != 4:
+                total_capacity += cls.server_info_dict[ip][0]
+                total_used += cls.server_info_dict[ip][1]
+        if total_capacity == 0:
+            occupied_rate = "0%"
+        else:
+            occupied_rate = str(round(total_used / total_capacity * 100, 2)) + '%'
+
+        return total_capacity, total_used, occupied_rate
