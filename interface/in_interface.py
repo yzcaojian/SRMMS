@@ -941,8 +941,8 @@ class in_interface_impl(in_interface):
                     cls.server_ip_dict[server_ip].append(server_name)
                     cls.server_ip_dict[server_ip].append(server_type)
                     cls.server_ip_dict[server_ip].append(now_time)
-                else:
-                    cls.server_ip_dict[server_ip][2] = now_time
+                # else:
+                #     cls.server_ip_dict[server_ip][2] = now_time  # 在DAC_2的send_data_RSD函数中更新时间戳
                 # 释放锁
                 threadLock_transaction.unlock()
                 threadLock_drawing.unlock()
