@@ -260,4 +260,7 @@ class MultDisksInfoWidget(QWidget):
         if not self.configuration:
             self.configuration = ConfigurationWidget(self.lock)
         else:
-            self.configuration.raise_()
+            if self.configuration.isVisible():
+                self.configuration.raise_()
+            else:
+                self.configuration.show()

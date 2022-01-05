@@ -611,7 +611,10 @@ class MultDisksInfoTabWidget(QTabWidget):
             self.server_history_io = HistoryIO(self.selected_server_ip, "", level)
             self.server_history_io.show()
         else:
-            self.server_history_io.raise_()
+            if self.server_history_io.isVisible():
+                self.server_history_io.raise_()
+            else:
+                self.server_history_io.show()
 
 
 class RaidInfoTabWidget(QTabWidget):
@@ -922,4 +925,7 @@ class RaidInfoTabWidget(QTabWidget):
             self.server_history_io = HistoryIO(self.selected_server_ip, "", 3)
             self.server_history_io.show()
         else:
-            self.server_history_io.raise_()
+            if self.server_history_io.isVisible():
+                self.server_history_io.raise_()
+            else:
+                self.server_history_io.show()

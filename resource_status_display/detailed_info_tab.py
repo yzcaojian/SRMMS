@@ -513,4 +513,7 @@ class DetailedInfoTab(QTabWidget):
             self.disk_history_io = HistoryIO(self.selected_disk_id[0], self.selected_disk_id[1], level)
             self.disk_history_io.show()
         else:
-            self.disk_history_io.raise_()
+            if self.disk_history_io.isVisible():
+                self.disk_history_io.raise_()
+            else:
+                self.disk_history_io.show()
