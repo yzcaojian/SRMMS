@@ -1,7 +1,6 @@
-from PyQt5 import QtCore
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QImage, QPixmap, QFont, QIcon
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QToolTip, QTableWidgetItem
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QTableWidgetItem
 
 """
 -*- coding: utf-8 -*- 
@@ -38,7 +37,7 @@ def get_ServerInfo_Item(serverInfo):
     server_name_widget = QLabel(server_name) if name_len <= 12 else QLabel(server_name[0:5] + '...')
     # server_name_widget.setFixedWidth(120)
     server_name_widget.setToolTip(server_name)
-    server_name_widget.setStyleSheet("font-size:20px; font-family:'黑体'; color:white")
+    server_name_widget.setStyleSheet("font-size:20px; font-family:'黑体'; color:rgb(249, 164, 84)")
 
     # 服务器IP地址
     server_IP_widget = QLabel(server_IP)

@@ -2,10 +2,10 @@ import sys
 import _thread
 import time
 
-from PyQt5.QtCore import Qt, QSize, QMutex, QThread, QRect, QPoint
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, \
-    QMessageBox, QSizePolicy
+from PyQt5.QtCore import Qt, QSize, QMutex, QThread
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMainWindow, QMessageBox
+from pyecharts.globals import CurrentConfig
 from resource_status_display.mult_disks_info_GUI import MultDisksInfoWidget
 from resource_status_display.raid_info_GUI import RAIDInfoWidget
 from resource_status_display.configuration_checking import configuration_info
@@ -24,6 +24,7 @@ from data_communication_analysis.DAC_1 import analyse_data
 @Time : 2021/4/28 10:48
 @Author : cao jian
 """
+CurrentConfig.ONLINE_HOST = "../js/"  # 配置使用本地js文件
 
 # I/O负载输入队列
 io_load_input_queue = in_interface_impl.get_io_load_input_queue()
