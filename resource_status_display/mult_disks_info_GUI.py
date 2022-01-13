@@ -80,7 +80,8 @@ class MultDisksInfoWidget(QWidget):
         # 告警信息， 以list呈现
         warning_widget = QListWidget()
         warning_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
-                                     "QListWidget::item:hover{background-color: #406882}")
+                                     "QListWidget::item:hover{background-color: #406882}"
+                                     "QListWidget::item:selected{background-color: black}")
 
         # warning_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
 
@@ -131,7 +132,8 @@ class MultDisksInfoWidget(QWidget):
         # 日志信息，以list呈现
         log_widget = QListWidget()
         log_widget.setStyleSheet("QListWidget{background-color:transparent; border:1px solid #7efaff;}"
-                                 "QListWidget::item:hover{background-color: #406882}")
+                                 "QListWidget::item:hover{background-color: #406882}"
+                                 "QListWidget::item:selected{background-color: black}")
         # log_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将竖直的滑动条隐藏，避免遮挡内容
         log_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 将水平的滑动条隐藏，避免遮挡内容
         # 定位当前选中的item行，双击显示详细信息
