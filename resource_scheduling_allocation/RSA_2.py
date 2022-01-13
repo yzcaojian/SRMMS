@@ -3,7 +3,7 @@
 # @Function: I/O负载预测子模块
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:55
-
+import locale
 import time
 import tensorflow as tf
 import numpy as np
@@ -100,6 +100,8 @@ def io_load_prediction(io_load_input_queue, io_load_output_queue, save_model_pat
                     now_time = time.time()
                     # 预测的是为20分钟之后的负载值
                     predict_step = 20 * 60
+                    locale.setlocale(locale.LC_ALL, 'en')
+                    locale.setlocale(locale.LC_CTYPE, 'chinese')
                     local_time = time.strftime("%H:%M", time.localtime(now_time + predict_step))
                     now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月',
                                                                                                       d='日')

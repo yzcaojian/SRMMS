@@ -3,6 +3,7 @@
 # @Function: 监控应用需求子模块
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:56
+import locale
 import time
 
 from interface.in_interface import in_interface_impl
@@ -29,6 +30,8 @@ def sever_disconnection_warning(io_load_queue, warning_message_queue):
             # 间隔超过1分钟  视作服务器失联
             if 62 >= now_time - time_stamp > 60:
                 errorID = 3
+                locale.setlocale(locale.LC_ALL, 'en')
+                locale.setlocale(locale.LC_CTYPE, 'chinese')
                 now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
                 warning = Warning(errorID, now_time, configuration_info.IPtoName(ip), diskID, "")
                 # 服务器失联异常消息[03, 事件发生时间, 服务器名称, 硬盘标识]
@@ -94,6 +97,8 @@ def hard_disk_high_io_warning(high_io_load_queue, warning_message_queue):
                     sum += item[0]
                 average_io = sum / len(high_io_load_queue[serverIP][diskID])
                 errorID = 4
+                locale.setlocale(locale.LC_ALL, 'en')
+                locale.setlocale(locale.LC_CTYPE, 'chinese')
                 now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
                 warning = Warning(errorID, now_time, configuration_info.IPtoName(serverIP), diskID, average_io)
                 # 硬盘持续高IO异常消息[04, 事件发生时间, 服务器IP, 硬盘标识, 持续期间平均IO负载]

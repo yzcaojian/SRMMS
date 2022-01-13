@@ -3,7 +3,7 @@
 # @Function: 资源调度分配子模块
 # @Author: Chen Zhongwei
 # @Time: 2021/5/6 15:56
-
+import locale
 import time
 import _thread
 from interface.in_interface import in_interface_impl
@@ -23,6 +23,8 @@ def resource_scheduling_allocation(disk_detailed_info, warning_message_queue):
             continue
         serverIP = configuration_info.NametoIP(serverName)
         now_time = time.time()
+        locale.setlocale(locale.LC_ALL, 'en')
+        locale.setlocale(locale.LC_CTYPE, 'chinese')
         now_time = time.strftime("%Y{y}%m{m}%d{d}%H:%M", time.localtime(now_time)).format(y='年', m='月', d='日')
         # 生成调度信息，一方面写入调度分配文件，一方面生成调度分配指令
         scheduling = Scheduling(errorID, now_time, serverName, diskID, situation=warning_message.warningContent)

@@ -272,6 +272,7 @@ class ConfigurationWidget(QWidget):
     # 考虑时间因素，无返回结果，直接更改内部元素为元组的列表events_info
     def set_events_info(self, new_line):
         # current_time = datetime.datetime.now().strftime('%Y年%m月%d日 %H:%M')
+        locale.setlocale(locale.LC_ALL, 'en')
         locale.setlocale(locale.LC_CTYPE, 'chinese')
         current_time = time.strftime('%Y年%m月%d日 %H:%M')
         index = current_time.find(' ')
